@@ -14,32 +14,32 @@ interface Product {
 
 const products: Product[] = [
   {
-    id: "tshirt-black",
+    id: "tshirt-bodega",
     name: "BODEGA T-SHIRT",
     price: "₱695",
-    image: "/images/merch/tshirt-black.jpg",
+    image: "/images/merch/tshirt-bodega.png",
     description:
       "Official Bodega Sound tee. 100% cotton. Black with yellow logo.",
   },
   {
-    id: "hoodie-yellow",
-    name: "CONTRABANDA HOODIE",
-    price: "₱1,495",
-    image: "/images/merch/hoodie.jpg",
-    description: "Limited edition hoodie. Premium quality. Yellow on black.",
+    id: "tshirt-miles",
+    name: "MILES MEDINA TEE",
+    price: "₱895",
+    image: "/images/merch/tshirt-miles.png",
+    description: "Limited edition Miles Medina Live in Manila tee. 2026 Official Merch.",
   },
   {
-    id: "cap",
-    name: "BODEGA CAP",
-    price: "₱595",
-    image: "/images/merch/cap.jpg",
-    description: "Embroidered dad cap. Adjustable strap. Black.",
+    id: "keychain",
+    name: "BODEGA KEYCHAIN",
+    price: "₱250",
+    image: "/images/merch/keychain.png",
+    description: "Premium metal keychain with enamel fill. Yellow on black.",
   },
   {
-    id: "tote",
-    name: "CARRYALL TOTE",
-    price: "₱395",
-    image: "/images/merch/tote.jpg",
+    id: "tote-bag",
+    name: "TOTE BAG",
+    price: "₱495",
+    image: "/images/merch/tote-bag.png",
     description: "Canvas tote bag. Perfect for records and essentials.",
   },
 ];
@@ -47,16 +47,12 @@ const products: Product[] = [
 function ProductCard({ product }: { product: Product }) {
   return (
     <motion.div variants={fadeUp} className="group cursor-pointer">
-      <div className="relative aspect-square rounded-sm overflow-hidden bg-warm-800 mb-4">
-        {/* Placeholder gradient - yellow like the Bodega brand */}
-        <div className="absolute inset-0 bg-[#E5FF00] flex items-center justify-center">
-          <div className="text-center text-[#0A0A08]">
-            <p className="font-['Bebas_Neue'] text-4xl">
-              {product.name.split(" ")[0]}
-            </p>
-            <p className="text-sm opacity-60 mt-2">Image coming soon</p>
-          </div>
-        </div>
+      <div className="relative aspect-[3/4] rounded-sm overflow-hidden bg-warm-800 mb-4">
+        <img
+          src={product.image}
+          alt={product.name}
+          className="object-cover w-full h-full transform group-hover:scale-105 transition-transform duration-500"
+        />
 
         {/* Hover overlay */}
         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors duration-300 flex items-center justify-center">

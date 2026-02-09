@@ -14,6 +14,7 @@ interface TextRevealProps {
     text?: string;
     lines?: (string | TextRevealLine)[];
     className?: string;
+    highlightWords?: string[];
 }
 
 /**
@@ -21,7 +22,7 @@ interface TextRevealProps {
  * A scroll-triggered text reveal component where words highlight as you scroll.
  * Supports multi-line centered layouts with precise pinning behavior and line-specific links.
  */
-export function TextReveal({ text, lines, className }: TextRevealProps) {
+export function TextReveal({ text, lines, className, highlightWords = [] }: TextRevealProps) {
     const targetRef = useRef<HTMLDivElement>(null);
 
     // Normalize lines to Line objects
@@ -47,7 +48,7 @@ export function TextReveal({ text, lines, className }: TextRevealProps) {
             {/* Dimming background */}
             <motion.div
                 style={{ opacity: bgOpacity }}
-                className="fixed inset-0 bg-black pointer-events-none z-0"
+                className="fixed inset-0 bg-white dark:bg-black pointer-events-none z-0"
             />
 
             <div className="sticky top-0 flex h-screen w-full items-center justify-center bg-transparent px-6 mx-auto z-10 text-center">
@@ -66,11 +67,19 @@ export function TextReveal({ text, lines, className }: TextRevealProps) {
                             const start = globalIndex / allWords.length;
                             const end = (globalIndex + 1) / allWords.length;
 
+                            // Check if word should be highlighted
+                            // Remove punctuation for checking but keep it for rendering
+                            const cleanWord = word.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "");
+                            const isHighlighted = highlightWords.some(hw =>
+                                cleanWord.toLowerCase() === hw.toLowerCase()
+                            );
+
                             return (
                                 <Word
                                     key={i}
                                     range={[start, end]}
                                     progress={scrollYProgress}
+                                    isHighlighted={isHighlighted}
                                 >
                                     {word}
                                 </Word>
@@ -78,7 +87,7 @@ export function TextReveal({ text, lines, className }: TextRevealProps) {
                         });
 
                         const commonClassName = cn(
-                            "flex flex-wrap justify-center font-display text-[clamp(1.5rem,5vw,4.5rem)] leading-[1.1] tracking-tight uppercase transition-colors",
+                            "flex flex-wrap justify-center font-display text-[clamp(1.5rem,5vw,4.5rem)] leading-[1.1] tracking-tight uppercase transition-colors text-zinc-900 dark:text-white",
                             href && "hover:text-bodega-yellow cursor-pointer underline decoration-bodega-yellow/30 underline-offset-8"
                         );
 
@@ -115,9 +124,10 @@ interface WordProps {
     children: React.ReactNode;
     range: [number, number];
     progress: any;
+    isHighlighted?: boolean;
 }
 
-const Word = ({ children, range, progress }: WordProps) => {
+const Word = ({ children, range, progress, isHighlighted }: WordProps) => {
     // Smoother opacity transition
     const opacity = useTransform(progress, range, [0.1, 1]);
     // Subtle lift effect
@@ -130,7 +140,10 @@ const Word = ({ children, range, progress }: WordProps) => {
         <span className="relative mr-[0.3em] mb-[0.2em] inline-block">
             <motion.span
                 style={{ opacity, filter, y }}
-                className="inline-block"
+                className={cn(
+                    "inline-block transition-colors duration-300",
+                    isHighlighted && "text-bodega-yellow drop-shadow-[0_2px_4px_rgba(0,0,0,0.1)] dark:drop-shadow-none"
+                )}
             >
                 {children}
             </motion.span>

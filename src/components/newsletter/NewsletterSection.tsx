@@ -28,7 +28,7 @@ export function NewsletterSection() {
     <section id="newsletter" className="relative py-32 px-6">
       {/* Large background text */}
       <div className="absolute inset-0 flex items-center justify-center overflow-hidden pointer-events-none">
-        <span className="font-['Bebas_Neue'] text-[20vw] text-warm-800/30 whitespace-nowrap select-none">
+        <span className="font-['Bebas_Neue'] text-[20vw] text-warm-200/50 dark:text-warm-800/30 whitespace-nowrap select-none transition-colors duration-300">
           JOIN US
         </span>
       </div>
@@ -46,11 +46,11 @@ export function NewsletterSection() {
             </div>
           </div>
 
-          <h2 className="font-['Bebas_Neue'] text-6xl md:text-8xl text-white tracking-tight mb-6">
+          <h2 className="font-['Bebas_Neue'] text-6xl md:text-8xl text-zinc-900 dark:text-white tracking-tight mb-6 transition-colors duration-300">
             JOIN THE COLLECTIVE
           </h2>
 
-          <p className="text-xl text-warm-400 mb-12 max-w-xl mx-auto">
+          <p className="text-xl text-zinc-600 dark:text-warm-400 mb-12 max-w-xl mx-auto transition-colors duration-300">
             First access to tickets, secret locations, and after-hours content.
             Be the first to know about Contrabanda drops.
           </p>
@@ -66,7 +66,7 @@ export function NewsletterSection() {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your email"
                 required
-                className="flex-1 px-6 py-4 bg-transparent border-2 border-warm-700 rounded-sm text-white placeholder:text-warm-600 focus:outline-none focus:border-bodega-yellow transition-colors duration-300"
+                className="flex-1 px-6 py-4 bg-transparent border-2 border-zinc-300 dark:border-warm-700 rounded-sm text-zinc-900 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-warm-600 focus:outline-none focus:border-bodega-yellow transition-colors duration-300"
               />
               <button
                 type="submit"
@@ -91,7 +91,7 @@ export function NewsletterSection() {
             </motion.div>
           )}
 
-          <p className="text-warm-600 text-sm mt-4">
+          <p className="text-zinc-500 dark:text-warm-600 text-sm mt-4 transition-colors duration-300">
             No spam. Only vibes. Unsubscribe anytime.
           </p>
         </motion.div>

@@ -20,6 +20,15 @@ export default function Home() {
             "BUILDING THE FUTURE OF BASS CULTURE.",
             "JOIN THE MOVEMENT.",
           ]}
+          highlightWords={[
+            "vibration",
+            "streets",
+            "sound",
+            "architects",
+            "future",
+            "culture",
+            "movement",
+          ]}
         />
 
         <NextEventSection />

@@ -61,21 +61,21 @@ export function HeroSection() {
 
           <FlipTextReveal
             text="BODEGA"
-            className="text-bodega-yellow leading-[0.65] tracking-[-0.03em] text-[clamp(4rem,11.5vw,13rem)]"
-            style={{ textShadow: "0 0 40px rgba(229, 255, 0, 0.15)" }}
+            className="text-bodega-yellow leading-[0.65] tracking-[-0.03em] text-[clamp(4rem,11.5vw,13rem)] drop-shadow-[0_4px_8px_rgba(0,0,0,0.3)]"
+            style={{ textShadow: "0 0 40px rgba(229, 255, 0, 0.25)" }}
           />
 
           {/* Tucked "SOUND" - Maximum overlap */}
           <FlipTextReveal
             text="SOUND"
-            className="text-white leading-[0.65] tracking-[-0.03em] text-[clamp(4rem,11.5vw,13rem)] mt-[-0.75em] z-10"
+            className="text-zinc-900 dark:text-white leading-[0.65] tracking-[-0.03em] text-[clamp(4rem,11.5vw,13rem)] mt-[-0.75em] z-10 drop-shadow-[0_4px_8px_rgba(0,0,0,0.3)]"
             delay={0.4}
           />
         </div>
 
         <motion.p
           variants={fadeUp}
-          className="text-base md:text-lg max-w-lg mx-auto mb-10 text-warm-300 leading-relaxed mt-[-1.2rem]"
+          className="text-base md:text-lg max-w-lg mx-auto mb-10 text-zinc-600 dark:text-warm-300 leading-relaxed mt-[-1.2rem]"
         >
           International DJ secret location at Mila&apos;s Underground
           Collective. Step into the venue at 2 AM.
@@ -95,7 +95,7 @@ export function HeroSection() {
 
           <a
             href="/archive"
-            className="px-10 py-5 border border-warm-600 text-warm-200 font-medium text-lg rounded-sm hover:border-bodega-yellow hover:text-bodega-yellow transition-all duration-300"
+            className="px-10 py-5 border border-zinc-300 dark:border-warm-600 text-zinc-700 dark:text-warm-200 font-medium text-lg rounded-sm hover:border-black dark:hover:border-bodega-yellow hover:text-black dark:hover:text-bodega-yellow transition-all duration-300"
           >
             VIEW ARCHIVE
           </a>
