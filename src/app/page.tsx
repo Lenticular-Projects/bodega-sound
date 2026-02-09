@@ -1,5 +1,6 @@
 import { HeroSection } from "@/components/hero/HeroSection";
 import { TextReveal } from "@/components/ui/text-reveal";
+import { SpinningLogo } from "@/components/ui/spinning-logo";
 import { NextEventSection } from "@/components/events/NextEventSection";
 import { PastEventsSection } from "@/components/archive/PastEventsSection";
 import { YouTubeSection } from "@/components/media/YouTubeSection";
@@ -30,6 +31,8 @@ export default function Home() {
             "movement",
           ]}
         />
+
+        <SpinningLogo />
 
         <NextEventSection />
         <PastEventsSection />

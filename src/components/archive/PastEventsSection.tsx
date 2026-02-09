@@ -93,7 +93,7 @@ function EventCard({ event, index }: { event: PastEvent; index: number }) {
 
 export function PastEventsSection() {
   return (
-    <section className="relative py-32 px-6 overflow-hidden">
+    <section className="relative pt-8 pb-8 px-6 overflow-hidden">
       {/* Background accent */}
       <div className="absolute top-1/2 left-0 w-[600px] h-[600px] bg-bodega-yellow/5 rounded-full blur-[200px] -translate-y-1/2" />
 

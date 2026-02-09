@@ -8,7 +8,7 @@
 @layer base {
   :root {
     /* Light Mode: Warm off-white */
-    --background: #fdfdfd;
+    --background: #000000;
     --foreground: #09090b;
 
     --card: #ffffff;
@@ -62,7 +62,7 @@
   }
 
   .dark {
-    --background: #09090b;
+    --background: #000000;
     --foreground: #fafafa;
 
     --card: #09090b;

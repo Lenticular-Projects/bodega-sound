@@ -34,7 +34,7 @@ const nextEvent: Event = {
 
 export function NextEventSection() {
   return (
-    <section id="next-event" className="relative py-32 px-6">
+    <section id="next-event" className="relative pt-32 pb-8 px-6">
       <div className="max-w-7xl mx-auto">
         <motion.div
           initial="initial"

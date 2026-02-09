@@ -84,7 +84,7 @@ function ProductCard({ product }: { product: Product }) {
 
 export function MerchSection() {
   return (
-    <section className="relative py-32 px-6">
+    <section className="relative pt-8 pb-4 px-6">
       {/* Background accent */}
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-bodega-yellow/5 rounded-full blur-[200px]" />
 

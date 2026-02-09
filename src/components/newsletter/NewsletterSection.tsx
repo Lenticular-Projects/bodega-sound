@@ -25,7 +25,7 @@ export function NewsletterSection() {
   };
 
   return (
-    <section id="newsletter" className="relative py-32 px-6">
+    <section id="newsletter" className="relative pt-4 pb-32 px-6">
       {/* Large background text */}
       <div className="absolute inset-0 flex items-center justify-center overflow-hidden pointer-events-none">
         <span className="font-['Bebas_Neue'] text-[20vw] text-warm-200/50 dark:text-warm-800/30 whitespace-nowrap select-none transition-colors duration-300">

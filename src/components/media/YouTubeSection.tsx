@@ -88,7 +88,7 @@ function VideoCard({ video }: { video: YouTubeVideo }) {
 
 export function YouTubeSection() {
   return (
-    <section className="relative py-32 px-6">
+    <section className="relative pt-8 pb-8 px-6">
       <div className="max-w-7xl mx-auto">
         <motion.div
           initial="initial"
@@ -110,7 +110,7 @@ export function YouTubeSection() {
           </div>
 
           <a
-            href="https://youtube.com/@bodegasound"
+            href="https://www.youtube.com/channel/UCpF9K0Lg4wlwNrqprRFRmxg"
             target="_blank"
             rel="noopener noreferrer"
             className="text-warm-400 hover:text-bodega-yellow transition-colors duration-300 flex items-center gap-2"
@@ -139,7 +139,7 @@ export function YouTubeSection() {
           className="mt-12 text-center"
         >
           <a
-            href="https://youtube.com/@bodegasound"
+            href="https://www.youtube.com/channel/UCpF9K0Lg4wlwNrqprRFRmxg"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 px-8 py-4 border border-warm-600 text-warm-200 rounded-sm hover:border-red-600 hover:text-red-600 transition-all duration-300"
