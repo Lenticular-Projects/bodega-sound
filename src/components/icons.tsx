@@ -38,4 +38,6 @@ export {
   Link as LinkIcon,
   ChevronUp as ChevronUpIcon,
   ArrowUpRight as ArrowUpRightIcon,
+  Star as StarIcon,
+  OverflowMenuVertical as MoreIcon,
 } from "@carbon/icons-react";

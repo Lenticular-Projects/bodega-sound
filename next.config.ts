@@ -5,7 +5,15 @@ const projectName = path.basename(__dirname).replace(/-/g, ' ').replace(/\b\w/g,
 process.env.NEXT_PUBLIC_APP_NAME = projectName;
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  async redirects() {
+    return [
+      {
+        source: '/link',
+        destination: '/links',
+        permanent: true,
+      },
+    ]
+  },
 };
 
 export default nextConfig;

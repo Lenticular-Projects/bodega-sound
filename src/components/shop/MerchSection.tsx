@@ -10,6 +10,7 @@ interface Product {
   price: string;
   image: string;
   description: string;
+  orderLink: string;
 }
 
 const products: Product[] = [
@@ -20,6 +21,7 @@ const products: Product[] = [
     image: "/images/merch/tshirt-bodega.png",
     description:
       "Official Bodega Sound tee. 100% cotton. Black with yellow logo.",
+    orderLink: "https://docs.google.com/forms/d/e/1FAIpQLSc2_2cFW-ez1vLFV6QJi7Z-RPTxYzeHltWE1BxZyFAtRoOCWQ/viewform",
   },
   {
     id: "tshirt-miles",
@@ -27,6 +29,7 @@ const products: Product[] = [
     price: "₱895",
     image: "/images/merch/tshirt-miles.png",
     description: "Limited edition Miles Medina Live in Manila tee. 2026 Official Merch.",
+    orderLink: "https://docs.google.com/forms/d/e/1FAIpQLSeDm_1NaY6prQv3Qe7KMbBLk7yxy9cJTqcILSdXeUfSw1Gqdg/viewform",
   },
   {
     id: "keychain",
@@ -34,6 +37,7 @@ const products: Product[] = [
     price: "₱250",
     image: "/images/merch/keychain.png",
     description: "Premium metal keychain with enamel fill. Yellow on black.",
+    orderLink: "https://docs.google.com/forms/d/e/1FAIpQLSc2_2cFW-ez1vLFV6QJi7Z-RPTxYzeHltWE1BxZyFAtRoOCWQ/viewform",
   },
   {
     id: "tote-bag",
@@ -41,6 +45,7 @@ const products: Product[] = [
     price: "₱495",
     image: "/images/merch/tote-bag.png",
     description: "Canvas tote bag. Perfect for records and essentials.",
+    orderLink: "https://docs.google.com/forms/d/e/1FAIpQLSc2_2cFW-ez1vLFV6QJi7Z-RPTxYzeHltWE1BxZyFAtRoOCWQ/viewform",
   },
 ];
 
@@ -57,10 +62,15 @@ function ProductCard({ product }: { product: Product }) {
         {/* Hover overlay */}
         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors duration-300 flex items-center justify-center">
           <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 transform translate-y-4 group-hover:translate-y-0">
-            <button className="flex items-center gap-2 px-6 py-3 bg-bodega-yellow text-[#0A0A08] font-bold rounded-sm hover:bg-bodega-yellow-light transition-colors duration-300">
+            <a
+              href={product.orderLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 px-6 py-3 bg-bodega-yellow text-[#0A0A08] font-bold rounded-sm hover:bg-bodega-yellow-light transition-colors duration-300"
+            >
               <ShoppingCartIcon className="w-5 h-5" />
               ADD TO CART
-            </button>
+            </a>
           </div>
         </div>
       </div>
