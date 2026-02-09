@@ -77,8 +77,8 @@ export function HeroSection() {
           variants={fadeUp}
           className="text-base md:text-lg max-w-lg mx-auto mb-10 text-zinc-600 dark:text-warm-300 leading-relaxed mt-[-1.2rem]"
         >
-          International DJ secret location at Mila&apos;s Underground
-          Collective. Step into the venue at 2 AM.
+          Manila&apos;s Underground Collective. International DJs. Secret Locations.
+          Step into the venue at 2 AM.
         </motion.p>
 
         <motion.div

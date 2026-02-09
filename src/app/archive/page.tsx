@@ -1,21 +1,71 @@
-export default function ArchivePage() {
-    return (
-        <div className="pt-32 pb-20 px-6 max-w-7xl mx-auto">
-            <h1 className="font-['Bebas_Neue'] text-7xl md:text-9xl text-zinc-900 dark:text-white tracking-tight mb-8 transition-colors duration-300">
-                ARCHIVE
-            </h1>
-            <p className="text-zinc-600 dark:text-warm-300 text-xl max-w-2xl transition-colors duration-300">
-                A visual history of our gatherings. Every set, every room, every movement captured.
-            </p>
+"use client";
 
-            {/* Gallery placeholder */}
-            <div className="mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {[1, 2, 3, 4, 5, 6].map((i) => (
-                    <div key={i} className="aspect-[4/5] bg-zinc-100 dark:bg-warm-900 rounded-sm flex items-center justify-center border border-zinc-200 dark:border-warm-800 group cursor-pointer hover:border-black dark:hover:border-bodega-yellow transition-all duration-300">
-                        <span className="text-zinc-400 dark:text-warm-600 font-display text-4xl group-hover:text-black dark:group-hover:text-bodega-yellow transition-colors duration-300">CONTRABANDA 0{i}</span>
-                    </div>
-                ))}
-            </div>
+import { motion } from "framer-motion";
+import { allEvents, type BodegaEvent } from "@/data/events";
+import { fadeUp, staggerContainer } from "@/lib/animations";
+
+function ArchiveCard({ event, index }: { event: BodegaEvent; index: number }) {
+  return (
+    <motion.div
+      variants={fadeUp}
+      className="group relative overflow-hidden rounded-sm"
+    >
+      <div className="relative aspect-[3/4] bg-warm-800">
+        <img
+          src={event.imageUrl}
+          alt={event.name}
+          loading={index < 3 ? "eager" : "lazy"}
+          className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+        />
+
+        {/* Hover overlay */}
+        <div className="absolute inset-0 bg-bodega-yellow/0 group-hover:bg-bodega-yellow/10 transition-colors duration-500" />
+
+        {/* Content overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A08] via-[#0A0A08]/20 to-transparent" />
+
+        {/* Event info */}
+        <div className="absolute bottom-0 left-0 right-0 p-6 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
+          <p className="text-bodega-yellow font-mono text-xs tracking-wider mb-1">
+            {event.date}
+          </p>
+          <h3 className="font-['Bebas_Neue'] text-3xl md:text-4xl text-white mb-1 tracking-tight">
+            {event.name}
+          </h3>
+          <p className="text-warm-400 text-sm">{event.theme}</p>
+
+          <p className="text-warm-500 text-xs mt-3 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+            {event.artists.join(" • ")}
+          </p>
         </div>
-    );
+      </div>
+    </motion.div>
+  );
+}
+
+export default function ArchivePage() {
+  return (
+    <div className="pt-32 pb-20 px-6 max-w-7xl mx-auto">
+      <motion.div initial="initial" animate="animate" variants={fadeUp}>
+        <h1 className="font-['Bebas_Neue'] text-7xl md:text-9xl text-white tracking-tight mb-4">
+          ARCHIVE
+        </h1>
+        <p className="text-warm-400 text-xl max-w-2xl">
+          A visual history of our gatherings. Every set, every room, every
+          movement captured.
+        </p>
+      </motion.div>
+
+      <motion.div
+        initial="initial"
+        animate="animate"
+        variants={staggerContainer}
+        className="mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+      >
+        {allEvents.map((event, index) => (
+          <ArchiveCard key={event.id} event={event} index={index} />
+        ))}
+      </motion.div>
+    </div>
+  );
 }

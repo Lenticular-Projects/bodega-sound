@@ -15,9 +15,30 @@ export function Footer() {
         <div className="flex flex-col gap-4">
           <h3 className="text-xs font-bold tracking-widest text-zinc-500 dark:text-warm-500 uppercase transition-colors duration-300">Connect</h3>
           <div className="flex gap-6">
-            <a href="#" className="text-zinc-600 dark:text-warm-300 hover:text-black dark:hover:text-bodega-yellow transition-colors duration-300">Instagram</a>
-            <a href="#" className="text-zinc-600 dark:text-warm-300 hover:text-black dark:hover:text-bodega-yellow transition-colors duration-300">SoundCloud</a>
-            <a href="#" className="text-zinc-600 dark:text-warm-300 hover:text-black dark:hover:text-bodega-yellow transition-colors duration-300">Resident Advisor</a>
+            <a
+              href="https://www.instagram.com/bodega_sound/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-zinc-600 dark:text-warm-300 hover:text-black dark:hover:text-bodega-yellow transition-colors duration-300"
+            >
+              Instagram
+            </a>
+            <a
+              href="https://www.tiktok.com/@bodega_sound"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-zinc-600 dark:text-warm-300 hover:text-black dark:hover:text-bodega-yellow transition-colors duration-300"
+            >
+              TikTok
+            </a>
+            <a
+              href="https://www.youtube.com/channel/UCpF9K0Lg4wlwNrqprRFRmxg"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-zinc-600 dark:text-warm-300 hover:text-black dark:hover:text-bodega-yellow transition-colors duration-300"
+            >
+              YouTube
+            </a>
           </div>
         </div>
       </div>

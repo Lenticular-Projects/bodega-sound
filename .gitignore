@@ -40,5 +40,8 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# raw party photos (optimized webp versions are committed)
+public/images/party-photos/*.jpg
+
 /lib/generated/prisma
 .env

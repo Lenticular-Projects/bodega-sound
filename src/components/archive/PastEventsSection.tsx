@@ -1,51 +1,23 @@
 "use client";
 
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { PlayIcon, ArrowRightIcon } from "@/components/icons";
 import { fadeUp, staggerContainer } from "@/lib/animations";
+import { recentEvents, allEvents, type BodegaEvent } from "@/data/events";
 
-interface PastEvent {
-  id: string;
-  name: string;
-  date: string;
-  theme: string;
-  artists: string[];
-  imageUrl?: string;
-}
+const handleCardClick = (slideIndex: number) => {
+  document.getElementById("gallery")?.scrollIntoView({ behavior: "smooth" });
+  setTimeout(() => {
+    window.dispatchEvent(
+      new CustomEvent("lumina-navigate", { detail: { index: slideIndex } })
+    );
+  }, 600);
+};
 
-// Static data for MVP
-const pastEvents: PastEvent[] = [
-  {
-    id: "contrabanda-iv",
-    name: "CONTRABANDA IV",
-    date: "December 2024",
-    theme: "Winter Solstice",
-    artists: ["Miles Medina", "Butta B", "Roy de Borja"],
-  },
-  {
-    id: "contrabanda-iii",
-    name: "CONTRABANDA III",
-    date: "September 2024",
-    theme: "Halloween Edition",
-    artists: ["A$TRIDX", "Sky Dominique", "Cabu b2b Baby Oliv"],
-  },
-  {
-    id: "contrabanda-ii",
-    name: "CONTRABANDA II",
-    date: "June 2024",
-    theme: "Summer Sessions",
-    artists: ["Miss A & Fateeha", "DJ Katsy", "Juaniyo"],
-  },
-  {
-    id: "contrabanda-i",
-    name: "CONTRABANDA I",
-    date: "March 2024",
-    theme: "Launch Party",
-    artists: ["Various Artists", "Local Selectors"],
-  },
-];
+function EventCard({ event, index }: { event: BodegaEvent; index: number }) {
+  const slideIndex = allEvents.findIndex((e) => e.id === event.id);
 
-function EventCard({ event, index }: { event: PastEvent; index: number }) {
   return (
     <motion.div
       variants={fadeUp}
@@ -53,11 +25,15 @@ function EventCard({ event, index }: { event: PastEvent; index: number }) {
       style={{
         marginTop: index % 2 === 1 ? "2rem" : "0",
       }}
+      onClick={() => handleCardClick(slideIndex)}
     >
       {/* Card Background */}
       <div className="relative aspect-[3/4] bg-warm-800">
-        {/* Placeholder gradient */}
-        <div className="absolute inset-0 bg-gradient-to-br from-warm-800 to-warm-900" />
+        <img
+          src={event.imageUrl}
+          alt={event.name}
+          className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+        />
 
         {/* Hover overlay */}
         <div className="absolute inset-0 bg-bodega-yellow/0 group-hover:bg-bodega-yellow/10 transition-colors duration-500" />
@@ -122,7 +98,7 @@ export function PastEventsSection() {
           variants={staggerContainer}
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
         >
-          {pastEvents.map((event, index) => (
+          {recentEvents.map((event, index) => (
             <EventCard key={event.id} event={event} index={index} />
           ))}
         </motion.div>
@@ -135,10 +111,13 @@ export function PastEventsSection() {
           transition={{ delay: 0.5 }}
           className="mt-16 text-center"
         >
-          <button className="group inline-flex items-center gap-3 px-8 py-4 border border-warm-600 text-warm-200 rounded-sm hover:border-bodega-yellow hover:text-bodega-yellow transition-all duration-300">
+          <Link
+            href="/archive"
+            className="group inline-flex items-center gap-3 px-8 py-4 border border-warm-600 text-warm-200 rounded-sm hover:border-bodega-yellow hover:text-bodega-yellow transition-all duration-300"
+          >
             VIEW ALL ARCHIVES
             <ArrowRightIcon className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
-          </button>
+          </Link>
         </motion.div>
       </div>
     </section>

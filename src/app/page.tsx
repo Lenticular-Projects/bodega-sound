@@ -2,6 +2,7 @@ import { HeroSection } from "@/components/hero/HeroSection";
 import { TextReveal } from "@/components/ui/text-reveal";
 import { SpinningLogo } from "@/components/ui/spinning-logo";
 import { NextEventSection } from "@/components/events/NextEventSection";
+import { PartyGallerySection } from "@/components/gallery/PartyGallerySection";
 import { PastEventsSection } from "@/components/archive/PastEventsSection";
 import { YouTubeSection } from "@/components/media/YouTubeSection";
 import { MerchSection } from "@/components/shop/MerchSection";
@@ -35,6 +36,7 @@ export default function Home() {
         <SpinningLogo />
 
         <NextEventSection />
+        <PartyGallerySection />
         <PastEventsSection />
         <YouTubeSection />
         <MerchSection />
