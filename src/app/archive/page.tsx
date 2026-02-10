@@ -1,14 +1,26 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { allEvents, type BodegaEvent } from "@/data/events";
 import { fadeUp, staggerContainer } from "@/lib/animations";
+import { ArchiveGallery } from "@/components/archive/ArchiveGallery";
+import type { LuminaSlide } from "@/components/ui/lumina-interactive-list";
 
-function ArchiveCard({ event, index }: { event: BodegaEvent; index: number }) {
+function ArchiveCard({
+  event,
+  index,
+  onClick,
+}: {
+  event: BodegaEvent;
+  index: number;
+  onClick: (event: BodegaEvent) => void;
+}) {
   return (
     <motion.div
       variants={fadeUp}
-      className="group relative overflow-hidden rounded-sm"
+      className="group relative overflow-hidden rounded-sm cursor-pointer"
+      onClick={() => onClick(event)}
     >
       <div className="relative aspect-[3/4] bg-warm-800">
         <img
@@ -44,6 +56,26 @@ function ArchiveCard({ event, index }: { event: BodegaEvent; index: number }) {
 }
 
 export default function ArchivePage() {
+  const [selectedEvent, setSelectedEvent] = useState<BodegaEvent | null>(null);
+
+  const handleEventClick = (event: BodegaEvent) => {
+    setSelectedEvent(event);
+  };
+
+  const handleCloseGallery = () => {
+    setSelectedEvent(null);
+  };
+
+  // Convert event images to LuminaSlide format
+  const gallerySlides: LuminaSlide[] =
+    selectedEvent?.galleryImages?.map((img, i) => ({
+      id: `${selectedEvent.id}-slide-${i}`,
+      media: img,
+      label: selectedEvent.galleryLabel,
+      title: selectedEvent.name,
+      description: selectedEvent.theme,
+    })) || [];
+
   return (
     <div className="pt-32 pb-20 px-6 max-w-7xl mx-auto">
       <motion.div initial="initial" animate="animate" variants={fadeUp}>
@@ -63,9 +95,23 @@ export default function ArchivePage() {
         className="mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
       >
         {allEvents.map((event, index) => (
-          <ArchiveCard key={event.id} event={event} index={index} />
+          <ArchiveCard
+            key={event.id}
+            event={event}
+            index={index}
+            onClick={handleEventClick}
+          />
         ))}
       </motion.div>
+
+      {/* Full Screen Gallery Modal */}
+      {selectedEvent && (
+        <ArchiveGallery
+          isOpen={!!selectedEvent}
+          onClose={handleCloseGallery}
+          slides={gallerySlides}
+        />
+      )}
     </div>
   );
 }

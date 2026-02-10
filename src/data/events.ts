@@ -9,6 +9,7 @@ export interface BodegaEvent {
   artists: string[];
   imageUrl: string;
   galleryLabel: string;
+  galleryImages?: string[];
 }
 
 /** All events, sorted newest-first */
@@ -22,6 +23,12 @@ export const allEvents: BodegaEvent[] = [
     artists: ["A$TRIDX", "Miles Medina", "Orange Juice Asia"],
     imageUrl: "/images/party-photos/optimized/DSC00070.webp",
     galleryLabel: "MILES MEDINA LIVE",
+    galleryImages: [
+      "/images/party-photos/optimized/DSC00070.webp",
+      "/images/party-photos/optimized/DSC00098.webp", // Mixing in other event photos for demo
+      "/images/party-photos/optimized/DSC00194.webp",
+      "/images/party-photos/optimized/DSC00070.webp",
+    ],
   },
   {
     id: "contrabanda-halloween",
@@ -32,6 +39,12 @@ export const allEvents: BodegaEvent[] = [
     artists: ["A$TRIDX", "Butta B", "Roy De Borja", "Rjay Ty"],
     imageUrl: "/images/party-photos/optimized/DSC00098.webp",
     galleryLabel: "CONTRABANDA HALLOWEEN",
+    galleryImages: [
+      "/images/party-photos/optimized/DSC00098.webp",
+      "/images/party-photos/optimized/DSC00194.webp",
+      "/images/party-photos/optimized/DSC00217.webp",
+      "/images/party-photos/optimized/DSC00098.webp",
+    ],
   },
   {
     id: "afterkopia",
@@ -42,6 +55,12 @@ export const allEvents: BodegaEvent[] = [
     artists: ["A$TRIDX", "DJ Ankle Sandwich", "Butta B", "Margachi"],
     imageUrl: "/images/party-photos/optimized/DSC00194.webp",
     galleryLabel: "AFTERKOPIA",
+    galleryImages: [
+      "/images/party-photos/optimized/DSC00194.webp",
+      "/images/party-photos/optimized/DSC00217.webp",
+      "/images/party-photos/optimized/DSC00266.webp",
+      "/images/party-photos/optimized/DSC00194.webp",
+    ],
   },
   {
     id: "contrabanda-aug",
@@ -57,6 +76,12 @@ export const allEvents: BodegaEvent[] = [
     ],
     imageUrl: "/images/party-photos/optimized/DSC00217.webp",
     galleryLabel: "CONTRABANDA",
+    galleryImages: [
+      "/images/party-photos/optimized/DSC00217.webp",
+      "/images/party-photos/optimized/DSC00266.webp",
+      "/images/party-photos/optimized/DSC00317.webp",
+      "/images/party-photos/optimized/DSC00217.webp",
+    ],
   },
   {
     id: "contrabanda-ii",
@@ -67,6 +92,12 @@ export const allEvents: BodegaEvent[] = [
     artists: ["A$TRIDX"],
     imageUrl: "/images/party-photos/optimized/DSC00266.webp",
     galleryLabel: "CONTRABANDA II",
+    galleryImages: [
+      "/images/party-photos/optimized/DSC00266.webp",
+      "/images/party-photos/optimized/DSC00317.webp",
+      "/images/party-photos/optimized/DSC00070.webp",
+      "/images/party-photos/optimized/DSC00266.webp",
+    ],
   },
   {
     id: "contrabanda-i",
@@ -77,6 +108,12 @@ export const allEvents: BodegaEvent[] = [
     artists: ["A$TRIDX"],
     imageUrl: "/images/party-photos/optimized/DSC00317.webp",
     galleryLabel: "CONTRABANDA I",
+    galleryImages: [
+      "/images/party-photos/optimized/DSC00317.webp",
+      "/images/party-photos/optimized/DSC00070.webp",
+      "/images/party-photos/optimized/DSC00098.webp",
+      "/images/party-photos/optimized/DSC00317.webp",
+    ],
   },
 ];
 

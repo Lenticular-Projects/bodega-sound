@@ -3,98 +3,13 @@
 import { motion } from "framer-motion";
 import { ShoppingCartIcon, ArrowUpRightIcon } from "@/components/icons";
 import { fadeUp, staggerContainer } from "@/lib/animations";
-
-interface Product {
-  id: string;
-  name: string;
-  price: string;
-  image: string;
-  description: string;
-  orderLink: string;
-}
-
-const products: Product[] = [
-  {
-    id: "tshirt-bodega",
-    name: "BODEGA T-SHIRT",
-    price: "₱695",
-    image: "/images/merch/tshirt-bodega.png",
-    description:
-      "Official Bodega Sound tee. 100% cotton. Black with yellow logo.",
-    orderLink: "https://docs.google.com/forms/d/e/1FAIpQLSc2_2cFW-ez1vLFV6QJi7Z-RPTxYzeHltWE1BxZyFAtRoOCWQ/viewform",
-  },
-  {
-    id: "tshirt-miles",
-    name: "MILES MEDINA TEE",
-    price: "₱895",
-    image: "/images/merch/tshirt-miles.png",
-    description: "Limited edition Miles Medina Live in Manila tee. 2026 Official Merch.",
-    orderLink: "https://docs.google.com/forms/d/e/1FAIpQLSeDm_1NaY6prQv3Qe7KMbBLk7yxy9cJTqcILSdXeUfSw1Gqdg/viewform",
-  },
-  {
-    id: "keychain",
-    name: "BODEGA KEYCHAIN",
-    price: "₱250",
-    image: "/images/merch/keychain.png",
-    description: "Premium metal keychain with enamel fill. Yellow on black.",
-    orderLink: "https://docs.google.com/forms/d/e/1FAIpQLSc2_2cFW-ez1vLFV6QJi7Z-RPTxYzeHltWE1BxZyFAtRoOCWQ/viewform",
-  },
-  {
-    id: "tote-bag",
-    name: "TOTE BAG",
-    price: "₱495",
-    image: "/images/merch/tote-bag.png",
-    description: "Canvas tote bag. Perfect for records and essentials.",
-    orderLink: "https://docs.google.com/forms/d/e/1FAIpQLSc2_2cFW-ez1vLFV6QJi7Z-RPTxYzeHltWE1BxZyFAtRoOCWQ/viewform",
-  },
-];
-
-function ProductCard({ product }: { product: Product }) {
-  return (
-    <motion.div variants={fadeUp} className="group cursor-pointer">
-      <div className="relative aspect-[3/4] rounded-sm overflow-hidden bg-warm-800 mb-4">
-        <img
-          src={product.image}
-          alt={product.name}
-          className="object-cover w-full h-full transform group-hover:scale-105 transition-transform duration-500"
-        />
-
-        {/* Hover overlay */}
-        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors duration-300 flex items-center justify-center">
-          <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 transform translate-y-4 group-hover:translate-y-0">
-            <a
-              href={product.orderLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 px-6 py-3 bg-bodega-yellow text-[#0A0A08] font-bold rounded-sm hover:bg-bodega-yellow-light transition-colors duration-300"
-            >
-              <ShoppingCartIcon className="w-5 h-5" />
-              ADD TO CART
-            </a>
-          </div>
-        </div>
-      </div>
-
-      <div className="flex justify-between items-start">
-        <div>
-          <h3 className="font-['Bebas_Neue'] text-2xl text-white tracking-tight">
-            {product.name}
-          </h3>
-          <p className="text-warm-500 text-sm mt-1 line-clamp-1">
-            {product.description}
-          </p>
-        </div>
-        <span className="font-['Bebas_Neue'] text-2xl text-bodega-yellow">
-          {product.price}
-        </span>
-      </div>
-    </motion.div>
-  );
-}
+import { products } from "./shop-data";
+import { ProductCard } from "./ProductCard";
+import Link from "next/link";
 
 export function MerchSection() {
   return (
-    <section className="relative pt-8 pb-4 px-6">
+    <section id="shop" className="relative pt-8 pb-4 px-6">
       {/* Background accent */}
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-bodega-yellow/5 rounded-full blur-[200px]" />
 
@@ -124,7 +39,7 @@ export function MerchSection() {
           variants={staggerContainer}
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
         >
-          {products.map((product) => (
+          {products.slice(0, 4).map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
         </motion.div>
@@ -136,16 +51,14 @@ export function MerchSection() {
           transition={{ delay: 0.5 }}
           className="mt-12 text-center"
         >
-          <a
-            href="https://docs.google.com/forms/d/e/1FAIpQLSeDm_1NaY6prQv3Qe7KMbBLk7yxy9cJTqcILSdXeUfSw1Gqdg/viewform"
-            target="_blank"
-            rel="noopener noreferrer"
+          <Link
+            href="/shop"
             className="inline-flex items-center gap-2 px-8 py-4 bg-warm-800 text-white rounded-sm hover:bg-warm-700 transition-all duration-300"
           >
             <ShoppingCartIcon className="w-5 h-5" />
-            ORDER VIA GOOGLE FORM
+            VIEW ALL MERCH
             <ArrowUpRightIcon className="w-4 h-4" />
-          </a>
+          </Link>
         </motion.div>
       </div>
     </section>

@@ -15,9 +15,11 @@ export function Header() {
                     />
                 </Link>
                 <nav className="hidden md:flex items-center gap-6 text-sm font-medium tracking-tight">
-                    <Link href="/archive" className="hover:text-black dark:hover:text-bodega-yellow transition-colors text-zinc-600 dark:text-warm-300">ARCHIVE</Link>
                     <Link href="/events" className="hover:text-black dark:hover:text-bodega-yellow transition-colors text-zinc-600 dark:text-warm-300">EVENTS</Link>
+                    <Link href="/archive" className="hover:text-black dark:hover:text-bodega-yellow transition-colors text-zinc-600 dark:text-warm-300">ARCHIVE</Link>
+                    <Link href="/shop" className="hover:text-black dark:hover:text-bodega-yellow transition-colors text-zinc-600 dark:text-warm-300">SHOP</Link>
                     <Link href="/about" className="hover:text-black dark:hover:text-bodega-yellow transition-colors text-zinc-600 dark:text-warm-300">ABOUT</Link>
+                    <Link href="/contact" className="hover:text-black dark:hover:text-bodega-yellow transition-colors text-zinc-600 dark:text-warm-300">CONTACT</Link>
                 </nav>
             </div>
             <div className="flex items-center gap-4">
@@ -26,6 +28,6 @@ export function Header() {
                     JOIN THE LIST
                 </button>
             </div>
-        </header>
+        </header >
     );
 }

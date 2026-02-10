@@ -86,18 +86,24 @@ export function HeroSection() {
           className="flex flex-col md:flex-row gap-4 justify-center items-center"
         >
           <a
-            href="#next-event"
-            className="group px-10 py-5 bg-bodega-yellow text-[#0A0A08] font-bold text-lg rounded-sm hover:bg-bodega-yellow-light transition-all duration-300 flex items-center gap-3 shadow-[0_0_40px_rgba(229,255,0,0.3)] hover:shadow-[0_0_60px_rgba(229,255,0,0.5)]"
+            href="/shop"
+            className="group px-10 py-5 bg-bodega-yellow text-[#0A0A08] font-bold text-lg rounded-sm hover:bg-bodega-yellow-light transition-all duration-300 flex items-center gap-3 shadow-[0_0_40px_rgba(229,255,0,0.3)] hover:shadow-[0_0_60px_rgba(229,255,0,0.5)] min-w-[180px] justify-center"
           >
-            ENTER THE VOID
-            <ArrowRightIcon className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
+            SHOP
           </a>
 
           <a
             href="/archive"
-            className="px-10 py-5 border border-zinc-300 dark:border-warm-600 text-zinc-700 dark:text-warm-200 font-medium text-lg rounded-sm hover:border-black dark:hover:border-bodega-yellow hover:text-black dark:hover:text-bodega-yellow transition-all duration-300"
+            className="px-10 py-5 bg-zinc-900 dark:bg-black border-2 border-white/30 text-white font-medium text-lg rounded-sm hover:bg-zinc-800 dark:hover:bg-zinc-900 transition-all duration-300 min-w-[180px] text-center"
           >
-            VIEW ARCHIVE
+            ARCHIVE
+          </a>
+
+          <a
+            href="/events"
+            className="group px-10 py-5 bg-bodega-yellow text-[#0A0A08] font-bold text-lg rounded-sm hover:bg-bodega-yellow-light transition-all duration-300 flex items-center gap-3 shadow-[0_0_40px_rgba(229,255,0,0.3)] hover:shadow-[0_0_60px_rgba(229,255,0,0.5)] min-w-[180px] justify-center"
+          >
+            EVENTS
           </a>
         </motion.div>
       </motion.div>
