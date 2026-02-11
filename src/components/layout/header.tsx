@@ -11,7 +11,7 @@ export function Header() {
     const { scrollY } = useScroll();
 
     useMotionValueEvent(scrollY, "change", (latest) => {
-        if (latest > 50) {
+        if (latest > 320) {
             setIsVisible(true);
         } else {
             setIsVisible(false);
@@ -63,39 +63,50 @@ export function Header() {
     };
 
     const navLinks = [
-        { href: "/shop", label: "Shop" },
+        { href: "/", label: "Home" },
         { href: "/events", label: "Events" },
         { href: "/archive", label: "Archive" },
+        { href: "/shop", label: "Shop" },
         { href: "/about", label: "About" },
-        { href: "/links", label: "Links" },
+        { href: "/contact", label: "Contact" },
     ];
 
     return (
         <>
             <AnimatePresence>
                 <motion.header
-                    initial={{ y: -100 }}
-                    animate={{ y: 0 }}
-                    className={`fixed top-0 left-0 right-0 z-50 px-4 md:px-6 py-4 flex justify-between items-center transition-all duration-500 ${isVisible || isMenuOpen ? "bg-[#0A0A08]/80 backdrop-blur-md border-b border-zinc-800" : "bg-transparent"}`}
+                    initial={{ y: -40, opacity: 0 }}
+                    animate={{
+                        y: isVisible || isMenuOpen ? 0 : -40,
+                        opacity: isVisible || isMenuOpen ? 1 : 0
+                    }}
+                    transition={{
+                        duration: 1.2,
+                        ease: [0.22, 1, 0.36, 1] // Custom expo-out for smooth deceleration
+                    }}
+                    className={`fixed top-0 left-0 right-0 z-50 h-28 px-8 flex justify-between items-center ${isVisible || isMenuOpen ? "bg-white/70 dark:bg-black/60 backdrop-blur-2xl border-b border-zinc-200/50 dark:border-white/10" : "bg-transparent pointer-events-none"}`}
                 >
-                    <div className="flex items-center gap-8">
-                        {/* Mobile Menu Button */}
+                    <div className="flex items-center">
+                        {/* Mobile Menu Button - Hidden for now as user said forget mobile responsiveness, but kept for future use if needed */}
                         <button
-                            className="md:hidden text-zinc-100 hover:text-white transition-colors z-50 relative"
+                            className="md:hidden text-zinc-600 dark:text-zinc-100 hover:text-black dark:hover:text-white transition-colors z-50 relative mr-4"
                             onClick={() => setIsMenuOpen(!isMenuOpen)}
                             aria-label="Toggle menu"
                         >
                             {isMenuOpen ? <CloseIcon size={24} /> : <MenuIcon size={24} />}
                         </button>
 
-                        <div className="hidden md:flex items-center gap-8">
-                            <Link href="/shop" className="text-zinc-400 hover:text-white transition-colors text-xs font-mono uppercase tracking-widest hidden md:block">
-                                Shop
-                            </Link>
-                            <Link href="/about" className="text-zinc-400 hover:text-white transition-colors text-xs font-mono uppercase tracking-widest hidden md:block">
-                                About
-                            </Link>
-                        </div>
+                        <nav className="hidden md:flex items-center gap-10 text-xl font-medium tracking-tight ml-12">
+                            {navLinks.map((link) => (
+                                <Link
+                                    key={link.href}
+                                    href={link.href}
+                                    className="hover:text-black dark:hover:text-bodega-yellow transition-colors text-zinc-600 dark:text-warm-300 uppercase"
+                                >
+                                    {link.label}
+                                </Link>
+                            ))}
+                        </nav>
                     </div>
 
                     <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
@@ -103,18 +114,14 @@ export function Header() {
                             <img
                                 src="/images/logo/bdg-yellow.png"
                                 alt="Bodega Sound"
-                                className="h-8 md:h-10 w-auto object-contain transition-all"
+                                className="h-20 w-auto object-contain transition-all"
                             />
                         </Link>
                     </div>
 
                     <div className="flex items-center gap-4">
-                        <Link href="/links" className="text-zinc-400 hover:text-white transition-colors text-xs font-mono uppercase tracking-widest hidden md:block">
-                            Links
-                        </Link>
-                        <button className="bg-bodega-yellow text-black px-3 py-2 md:px-4 md:py-2 rounded-sm text-[10px] md:text-xs font-bold tracking-widest hover:scale-105 transition-transform whitespace-nowrap">
-                            <span className="hidden md:inline">JOIN THE LIST</span>
-                            <span className="md:hidden">JOIN</span>
+                        <button className="bg-bodega-yellow text-black px-4 py-2 rounded-sm text-sm font-bold tracking-widest hover:scale-105 transition-transform border border-transparent hover:border-black dark:hover:border-transparent whitespace-nowrap">
+                            JOIN THE LIST
                         </button>
                     </div>
                 </motion.header>
@@ -153,7 +160,7 @@ export function Header() {
                             <img
                                 src="/images/logo/bdg-yellow.png"
                                 alt="Bodega Sound"
-                                className="h-32 w-auto object-contain mx-auto grayscale opacity-10"
+                                className="h-30 w-auto object-contain mx-auto grayscale opacity-10"
                             />
                         </div>
                     </motion.div>
