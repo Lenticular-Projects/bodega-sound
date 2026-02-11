@@ -126,3 +126,42 @@ export const gallerySlides: LuminaSlide[] = allEvents.map((e) => ({
   media: e.imageUrl,
   label: e.galleryLabel,
 }));
+
+/** Deterministic PRNG (mulberry32) for stable shuffle across renders */
+function mulberry32(seed: number): () => number {
+  let s = seed;
+  return (): number => {
+    s |= 0;
+    s = (s + 0x6d2b79f5) | 0;
+    let t = Math.imul(s ^ (s >>> 15), 1 | s);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+/** Build a shuffled mix of slides from all events (first 2 gallery images each) */
+export function buildArchiveDefaultSlides(events: BodegaEvent[]): LuminaSlide[] {
+  const slides: LuminaSlide[] = events.flatMap((e) =>
+    (e.galleryImages ?? []).slice(0, 2).map((img, i) => ({
+      id: `${e.id}-default-${i}`,
+      media: img,
+      label: e.galleryLabel,
+    }))
+  );
+  // Fisher-Yates shuffle with deterministic seed
+  const rng = mulberry32(42);
+  for (let i = slides.length - 1; i > 0; i--) {
+    const j = Math.floor(rng() * (i + 1));
+    [slides[i], slides[j]] = [slides[j], slides[i]];
+  }
+  return slides;
+}
+
+/** Build slides from a single event's gallery images */
+export function buildEventSlides(event: BodegaEvent): LuminaSlide[] {
+  return (event.galleryImages ?? []).map((img, i) => ({
+    id: `${event.id}-slide-${i}`,
+    media: img,
+    label: event.galleryLabel,
+  }));
+}
