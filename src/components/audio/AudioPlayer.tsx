@@ -56,7 +56,7 @@ export function AudioPlayer() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 20 }}
-            className="fixed bottom-24 right-6 z-50"
+            className="fixed bottom-28 right-4 md:bottom-24 md:right-6 z-50"
           >
             <button
               onClick={enableAudio}
@@ -119,7 +119,7 @@ export function AudioPlayer() {
         <audio
           ref={audioRef}
           loop
-          // src="/audio/ambient-mix.mp3"  // Add actual audio file later
+        // src="/audio/ambient-mix.mp3"  // Add actual audio file later
         />
       </motion.div>
     </>

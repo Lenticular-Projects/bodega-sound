@@ -15,3 +15,17 @@ model Chat {
   response  String?
   metadata  String?  // JSON string for flexibility
 }
+
+model Order {
+  id              String   @id @default(cuid())
+  createdAt       DateTime @default(now())
+  customerName    String
+  customerEmail   String
+  contactNumber   String
+  shippingAddress String
+  shippingMethod  String
+  productName     String
+  quantity        Int
+  totalPrice      String
+  status          String   @default("PENDING")
+}

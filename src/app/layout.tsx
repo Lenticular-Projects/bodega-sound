@@ -6,6 +6,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { SmoothScrollProvider } from "@/components/providers/smooth-scroll-provider";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
+import { Toaster } from "react-hot-toast";
 
 export const metadata: Metadata = {
   title: "Bodega Sound | Underground Collective",
@@ -42,6 +43,16 @@ export default function RootLayout({
         <div className="grain-overlay" />
         <ThemeProvider>
           <SmoothScrollProvider>
+            <Toaster position="bottom-right" toastOptions={{
+              style: {
+                background: '#18181B',
+                color: '#fff',
+                border: '1px solid #27272A',
+                borderRadius: '0',
+                fontSize: '14px',
+                fontWeight: '500',
+              }
+            }} />
             <Header />
             <main className="relative min-h-screen bg-transparent">
               {children}
