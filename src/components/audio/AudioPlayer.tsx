@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState, useRef } from "react";
+import { motion } from "framer-motion";
 import {
   PlayIcon,
   PauseIcon,
@@ -13,16 +13,7 @@ import {
 export function AudioPlayer() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
-  const [showEnableAudio, setShowEnableAudio] = useState(true);
   const audioRef = useRef<HTMLAudioElement>(null);
-
-  // Auto-show enable audio button on mount
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowEnableAudio(true);
-    }, 2000);
-    return () => clearTimeout(timer);
-  }, []);
 
   const togglePlay = () => {
     if (audioRef.current) {
@@ -42,33 +33,8 @@ export function AudioPlayer() {
     }
   };
 
-  const enableAudio = () => {
-    setShowEnableAudio(false);
-    togglePlay();
-  };
-
   return (
     <>
-      {/* Enable Audio Prompt */}
-      <AnimatePresence>
-        {showEnableAudio && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 20 }}
-            className="fixed bottom-28 right-4 md:bottom-24 md:right-6 z-50"
-          >
-            <button
-              onClick={enableAudio}
-              className="flex items-center gap-3 px-6 py-4 bg-bodega-yellow text-[#0A0A08] font-bold rounded-sm shadow-lg hover:bg-bodega-yellow-light transition-colors duration-300"
-            >
-              <MusicIcon className="w-5 h-5" />
-              ENABLE SOUND
-            </button>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
       {/* Audio Player Bar */}
       <motion.div
         initial={{ y: 100 }}
