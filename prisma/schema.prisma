@@ -28,4 +28,16 @@ model Order {
   quantity        Int
   totalPrice      String
   status          String   @default("PENDING")
+  receiptUrl      String?  // URL to Vercel Blob storage
+  notes           String?
 }
+
+model Subscriber {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  email     String   @unique
+  phone     String?
+  name      String?
+  source    String?  // e.g., 'FOOTER', 'MODAL', 'ORDER'
+}
+

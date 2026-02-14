@@ -1,9 +1,9 @@
 export const siteConfig = {
-    name: "vibe-base",
-    description: "AI-native application built with Vibe Base",
-    url: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
+    name: "Bodega Sound",
+    description: "Bodega Sound - Events, Music, and Merchandise.",
+    url: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3001",
     ogImage: "/og.png",
     links: {
-        github: "https://github.com/yourusername",
+        github: "https://github.com/bodegasound",
     },
 };

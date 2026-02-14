@@ -133,15 +133,15 @@ export function BuyNowModal({ product, open, onOpenChange }: BuyNowModalProps) {
                             {/* Header */}
                             <div className="flex justify-between items-center mb-8 pt-4">
                                 <div>
-                                    <h2 className="font-['Bebas_Neue'] text-4xl text-white tracking-tight">
+                                    <Drawer.Title className="font-['Bebas_Neue'] text-4xl text-white tracking-tight">
                                         {step === 4 ? "ORDER CONFIRMED" : "SECURE YOUR DROP"}
-                                    </h2>
-                                    <p className="text-bodega-yellow font-mono text-xs uppercase tracking-widest mt-1">
+                                    </Drawer.Title>
+                                    <Drawer.Description className="text-bodega-yellow font-mono text-xs uppercase tracking-widest mt-1">
                                         {step === 1 && "Step 1: Contact & Shipping"}
                                         {step === 2 && "Step 2: Payment Details"}
                                         {step === 3 && "Step 3: Verify Payment"}
                                         {step === 4 && "Receipt #BS-" + Math.random().toString(36).substr(2, 9).toUpperCase()}
-                                    </p>
+                                    </Drawer.Description>
                                 </div>
                                 {step < 4 && (
                                     <button
@@ -302,7 +302,7 @@ export function BuyNowModal({ product, open, onOpenChange }: BuyNowModalProps) {
                                                 onClick={nextStep}
                                                 className="flex-[2] py-4 bg-bodega-yellow text-black font-bold flex items-center justify-center gap-2 hover:bg-bodega-yellow-light transition-all rounded-sm uppercase tracking-widest"
                                             >
-                                                I've Prepared My Payment
+                                                I&apos;ve Prepared My Payment
                                                 <ArrowRightIcon className="w-5 h-5" />
                                             </button>
                                         </div>
@@ -398,7 +398,7 @@ export function BuyNowModal({ product, open, onOpenChange }: BuyNowModalProps) {
                                         <div>
                                             <h3 className="font-['Bebas_Neue'] text-5xl text-white tracking-tight mb-2 uppercase">Order Received!</h3>
                                             <p className="text-zinc-400 max-w-sm mx-auto">
-                                                We've logged your request. Our team will verify the payment and reach out via email for shipping updates.
+                                                We&apos;ve logged your request. Our team will verify the payment and reach out via email for shipping updates.
                                             </p>
                                         </div>
 

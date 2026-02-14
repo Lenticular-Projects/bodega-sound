@@ -1,8 +1,8 @@
-"use server";
-
 import { z } from "zod";
 import { prisma } from "@/server/db";
 import { Resend } from "resend";
+import { put } from "@vercel/blob";
+import { OrderEmail } from "@/emails/OrderConfirmation";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -37,23 +37,72 @@ export async function submitOrder(formData: FormData) {
             return { success: false, error: "Proof of payment is required." };
         }
 
-        // 1. Save to Database
+        // 1. Upload to Vercel Blob (if token exists)
+        let receiptUrl = "";
+        try {
+            if (process.env.BLOB_READ_WRITE_TOKEN) {
+                const blob = await put(`receipts/${Date.now()}-${proofFile.name}`, proofFile, {
+                    access: "public",
+                });
+                receiptUrl = blob.url;
+            } else {
+                console.warn("BLOB_READ_WRITE_TOKEN not set. Skipping blob upload.");
+            }
+        } catch (blobError) {
+            console.error("Blob upload error:", blobError);
+            // We continue even if blob fails, as we still have the email attachment backup
+        }
+
+        // 2. Save to Database
         const order = await prisma.order.create({
-            data: validatedData,
+            data: {
+                ...validatedData,
+                receiptUrl,
+            },
         });
 
-        // 2. Prepare file for Resend
-        const arrayBuffer = await proofFile.arrayBuffer();
-        const buffer = Buffer.from(arrayBuffer);
+        // 3. Add to Subscribers list automatically
+        try {
+            await prisma.subscriber.upsert({
+                where: { email: validatedData.customerEmail },
+                update: {
+                    name: validatedData.customerName,
+                    phone: validatedData.contactNumber,
+                },
+                create: {
+                    email: validatedData.customerEmail,
+                    name: validatedData.customerName,
+                    phone: validatedData.contactNumber,
+                    source: "ORDER",
+                },
+            });
+        } catch (subError) {
+            console.error("Subscriber upsert error:", subError);
+        }
 
-        // 3. Send Email
-        // Note: If RESEND_API_KEY is not set, this will fail. 
-        // We check for the key to avoid throwing a hard error for the user if they haven't set it yet.
+        // 4. Send Email
         if (process.env.RESEND_API_KEY) {
-            const { data, error } = await resend.emails.send({
-                from: "Bodega Sound Orders <onboarding@resend.dev>", // Default Resend test sender
+            const arrayBuffer = await proofFile.arrayBuffer();
+            const buffer = Buffer.from(arrayBuffer);
+
+            // A. Send confirmation to Customer
+            await resend.emails.send({
+                from: "Bodega Sound <onboarding@resend.dev>",
+                to: validatedData.customerEmail,
+                subject: `Order Secured: ${validatedData.productName}`,
+                react: OrderEmail({
+                    customerName: validatedData.customerName,
+                    orderId: order.id.slice(-6).toUpperCase(),
+                    productName: validatedData.productName,
+                    totalPrice: validatedData.totalPrice,
+                }),
+            });
+
+            // B. Send notification to Admin
+            const { error: adminError } = await resend.emails.send({
+                from: "Bodega Sound Orders <onboarding@resend.dev>",
                 to: process.env.ADMIN_EMAIL || "orders@bodegasound.com",
-                subject: `New Order: ${validatedData.productName} - ${validatedData.customerName}`,
+                subject: `NEW ORDER: ${validatedData.productName} - ${validatedData.customerName}`,
                 text: `
           New order received!
           
@@ -68,6 +117,8 @@ export async function submitOrder(formData: FormData) {
           Total Price: ${validatedData.totalPrice}
           Shipping Method: ${validatedData.shippingMethod}
           
+          Receipt URL: ${receiptUrl || "Not uploaded to blob"}
+          
           Proof of payment is attached.
         `,
                 attachments: [
@@ -78,9 +129,9 @@ export async function submitOrder(formData: FormData) {
                 ],
             });
 
-            if (error) {
-                console.error("Resend error:", error);
-                return { success: true, orderId: order.id, warning: "Order saved but notification email failed to send." };
+            if (adminError) {
+                console.error("Admin Resend error:", adminError);
+                return { success: true, orderId: order.id, warning: "Order saved but admin notification failed." };
             }
         } else {
             console.warn("RESEND_API_KEY not set. Email not sent.");
@@ -96,3 +147,4 @@ export async function submitOrder(formData: FormData) {
         return { success: false, error: "Something went wrong. Please try again." };
     }
 }
+
