@@ -169,6 +169,8 @@ export function LuminaInteractiveList({
 
   // --- Main effect: WebGL setup, textures, render loop, events ---
   useEffect(() => {
+    let disposed = false;
+
     if (!canvasRef.current || slides.length < 2) return;
     if (!checkWebGLSupport()) {
       console.warn("WebGL not supported — Lumina gallery requires WebGL");
@@ -456,16 +458,25 @@ export function LuminaInteractiveList({
 
     // --- WebGL initialization ---
     const initRenderer = async () => {
+      if (disposed) return;
       const canvas = canvasRef.current;
       if (!canvas) return;
 
       const scene = new THREE.Scene();
       const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
-      const renderer = new THREE.WebGLRenderer({
-        canvas,
-        antialias: false,
-        alpha: false,
-      });
+
+      let renderer: THREE.WebGLRenderer;
+      try {
+        renderer = new THREE.WebGLRenderer({
+          canvas,
+          antialias: false,
+          alpha: false,
+        });
+      } catch (err) {
+        console.warn("Lumina: WebGLRenderer creation failed — likely a stale canvas context", err);
+        return;
+      }
+
       renderer.setSize(window.innerWidth, window.innerHeight);
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
@@ -522,12 +533,15 @@ export function LuminaInteractiveList({
 
       // Load all textures
       for (const slide of slides) {
+        if (disposed) return; // bail out if component unmounted mid-load
         try {
           texturesRef.current.push(await loadImageTexture(slide.media));
         } catch {
           console.warn(`Failed to load texture: ${slide.media}`);
         }
       }
+
+      if (disposed) return;
 
       if (texturesRef.current.length >= 2) {
         material.uniforms.uTexture1.value = texturesRef.current[0];
@@ -656,11 +670,14 @@ export function LuminaInteractiveList({
 
     // --- Cleanup ---
     return () => {
+      disposed = true;
       stopAutoSlideTimer();
       cancelAnimationFrame(rafIdRef.current);
       if (rendererRef.current) {
         rendererRef.current.dispose();
-        rendererRef.current.forceContextLoss();
+        // NOTE: Do NOT call forceContextLoss() here — it permanently
+        // invalidates the canvas context, causing "Cannot read properties
+        // of null (reading 'precision')" on re-mount (Strict Mode / HMR).
         rendererRef.current = null;
       }
       texturesRef.current.forEach((t) => t.dispose());
@@ -697,24 +714,7 @@ export function LuminaInteractiveList({
     return () => window.removeEventListener("lumina-navigate", handler);
   }, []);
 
-  // --- Auto-scroll active nav item into view on mobile ---
-  const isFirstRender = useRef(true);
 
-  useEffect(() => {
-    if (isFirstRender.current) {
-      isFirstRender.current = false;
-      return;
-    }
-
-    const navEl = navRef.current;
-    if (!navEl) return;
-    const activeItem = navEl.children[activeIndex] as HTMLElement | undefined;
-    activeItem?.scrollIntoView({
-      behavior: "smooth",
-      inline: "center",
-      block: "nearest",
-    });
-  }, [activeIndex]);
 
   return (
     <div

@@ -4,7 +4,12 @@ import { Resend } from "resend";
 import { put } from "@vercel/blob";
 import { OrderEmail } from "@/emails/OrderConfirmation";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const getResend = () => {
+    const key = process.env.RESEND_API_KEY;
+    if (!key) return null;
+    return new Resend(key);
+};
+
 
 const orderSchema = z.object({
     customerName: z.string().min(2),
@@ -81,12 +86,14 @@ export async function submitOrder(formData: FormData) {
         }
 
         // 4. Send Email
-        if (process.env.RESEND_API_KEY) {
+        const resend = getResend();
+        if (resend) {
             const arrayBuffer = await proofFile.arrayBuffer();
             const buffer = Buffer.from(arrayBuffer);
 
             // A. Send confirmation to Customer
             await resend.emails.send({
+
                 from: "Bodega Sound <onboarding@resend.dev>",
                 to: validatedData.customerEmail,
                 subject: `Order Secured: ${validatedData.productName}`,
