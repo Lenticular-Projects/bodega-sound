@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
+import { usePathname } from "next/navigation";
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
 import { MenuIcon, CloseIcon, ArrowRightIcon } from "@/components/icons";
 import { subscribeUser } from "@/server/actions/subscribers";
@@ -11,11 +12,31 @@ import { Dialog } from "@radix-ui/react-dialog";
 
 
 export function Header() {
-    const [isVisible, setIsVisible] = useState(false);
+    const pathname = usePathname();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const { scrollY } = useScroll();
 
+    // Define pages that should have a static (always visible) header
+    const isStaticPage = useMemo(() => {
+        const staticPages = ["/events", "/paid", "/shop", "/about", "/contact"];
+        return staticPages.includes(pathname);
+    }, [pathname]);
+
+    const [isVisible, setIsVisible] = useState(isStaticPage);
+
+    // Update visibility when route changes
+    useEffect(() => {
+        setIsVisible(isStaticPage);
+    }, [isStaticPage]);
+
     useMotionValueEvent(scrollY, "change", (latest) => {
+        // If it's a static page, keep it visible regardless of scroll
+        if (isStaticPage) {
+            setIsVisible(true);
+            return;
+        }
+
+        // Standard scroll behavior for home and archive
         if (latest > 320) {
             setIsVisible(true);
         } else {
