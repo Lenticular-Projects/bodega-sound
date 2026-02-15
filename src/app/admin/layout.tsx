@@ -18,7 +18,12 @@ export default async function AdminLayout({
         return <>{children}</>;
     }
 
-    const unreadCount = await prisma.contactMessage.count({ where: { read: false } });
+    let unreadCount = 0;
+    try {
+        unreadCount = await prisma.contactMessage.count({ where: { read: false } });
+    } catch {
+        // Table may not exist yet in production
+    }
 
     return (
         <div className="min-h-screen bg-[#0A0A08] text-zinc-100 flex">
