@@ -4,7 +4,8 @@ import { useScroll, useTransform, useMotionValueEvent } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 
-const FRAME_COUNT = 300;
+const FRAME_COUNT = 153;
+const START_FRAME = 50;
 
 export function SpinningLogo() {
     const containerRef = useRef<HTMLDivElement>(null);
@@ -36,7 +37,7 @@ export function SpinningLogo() {
     });
 
     // Map scroll progress (0 to 1) to frame index (0 to 299)
-    const frameIndex = useTransform(scrollYProgress, [0, 1], [0, FRAME_COUNT - 1]);
+    const frameIndex = useTransform(scrollYProgress, [0, 1], [START_FRAME, FRAME_COUNT - 1]);
 
     const renderFrame = (index: number) => {
         const canvas = canvasRef.current;
@@ -64,7 +65,7 @@ export function SpinningLogo() {
     // Initial render when images are loaded
     useEffect(() => {
         if (loadedCount === FRAME_COUNT) {
-            renderFrame(0);
+            renderFrame(START_FRAME);
         }
     }, [loadedCount]);
 
