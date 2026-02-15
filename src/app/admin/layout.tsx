@@ -3,6 +3,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { prisma } from "@/server/db";
 import { LogoutButton } from "@/components/admin/LogoutButton";
+import { verifyAdminSession } from "@/server/actions/auth";
+import { redirect } from "next/navigation";
 
 export default async function AdminLayout({
     children,
@@ -12,6 +14,13 @@ export default async function AdminLayout({
     const headersList = await headers();
     const pathname = headersList.get("x-pathname") ?? "";
     const isLoginPage = pathname.includes("/admin/login");
+
+    if (!isLoginPage) {
+        const isAuthenticated = await verifyAdminSession();
+        if (!isAuthenticated) {
+            redirect("/admin/login");
+        }
+    }
 
     // Login page gets a clean layout with no sidebar
     if (isLoginPage) {

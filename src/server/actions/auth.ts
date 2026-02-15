@@ -48,3 +48,18 @@ export async function logoutAdmin(): Promise<void> {
     cookieStore.delete(COOKIE_NAME);
     redirect("/admin/login");
 }
+
+export async function verifyAdminSession(): Promise<boolean> {
+    const cookieStore = await cookies();
+    const token = cookieStore.get(COOKIE_NAME)?.value;
+
+    if (!token || !SECRET) return false;
+
+    const parts = token.split(":");
+    if (parts.length !== 3) return false;
+
+    const [, , signature] = parts;
+    const expectedSignature = signToken(parts.slice(0, 2).join(":"));
+
+    return signature === expectedSignature;
+}
