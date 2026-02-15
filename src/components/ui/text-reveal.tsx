@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useRef } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform, type MotionValue } from "framer-motion";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 
@@ -123,7 +123,7 @@ export function TextReveal({ text, lines, className, highlightWords = [] }: Text
 interface WordProps {
     children: React.ReactNode;
     range: [number, number];
-    progress: any;
+    progress: MotionValue<number>;
     isHighlighted?: boolean;
 }
 

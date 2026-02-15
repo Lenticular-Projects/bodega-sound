@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { PlayIcon, ArrowRightIcon } from "@/components/icons";
 import { fadeUp, staggerContainer } from "@/lib/animations";
@@ -29,10 +30,12 @@ function EventCard({ event, index }: { event: BodegaEvent; index: number }) {
     >
       {/* Card Background */}
       <div className="relative aspect-[3/4] bg-warm-800">
-        <img
+        <Image
           src={event.imageUrl}
           alt={event.name}
-          className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+          fill
+          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 25vw"
+          className="object-cover transition-transform duration-700 group-hover:scale-110"
         />
 
         {/* Hover overlay */}

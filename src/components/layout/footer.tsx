@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 
 export function Footer() {
@@ -11,9 +12,11 @@ export function Footer() {
     <footer className="w-full pt-12 pb-32 md:pb-12 px-8 border-t border-zinc-200 dark:border-white/10 z-content relative bg-warm-50 dark:bg-[#0A0A08] transition-colors duration-300">
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
         <div>
-          <img
+          <Image
             src="/images/logo/bdg-yellow.png"
             alt="Bodega Sound"
+            width={128}
+            height={64}
             className="h-16 w-auto object-contain mb-4"
           />
           <p className="text-zinc-600 dark:text-warm-400 text-sm max-w-sm transition-colors duration-300">

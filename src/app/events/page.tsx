@@ -1,3 +1,14 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+    title: "Events | Bodega Sound",
+    description: "Upcoming gatherings and secret location reveals. Secure your position in Manila's underground dance music collective.",
+    openGraph: {
+        title: "Events | Bodega Sound",
+        description: "Upcoming gatherings and secret location reveals.",
+    },
+};
+
 export default function EventsPage() {
     return (
         <div className="pt-32 pb-20 px-6 max-w-7xl mx-auto">

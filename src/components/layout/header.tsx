@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
 import { MenuIcon, CloseIcon, ArrowRightIcon } from "@/components/icons";
@@ -88,10 +89,10 @@ export function Header() {
                         duration: 1.2,
                         ease: [0.22, 1, 0.36, 1] // Custom expo-out for smooth deceleration
                     }}
-                    className={`fixed top-0 left-0 right-0 z-50 h-28 px-8 flex justify-between items-center ${isVisible || isMenuOpen ? "bg-white/70 dark:bg-black/60 backdrop-blur-2xl border-b border-zinc-200/50 dark:border-white/10" : "bg-transparent pointer-events-none"}`}
+                    className={`fixed top-0 left-0 right-0 z-50 h-28 px-8 grid grid-cols-[1fr_auto_1fr] items-center ${isVisible || isMenuOpen ? "bg-white/70 dark:bg-black/60 backdrop-blur-2xl border-b border-zinc-200/50 dark:border-white/10" : "bg-transparent pointer-events-none"}`}
                 >
+                    {/* Left: Nav */}
                     <div className="flex items-center">
-                        {/* Mobile Menu Button - Hidden for now as user said forget mobile responsiveness, but kept for future use if needed */}
                         <button
                             className="md:hidden text-zinc-600 dark:text-zinc-100 hover:text-black dark:hover:text-white transition-colors z-50 relative mr-4"
                             onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -100,12 +101,12 @@ export function Header() {
                             {isMenuOpen ? <CloseIcon size={24} /> : <MenuIcon size={24} />}
                         </button>
 
-                        <nav className="hidden md:flex items-center gap-10 text-xl font-medium tracking-tight ml-12">
+                        <nav className="hidden md:flex items-center gap-6 lg:gap-8 text-sm lg:text-base font-medium tracking-tight">
                             {navLinks.map((link) => (
                                 <Link
                                     key={link.href}
                                     href={link.href}
-                                    className="hover:text-black dark:hover:text-bodega-yellow transition-colors text-zinc-600 dark:text-warm-300 uppercase"
+                                    className="hover:text-black dark:hover:text-bodega-yellow transition-colors text-zinc-600 dark:text-warm-300 uppercase whitespace-nowrap"
                                 >
                                     {link.label}
                                 </Link>
@@ -113,17 +114,21 @@ export function Header() {
                         </nav>
                     </div>
 
-                    <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    {/* Center: Logo */}
+                    <div className="flex justify-center">
                         <Link href="/" className="flex items-center hover:opacity-80 transition-opacity" onClick={() => setIsMenuOpen(false)}>
-                            <img
+                            <Image
                                 src="/images/logo/bdg-yellow.png"
                                 alt="Bodega Sound"
-                                className="h-20 w-auto object-contain transition-all"
+                                width={120}
+                                height={60}
+                                className="h-14 w-auto object-contain transition-all"
                             />
                         </Link>
                     </div>
 
-                    <div className="flex items-center gap-4">
+                    {/* Right: CTA */}
+                    <div className="flex items-center justify-end gap-4">
                         <SubscriberModal />
                     </div>
                 </motion.header>
@@ -160,9 +165,11 @@ export function Header() {
 
                         {/* Decorative background elements */}
                         <div className="absolute bottom-10 left-0 right-0 text-center opacity-20 pointer-events-none">
-                            <img
+                            <Image
                                 src="/images/logo/bdg-yellow.png"
                                 alt="Bodega Sound"
+                                width={120}
+                                height={120}
                                 className="h-30 w-auto object-contain mx-auto grayscale opacity-10"
                             />
                         </div>

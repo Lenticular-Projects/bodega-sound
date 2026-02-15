@@ -1,19 +1,36 @@
+import { headers } from "next/headers";
 import Link from "next/link";
+import Image from "next/image";
+import { prisma } from "@/server/db";
+import { LogoutButton } from "@/components/admin/LogoutButton";
 
-export default function AdminLayout({
+export default async function AdminLayout({
     children,
 }: {
     children: React.ReactNode;
 }) {
+    const headersList = await headers();
+    const pathname = headersList.get("x-pathname") ?? "";
+    const isLoginPage = pathname.includes("/admin/login");
+
+    // Login page gets a clean layout with no sidebar
+    if (isLoginPage) {
+        return <>{children}</>;
+    }
+
+    const unreadCount = await prisma.contactMessage.count({ where: { read: false } });
+
     return (
         <div className="min-h-screen bg-[#0A0A08] text-zinc-100 flex">
             {/* Sidebar */}
             <aside className="w-64 border-r border-zinc-900 flex flex-col pt-8">
                 <div className="px-6 mb-12">
                     <Link href="/" className="hover:opacity-80 transition-opacity">
-                        <img
+                        <Image
                             src="/images/logo/bdg-yellow.png"
                             alt="Bodega Sound"
+                            width={192}
+                            height={48}
                             className="h-12 w-auto object-contain"
                         />
                     </Link>
@@ -33,10 +50,22 @@ export default function AdminLayout({
                     >
                         Subscribers
                     </Link>
+                    <Link
+                        href="/admin/messages"
+                        className="flex items-center justify-between px-4 py-3 text-sm font-bold uppercase tracking-widest text-zinc-400 hover:text-white hover:bg-zinc-900/50 rounded-sm transition-all"
+                    >
+                        <span>Messages</span>
+                        {unreadCount > 0 && (
+                            <span className="bg-bodega-yellow text-black text-[10px] font-bold px-2 py-0.5 rounded-sm min-w-[20px] text-center">
+                                {unreadCount}
+                            </span>
+                        )}
+                    </Link>
                 </nav>
 
-                <div className="p-8 border-t border-zinc-900">
-                    <p className="text-[10px] font-mono text-zinc-700 uppercase">Bodega Sound © 2026</p>
+                <div className="p-4 border-t border-zinc-900">
+                    <LogoutButton />
+                    <p className="text-[10px] font-mono text-zinc-700 uppercase mt-4 px-4">Bodega Sound &copy; 2026</p>
                 </div>
             </aside>
 

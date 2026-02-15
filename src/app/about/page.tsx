@@ -1,3 +1,14 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+    title: "About | Bodega Sound",
+    description: "Manila's underground dance music collective. Born in the shadows, built for the vibration of the streets.",
+    openGraph: {
+        title: "About | Bodega Sound",
+        description: "Manila's underground dance music collective.",
+    },
+};
+
 export default function AboutPage() {
     return (
         <div className="pt-32 pb-20 px-6 max-w-7xl mx-auto">

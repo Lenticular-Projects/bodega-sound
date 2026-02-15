@@ -1,4 +1,14 @@
+import type { Metadata } from "next";
 import { ContactForm } from "@/components/contact/ContactForm";
+
+export const metadata: Metadata = {
+    title: "Contact | Bodega Sound",
+    description: "Reach out for bookings, collaborations, or general inquiries. Manila's underground dance music collective.",
+    openGraph: {
+        title: "Contact | Bodega Sound",
+        description: "Reach out for bookings, collaborations, or general inquiries.",
+    },
+};
 
 export default function ContactPage() {
     return (

@@ -5,6 +5,14 @@ const projectName = path.basename(__dirname).replace(/-/g, ' ').replace(/\b\w/g,
 process.env.NEXT_PUBLIC_APP_NAME = projectName;
 
 const nextConfig: NextConfig = {
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "img.youtube.com",
+      },
+    ],
+  },
   async redirects() {
     return [
       {

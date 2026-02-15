@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { fadeUp } from "@/lib/animations";
+import { submitContactMessage } from "@/server/actions/contact";
+import toast from "react-hot-toast";
 
 export function ContactForm() {
     const [formData, setFormData] = useState({
@@ -19,12 +21,21 @@ export function ContactForm() {
 
         setIsLoading(true);
 
-        // Simulate API call
-        await new Promise((resolve) => setTimeout(resolve, 1500));
+        const data = new FormData();
+        data.append("name", formData.name);
+        data.append("email", formData.email);
+        data.append("message", formData.message);
+
+        const result = await submitContactMessage(data);
 
         setIsLoading(false);
-        setIsSubmitted(true);
-        setFormData({ name: "", email: "", message: "" });
+
+        if (result.success) {
+            setIsSubmitted(true);
+            setFormData({ name: "", email: "", message: "" });
+        } else {
+            toast.error(result.error ?? "Something went wrong.");
+        }
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -107,7 +118,7 @@ export function ContactForm() {
                         MESSAGE RECEIVED
                     </h3>
                     <p className="text-zinc-600 dark:text-warm-400 text-lg">
-                        We'll get back to you shortly. Stay tuned.
+                        We&apos;ll get back to you shortly. Stay tuned.
                     </p>
                     <button
                         onClick={() => setIsSubmitted(false)}

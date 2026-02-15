@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { fadeUp, staggerContainer } from "@/lib/animations";
 import { cn } from "@/lib/utils";
@@ -32,11 +33,13 @@ function ArchiveCard({
       onClick={() => onClick(event)}
     >
       <div className="relative aspect-[3/4] bg-warm-800">
-        <img
+        <Image
           src={event.imageUrl}
           alt={event.name}
-          loading={index < 3 ? "eager" : "lazy"}
-          className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+          fill
+          priority={index < 3}
+          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          className="object-cover transition-transform duration-700 group-hover:scale-110"
         />
 
         {/* Hover overlay */}

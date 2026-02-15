@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
+import Image from "next/image";
 import { ShoppingCartIcon } from "@/components/icons";
 import { fadeUp } from "@/lib/animations";
 import { Product } from "./shop-data";
@@ -18,10 +19,12 @@ export function ProductCard({ product }: { product: Product }) {
                 onClick={() => setIsOpen(true)}
             >
                 <div className="relative aspect-[3/4] rounded-sm overflow-hidden bg-warm-800 mb-4">
-                    <img
+                    <Image
                         src={product.image}
                         alt={product.name}
-                        className="object-cover w-full h-full transform group-hover:scale-105 transition-transform duration-500"
+                        fill
+                        sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                        className="object-cover transform group-hover:scale-105 transition-transform duration-500"
                     />
 
                     {/* Hover overlay */}

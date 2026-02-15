@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { SuccessIcon } from "@/components/icons";
+import { subscribeUser } from "@/server/actions/subscribers";
+import toast from "react-hot-toast";
 
 export function NewsletterForm() {
     const [email, setEmail] = useState("");
@@ -15,12 +17,19 @@ export function NewsletterForm() {
 
         setIsLoading(true);
 
-        // Simulate API call - would connect to actual backend
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+        const data = new FormData();
+        data.append("email", email);
+
+        const result = await subscribeUser(data);
 
         setIsLoading(false);
-        setIsSubmitted(true);
-        setEmail("");
+
+        if (result.success) {
+            setIsSubmitted(true);
+            setEmail("");
+        } else {
+            toast.error(result.error ?? "Something went wrong.");
+        }
     };
 
     if (isSubmitted) {

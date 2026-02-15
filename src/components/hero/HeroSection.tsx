@@ -1,40 +1,13 @@
 "use client";
 
-import { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
-import { ArrowRightIcon } from "@/components/icons";
-import { fadeUp, staggerContainer } from "@/lib/animations";
+import { fadeUp, staggerContainer, breathe } from "@/lib/animations";
 import { FlipTextReveal } from "@/components/ui/flip-text-reveal";
 
 export function HeroSection() {
-  const heroRef = useRef<HTMLDivElement>(null);
-  const titleRef = useRef<HTMLHeadingElement>(null);
-
-  useEffect(() => {
-    // Breathing animation for background
-    const breatheAnimation = () => {
-      if (!heroRef.current) return;
-
-      heroRef.current.animate(
-        [
-          { transform: "scale(1)" },
-          { transform: "scale(1.02)" },
-          { transform: "scale(1)" },
-        ],
-        {
-          duration: 4000,
-          iterations: Infinity,
-          easing: "ease-in-out",
-        },
-      );
-    };
-
-    breatheAnimation();
-  }, []);
-
   return (
-    <section
-      ref={heroRef}
+    <motion.section
+      animate={breathe.animate}
       className="relative min-h-screen flex items-center justify-center overflow-hidden"
     >
       {/* Gradient orbs for atmosphere */}
@@ -107,8 +80,6 @@ export function HeroSection() {
           </a>
         </motion.div>
       </motion.div>
-
-
-    </section>
+    </motion.section>
   );
 }

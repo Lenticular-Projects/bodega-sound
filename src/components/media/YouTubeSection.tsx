@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { PlayIcon, YouTubeIcon } from "@/components/icons";
 import { fadeUp, staggerContainer } from "@/lib/animations";
@@ -50,10 +51,12 @@ function VideoCard({ video }: { video: YouTubeVideo }) {
           />
         ) : (
           <>
-            <img
+            <Image
               src={`https://img.youtube.com/vi/${video.id}/maxresdefault.jpg`}
               alt={video.title}
-              className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-500"
+              fill
+              sizes="(max-width: 768px) 100vw, 50vw"
+              className="object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-500"
             />
 
             {/* Gradient Overlay */}

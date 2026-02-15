@@ -31,6 +31,17 @@ export const scaleOnTap = {
     transition: transitions.interactive
 };
 
+export const breathe = {
+    animate: {
+        scale: [1, 1.02, 1],
+        transition: {
+            duration: 4,
+            repeat: Infinity,
+            ease: "easeInOut" as const,
+        },
+    },
+};
+
 export const staggerContainer = {
     initial: {},
     animate: {

@@ -19,6 +19,7 @@ model Chat {
 model Order {
   id              String   @id @default(cuid())
   createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
   customerName    String
   customerEmail   String
   contactNumber   String
@@ -30,6 +31,15 @@ model Order {
   status          String   @default("PENDING")
   receiptUrl      String?  // URL to Vercel Blob storage
   notes           String?
+}
+
+model ContactMessage {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  name      String
+  email     String
+  message   String
+  read      Boolean  @default(false)
 }
 
 model Subscriber {
