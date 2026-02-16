@@ -261,7 +261,7 @@ function SubscriberModal() {
                             </button>
 
                             <div className="text-center space-y-4">
-                                <h3 className="font-['Bebas_Neue'] text-5xl text-white tracking-tight leading-none uppercase">Join the Collective</h3>
+                                <h3 className="font-display text-5xl text-white tracking-tight leading-none uppercase">Join the Collective</h3>
                                 <p className="text-zinc-500 text-sm font-medium">Be the first to know about drops, secret parties, and archive updates.</p>
                             </div>
 

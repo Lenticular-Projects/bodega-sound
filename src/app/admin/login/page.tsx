@@ -31,7 +31,7 @@ export default function AdminLoginPage() {
         <div className="min-h-screen bg-[#0A0A08] flex items-center justify-center px-4">
             <div className="w-full max-w-sm">
                 <div className="text-center mb-12">
-                    <h1 className="font-['Bebas_Neue'] text-5xl text-white tracking-tight uppercase">
+                    <h1 className="font-display text-5xl text-white tracking-tight uppercase">
                         Admin
                     </h1>
                     <p className="text-[10px] font-mono text-zinc-600 mt-2 uppercase tracking-[0.2em]">

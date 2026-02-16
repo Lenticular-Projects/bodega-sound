@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { fadeUp, staggerContainer, breathe } from "@/lib/animations";
 import { FlipTextReveal } from "@/components/ui/flip-text-reveal";
@@ -58,26 +59,26 @@ export function HeroSection() {
           variants={fadeUp}
           className="flex flex-col md:flex-row gap-4 justify-center items-center"
         >
-          <a
+          <Link
             href="/shop"
             className="group px-10 py-5 bg-bodega-yellow text-[#0A0A08] font-bold text-lg rounded-sm hover:bg-bodega-yellow-light transition-all duration-300 flex items-center gap-3 shadow-[0_0_40px_rgba(229,255,0,0.3)] hover:shadow-[0_0_60px_rgba(229,255,0,0.5)] min-w-[180px] justify-center"
           >
             SHOP
-          </a>
+          </Link>
 
-          <a
+          <Link
             href="/archive"
             className="px-10 py-5 bg-zinc-900 dark:bg-black border-2 border-white/30 text-white font-medium text-lg rounded-sm hover:bg-zinc-800 dark:hover:bg-zinc-900 transition-all duration-300 min-w-[180px] text-center"
           >
             ARCHIVE
-          </a>
+          </Link>
 
-          <a
+          <Link
             href="/events"
             className="group px-10 py-5 bg-bodega-yellow text-[#0A0A08] font-bold text-lg rounded-sm hover:bg-bodega-yellow-light transition-all duration-300 flex items-center gap-3 shadow-[0_0_40px_rgba(229,255,0,0.3)] hover:shadow-[0_0_60px_rgba(229,255,0,0.5)] min-w-[180px] justify-center"
           >
             EVENTS
-          </a>
+          </Link>
         </motion.div>
       </motion.div>
     </motion.section>

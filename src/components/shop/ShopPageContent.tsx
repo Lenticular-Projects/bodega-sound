@@ -20,7 +20,7 @@ export function ShopPageContent() {
                         <p className="text-bodega-yellow font-mono tracking-wider text-sm mb-2">
                             OFFICIAL MERCHANDISE
                         </p>
-                        <h1 className="font-['Bebas_Neue'] text-7xl md:text-9xl text-zinc-900 dark:text-white tracking-tight transition-colors duration-300">
+                        <h1 className="font-display text-7xl md:text-9xl text-zinc-900 dark:text-white tracking-tight transition-colors duration-300">
                             SHOP
                         </h1>
                     </div>

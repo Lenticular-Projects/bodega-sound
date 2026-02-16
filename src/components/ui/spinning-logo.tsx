@@ -13,22 +13,34 @@ export function SpinningLogo() {
     const [images, setImages] = useState<HTMLImageElement[]>([]);
     const [loadedCount, setLoadedCount] = useState(0);
 
-    // Preload images
+    // Defer frame loading until after first paint so the hero renders instantly.
+    // Frames load in the background and are ready before the user scrolls here.
     useEffect(() => {
-        const loadedImages: HTMLImageElement[] = [];
-        let count = 0;
+        const startLoading = () => {
+            const loadedImages: HTMLImageElement[] = [];
+            let count = 0;
 
-        for (let i = 1; i <= FRAME_COUNT; i++) {
-            const img = new Image();
-            const frameNumber = i.toString().padStart(3, "0");
-            img.src = `/images/logo/logo-spin-scroll/ezgif-frame-${frameNumber}.jpg`;
-            img.onload = () => {
-                count++;
-                setLoadedCount(count);
-            };
-            loadedImages.push(img);
+            for (let i = 1; i <= FRAME_COUNT; i++) {
+                const img = new Image();
+                const frameNumber = i.toString().padStart(3, "0");
+                img.src = `/images/logo/logo-spin-scroll/ezgif-frame-${frameNumber}.jpg`;
+                img.onload = () => {
+                    count++;
+                    setLoadedCount(count);
+                };
+                loadedImages.push(img);
+            }
+            setImages(loadedImages);
+        };
+
+        // Wait for the browser to finish critical rendering before loading frames
+        if (typeof window.requestIdleCallback === "function") {
+            const id = window.requestIdleCallback(startLoading, { timeout: 2000 });
+            return () => window.cancelIdleCallback(id);
+        } else {
+            const timer = setTimeout(startLoading, 200);
+            return () => clearTimeout(timer);
         }
-        setImages(loadedImages);
     }, []);
 
     const { scrollYProgress } = useScroll({

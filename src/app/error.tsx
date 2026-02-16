@@ -10,7 +10,7 @@ export default function GlobalError({
     return (
         <div className="min-h-screen flex items-center justify-center px-6">
             <div className="text-center max-w-md">
-                <h1 className="font-['Bebas_Neue'] text-6xl text-zinc-900 dark:text-white tracking-tight mb-4">
+                <h1 className="font-display text-6xl text-zinc-900 dark:text-white tracking-tight mb-4">
                     SOMETHING BROKE
                 </h1>
                 <p className="text-zinc-600 dark:text-warm-400 text-lg mb-8">

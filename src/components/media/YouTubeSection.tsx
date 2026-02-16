@@ -107,7 +107,7 @@ export function YouTubeSection() {
                 YOUTUBE CHANNEL
               </p>
             </div>
-            <h2 className="font-['Bebas_Neue'] text-6xl md:text-8xl text-white tracking-tight">
+            <h2 className="font-display text-6xl md:text-8xl text-white tracking-tight">
               FULL SETS
             </h2>
           </div>

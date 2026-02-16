@@ -10,7 +10,7 @@ export function NewsletterSection() {
     <section id="newsletter" className="relative pt-4 pb-32 px-6">
       {/* Large background text */}
       <div className="absolute inset-0 flex items-center justify-center overflow-hidden pointer-events-none">
-        <span className="font-['Bebas_Neue'] text-[20vw] text-warm-200/50 dark:text-warm-800/30 whitespace-nowrap select-none transition-colors duration-300">
+        <span className="font-display text-[20vw] text-warm-200/50 dark:text-warm-800/30 whitespace-nowrap select-none transition-colors duration-300">
           JOIN US
         </span>
       </div>
@@ -28,7 +28,7 @@ export function NewsletterSection() {
             </div>
           </div>
 
-          <h2 className="font-['Bebas_Neue'] text-6xl md:text-8xl text-zinc-900 dark:text-white tracking-tight mb-6 transition-colors duration-300">
+          <h2 className="font-display text-6xl md:text-8xl text-zinc-900 dark:text-white tracking-tight mb-6 transition-colors duration-300">
             JOIN THE COLLECTIVE
           </h2>
 

@@ -42,14 +42,14 @@ export function ProductCard({ product }: { product: Product }) {
 
                 <div className="flex justify-between items-start px-1">
                     <div>
-                        <h3 className="font-['Bebas_Neue'] text-3xl text-white tracking-tight leading-none">
+                        <h3 className="font-display text-3xl text-white tracking-tight leading-none">
                             {product.name}
                         </h3>
                         <p className="text-warm-500 text-[10px] uppercase font-bold tracking-widest mt-1 line-clamp-1">
                             {product.description}
                         </p>
                     </div>
-                    <span className="font-['Bebas_Neue'] text-3xl text-bodega-yellow leading-none">
+                    <span className="font-display text-3xl text-bodega-yellow leading-none">
                         {product.price}
                     </span>
                 </div>

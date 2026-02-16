@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 export default function ContactPage() {
     return (
         <div className="pt-32 pb-20 px-6 max-w-7xl mx-auto">
-            <h1 className="font-['Bebas_Neue'] text-7xl md:text-9xl text-zinc-900 dark:text-white tracking-tight mb-8 transition-colors duration-300">
+            <h1 className="font-display text-7xl md:text-9xl text-zinc-900 dark:text-white tracking-tight mb-8 transition-colors duration-300">
                 CONTACT
             </h1>
 

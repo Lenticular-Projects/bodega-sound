@@ -93,7 +93,7 @@ const config: Config = {
       fontFamily: {
         sans: ["var(--font-geist-sans)"],
         mono: ["var(--font-geist-mono)"],
-        display: ["'Bebas Neue'", "sans-serif"],
+        display: ["var(--font-bebas)", "sans-serif"],
       },
     },
   },

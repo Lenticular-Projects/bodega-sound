@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
+import { Bebas_Neue } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { SmoothScrollProvider } from "@/components/providers/smooth-scroll-provider";
@@ -8,6 +9,13 @@ import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { AudioPlayer } from "@/components/audio/AudioPlayer";
 import { Toaster } from "react-hot-toast";
+
+const bebasNeue = Bebas_Neue({
+  subsets: ["latin"],
+  weight: "400",
+  display: "swap",
+  variable: "--font-bebas",
+});
 
 export const metadata: Metadata = {
   title: "Bodega Sound | Underground Collective",
@@ -39,7 +47,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${GeistSans.variable} ${GeistMono.variable} font-sans antialiased bg-background text-foreground`}
+        className={`${GeistSans.variable} ${GeistMono.variable} ${bebasNeue.variable} font-sans antialiased bg-background text-foreground`}
       >
         <div className="grain-overlay" />
         <ThemeProvider>

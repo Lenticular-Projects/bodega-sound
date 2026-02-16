@@ -10,7 +10,7 @@ export default function AdminError({
     return (
         <div className="flex items-center justify-center py-20">
             <div className="text-center max-w-md">
-                <h2 className="font-['Bebas_Neue'] text-5xl text-white tracking-tight mb-4">
+                <h2 className="font-display text-5xl text-white tracking-tight mb-4">
                     SYSTEM ERROR
                 </h2>
                 <p className="text-zinc-500 text-sm mb-8">

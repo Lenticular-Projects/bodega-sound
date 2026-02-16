@@ -24,7 +24,7 @@ export function MerchSection() {
           <p className="text-bodega-yellow font-mono tracking-wider text-sm mb-2">
             OFFICIAL MERCHANDISE
           </p>
-          <h2 className="font-['Bebas_Neue'] text-6xl md:text-8xl text-white tracking-tight mb-4">
+          <h2 className="font-display text-6xl md:text-8xl text-white tracking-tight mb-4">
             GEAR UP
           </h2>
           <p className="text-xl text-warm-400 max-w-xl">

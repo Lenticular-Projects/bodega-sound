@@ -49,7 +49,7 @@ function EventCard({ event, index }: { event: BodegaEvent; index: number }) {
           <p className="text-bodega-yellow font-mono text-xs tracking-wider mb-1">
             {event.date}
           </p>
-          <h3 className="font-['Bebas_Neue'] text-3xl md:text-4xl text-white mb-1 tracking-tight">
+          <h3 className="font-display text-3xl md:text-4xl text-white mb-1 tracking-tight">
             {event.name}
           </h3>
           <p className="text-warm-400 text-sm">{event.theme}</p>
@@ -84,7 +84,7 @@ export function PastEventsSection() {
           variants={fadeUp}
           className="mb-16"
         >
-          <h2 className="font-['Bebas_Neue'] text-6xl md:text-8xl text-white tracking-tight mb-4">
+          <h2 className="font-display text-6xl md:text-8xl text-white tracking-tight mb-4">
             TIME CAPSULE
           </h2>
           <p className="text-xl text-warm-400 max-w-xl">

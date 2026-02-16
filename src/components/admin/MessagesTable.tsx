@@ -41,7 +41,7 @@ export function MessagesTable({ messages }: { messages: ContactMessage[] }) {
         <div className="space-y-8">
             <div className="flex justify-between items-end">
                 <div>
-                    <h2 className="text-4xl font-['Bebas_Neue'] tracking-tight text-white uppercase">Messages</h2>
+                    <h2 className="text-4xl font-display tracking-tight text-white uppercase">Messages</h2>
                     <p className="text-zinc-500 font-mono text-xs uppercase tracking-widest mt-1">Contact Form Submissions</p>
                 </div>
                 <div className="flex items-center gap-4">

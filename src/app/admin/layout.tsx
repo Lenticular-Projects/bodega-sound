@@ -77,7 +77,7 @@ export default async function AdminLayout({
             {/* Main Content */}
             <main className="flex-1 overflow-y-auto">
                 <header className="h-20 border-b border-zinc-900 flex items-center justify-between px-10 bg-black/20 backdrop-blur-xl sticky top-0 z-10">
-                    <h1 className="font-['Bebas_Neue'] text-2xl tracking-tight uppercase">Dashboard</h1>
+                    <h1 className="font-display text-2xl tracking-tight uppercase">Dashboard</h1>
                     <div className="flex items-center gap-4">
                         <div className="flex items-center gap-2">
                             <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />

@@ -114,7 +114,7 @@ export function ContactForm() {
                     animate={{ opacity: 1, scale: 1 }}
                     className="p-12 text-center border border-zinc-200 dark:border-warm-800 bg-zinc-50/50 dark:bg-warm-900/20 rounded-sm"
                 >
-                    <h3 className="font-['Bebas_Neue'] text-4xl text-bodega-yellow mb-4">
+                    <h3 className="font-display text-4xl text-bodega-yellow mb-4">
                         MESSAGE RECEIVED
                     </h3>
                     <p className="text-zinc-600 dark:text-warm-400 text-lg">

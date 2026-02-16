@@ -133,7 +133,7 @@ export function BuyNowModal({ product, open, onOpenChange }: BuyNowModalProps) {
                             {/* Header */}
                             <div className="flex justify-between items-center mb-8 pt-4">
                                 <div>
-                                    <Drawer.Title className="font-['Bebas_Neue'] text-4xl text-white tracking-tight">
+                                    <Drawer.Title className="font-display text-4xl text-white tracking-tight">
                                         {step === 4 ? "ORDER CONFIRMED" : "SECURE YOUR DROP"}
                                     </Drawer.Title>
                                     <Drawer.Description className="text-bodega-yellow font-mono text-xs uppercase tracking-widest mt-1">
@@ -279,13 +279,13 @@ export function BuyNowModal({ product, open, onOpenChange }: BuyNowModalProps) {
                                         <div className="p-4 bg-bodega-yellow/5 border border-bodega-yellow/20 rounded-sm">
                                             <div className="flex justify-between items-center mb-2">
                                                 <span className="text-zinc-500 text-xs uppercase font-bold tracking-widest">Order Total</span>
-                                                <span className="text-bodega-yellow font-['Bebas_Neue'] text-2xl uppercase tracking-tighter">
+                                                <span className="text-bodega-yellow font-display text-2xl uppercase tracking-tighter">
                                                     {product.name} ({formData.shipping === 'JRS' ? 'Incl. Shipping' : 'Excl. Shipping'})
                                                 </span>
                                             </div>
                                             <div className="flex justify-between items-end">
                                                 <p className="text-zinc-400 text-xs max-w-[200px]">Please ensure the exact amount is paid to avoid delays.</p>
-                                                <span className="text-white font-['Bebas_Neue'] text-5xl tracking-tighter">
+                                                <span className="text-white font-display text-5xl tracking-tighter">
                                                     ₱{calculateTotal()}
                                                 </span>
                                             </div>
@@ -396,7 +396,7 @@ export function BuyNowModal({ product, open, onOpenChange }: BuyNowModalProps) {
                                         </div>
 
                                         <div>
-                                            <h3 className="font-['Bebas_Neue'] text-5xl text-white tracking-tight mb-2 uppercase">Order Received!</h3>
+                                            <h3 className="font-display text-5xl text-white tracking-tight mb-2 uppercase">Order Received!</h3>
                                             <p className="text-zinc-400 max-w-sm mx-auto">
                                                 We&apos;ve logged your request. Our team will verify the payment and reach out via email for shipping updates.
                                             </p>
