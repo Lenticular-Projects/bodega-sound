@@ -55,7 +55,7 @@ export function Footer() {
       </div>
       <div className="mt-12 pt-8 border-t border-zinc-200 dark:border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-[10px] font-bold tracking-[0.2em] text-zinc-400 dark:text-warm-500 uppercase transition-colors duration-300">
         <p>© 2026 BODEGA SOUND COLLECTIVE. ALL RIGHTS RESERVED.</p>
-        <p>MANILA / TOKYO / BERLIN</p>
+        <p>MANILA / TOKYO / MIAMI</p>
       </div>
     </footer>
   );
