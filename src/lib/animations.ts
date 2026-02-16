@@ -13,15 +13,15 @@ export const transitions = {
 };
 
 export const fadeUp = {
-    initial: { opacity: 0, y: 24, filter: "blur(4px)" }, // Added blur for "expensive" feel
-    animate: { opacity: 1, y: 0, filter: "blur(0px)" },
+    initial: { opacity: 0, y: 24 },
+    animate: { opacity: 1, y: 0 },
     exit: { opacity: 0, y: -10 },
     transition: transitions.vibe
 };
 
 export const fadeIn = {
-    initial: { opacity: 0, filter: "blur(2px)" },
-    animate: { opacity: 1, filter: "blur(0px)" },
+    initial: { opacity: 0 },
+    animate: { opacity: 1 },
     transition: { duration: 0.6, ease: "easeOut" }
 };
 

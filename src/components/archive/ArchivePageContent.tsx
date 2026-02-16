@@ -23,14 +23,14 @@ export function ArchivePageContent() {
 
   return (
     <div>
-      <div className="relative h-screen w-full">
+      <div className="relative h-[70vh] sm:h-[80vh] lg:h-screen w-full">
         <LuminaInteractiveList
           key={selectedEventId ?? "archive-default"}
           slides={activeSlides}
           mode="minimal"
         />
         <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-content">
-          <h1 className="font-display text-7xl md:text-9xl text-white tracking-tight drop-shadow-lg">
+          <h1 className="font-display text-5xl sm:text-7xl md:text-9xl text-white tracking-tight drop-shadow-lg">
             ARCHIVE
           </h1>
           <p className="text-warm-300 text-xl mt-4 drop-shadow-md max-w-2xl text-center px-6">

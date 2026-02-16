@@ -48,7 +48,7 @@ export function TextReveal({ text, lines, className, highlightWords = [] }: Text
             {/* Dimming background */}
             <motion.div
                 style={{ opacity: bgOpacity }}
-                className="fixed inset-0 bg-white dark:bg-black pointer-events-none z-0"
+                className="fixed inset-0 bg-white dark:bg-black pointer-events-none z-0 [will-change:opacity] [backface-visibility:hidden]"
             />
 
             <div className="sticky top-0 flex h-screen w-full items-center justify-center bg-transparent px-6 mx-auto z-10 text-center">

@@ -24,7 +24,7 @@ export function HeroSection() {
       >
         <motion.p
           variants={fadeUp}
-          className="text-sm tracking-[0.4em] mb-0 text-warm-400 font-mono uppercase"
+          className="text-sm tracking-[0.4em] mb-6 md:mb-0 text-warm-400 font-mono uppercase"
         >
           Quarterly Sonic Experiences
         </motion.p>
@@ -35,21 +35,20 @@ export function HeroSection() {
 
           <FlipTextReveal
             text="BODEGA"
-            className="text-bodega-yellow leading-[0.65] tracking-[-0.03em] text-[clamp(3rem,11.5vw,13rem)] drop-shadow-[0_4px_8px_rgba(0,0,0,0.3)]"
-            style={{ textShadow: "0 0 40px rgba(229, 255, 0, 0.25)" }}
+            className="text-bodega-yellow leading-[0.65] tracking-[-0.03em] text-[clamp(4.5rem,16vw,13rem)] drop-shadow-[0_4px_8px_rgba(0,0,0,0.3)] [text-shadow:0_0_40px_rgba(229,255,0,0.25)]"
           />
 
           {/* Tucked "SOUND" - Maximum overlap */}
           <FlipTextReveal
             text="SOUND"
-            className="text-zinc-900 dark:text-white leading-[0.65] tracking-[-0.03em] text-[clamp(3rem,11.5vw,13rem)] mt-[-0.5em] md:mt-[-0.75em] z-10 drop-shadow-[0_4px_8px_rgba(0,0,0,0.3)]"
+            className="text-zinc-900 dark:text-white leading-[0.65] tracking-[-0.03em] text-[clamp(4.5rem,16vw,13rem)] mt-[-0.5em] md:mt-[-0.75em] z-10 drop-shadow-[0_4px_8px_rgba(0,0,0,0.3)]"
             delay={0.4}
           />
         </div>
 
         <motion.p
           variants={fadeUp}
-          className="text-base md:text-lg max-w-lg mx-auto mb-10 text-zinc-600 dark:text-warm-300 leading-relaxed mt-4 md:mt-[-1.2rem] px-4"
+          className="text-base md:text-lg max-w-lg mx-auto mb-10 text-zinc-600 dark:text-warm-300 leading-relaxed mt-6 md:mt-[-1.2rem] px-4"
         >
           Manila&apos;s Underground Collective. International DJs. Secret Locations.
           Step into the venue at 2 AM.

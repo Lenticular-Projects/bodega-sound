@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
 import { Bebas_Neue } from "next/font/google";
@@ -16,6 +16,10 @@ const bebasNeue = Bebas_Neue({
   display: "swap",
   variable: "--font-bebas",
 });
+
+export const viewport: Viewport = {
+  viewportFit: "cover",
+};
 
 export const metadata: Metadata = {
   title: "Bodega Sound | Underground Collective",

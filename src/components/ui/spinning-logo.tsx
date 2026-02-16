@@ -61,13 +61,17 @@ export function SpinningLogo() {
         const img = images[Math.round(index)];
         if (!img) return;
 
-        // Set canvas dimensions to match image if not set
-        if (canvas.width !== img.width) canvas.width = img.width;
-        if (canvas.height !== img.height) canvas.height = img.height;
+        // Cap canvas buffer to 1280px max dimension to reduce mobile memory
+        const maxDim = 1280;
+        const scale = Math.min(1, maxDim / Math.max(img.width, img.height));
+        const targetW = Math.round(img.width * scale);
+        const targetH = Math.round(img.height * scale);
+        if (canvas.width !== targetW) canvas.width = targetW;
+        if (canvas.height !== targetH) canvas.height = targetH;
 
-        // Clear and draw
+        // Clear and draw scaled
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.drawImage(img, 0, 0);
+        ctx.drawImage(img, 0, 0, targetW, targetH);
     };
 
     useMotionValueEvent(frameIndex, "change", (latest) => {

@@ -133,7 +133,7 @@ export function BuyNowModal({ product, open, onOpenChange }: BuyNowModalProps) {
                             {/* Header */}
                             <div className="flex justify-between items-center mb-8 pt-4">
                                 <div>
-                                    <Drawer.Title className="font-display text-4xl text-white tracking-tight">
+                                    <Drawer.Title className="font-display text-3xl sm:text-4xl text-white tracking-tight">
                                         {step === 4 ? "ORDER CONFIRMED" : "SECURE YOUR DROP"}
                                     </Drawer.Title>
                                     <Drawer.Description className="text-bodega-yellow font-mono text-xs uppercase tracking-widest mt-1">
@@ -146,7 +146,7 @@ export function BuyNowModal({ product, open, onOpenChange }: BuyNowModalProps) {
                                 {step < 4 && (
                                     <button
                                         onClick={() => onOpenChange(false)}
-                                        className="p-2 bg-zinc-900 rounded-full hover:bg-zinc-800 transition-colors"
+                                        className="p-3 bg-zinc-900 rounded-sm hover:bg-zinc-800 transition-colors"
                                     >
                                         <CloseIcon className="w-5 h-5 text-zinc-400" />
                                     </button>
@@ -277,15 +277,15 @@ export function BuyNowModal({ product, open, onOpenChange }: BuyNowModalProps) {
                                         </div>
 
                                         <div className="p-4 bg-bodega-yellow/5 border border-bodega-yellow/20 rounded-sm">
-                                            <div className="flex justify-between items-center mb-2">
+                                            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1 mb-2">
                                                 <span className="text-zinc-500 text-xs uppercase font-bold tracking-widest">Order Total</span>
-                                                <span className="text-bodega-yellow font-display text-2xl uppercase tracking-tighter">
+                                                <span className="text-bodega-yellow font-display text-lg sm:text-2xl uppercase tracking-tighter truncate">
                                                     {product.name} ({formData.shipping === 'JRS' ? 'Incl. Shipping' : 'Excl. Shipping'})
                                                 </span>
                                             </div>
                                             <div className="flex justify-between items-end">
                                                 <p className="text-zinc-400 text-xs max-w-[200px]">Please ensure the exact amount is paid to avoid delays.</p>
-                                                <span className="text-white font-display text-5xl tracking-tighter">
+                                                <span className="text-white font-display text-4xl sm:text-5xl tracking-tighter">
                                                     ₱{calculateTotal()}
                                                 </span>
                                             </div>

@@ -110,19 +110,19 @@ export function Header() {
                         duration: 1.2,
                         ease: [0.22, 1, 0.36, 1] // Custom expo-out for smooth deceleration
                     }}
-                    className={`fixed top-0 left-0 right-0 z-50 h-28 px-8 grid grid-cols-[1fr_auto_1fr] items-center ${isVisible || isMenuOpen ? "bg-white/70 dark:bg-black/60 backdrop-blur-2xl border-b border-zinc-200/50 dark:border-white/10" : "bg-transparent pointer-events-none"}`}
+                    className={`fixed top-0 left-0 right-0 z-50 h-16 px-4 lg:h-28 lg:px-8 grid grid-cols-[1fr_auto_1fr] items-center ${isVisible || isMenuOpen ? "bg-white/70 dark:bg-black/60 backdrop-blur-2xl border-b border-zinc-200/50 dark:border-white/10" : "bg-transparent pointer-events-none"}`}
                 >
                     {/* Left: Nav */}
                     <div className="flex items-center">
                         <button
-                            className="md:hidden text-zinc-600 dark:text-zinc-100 hover:text-black dark:hover:text-white transition-colors z-50 relative mr-4"
+                            className="lg:hidden p-2.5 text-zinc-600 dark:text-zinc-100 hover:text-black dark:hover:text-white transition-colors z-50 relative mr-4"
                             onClick={() => setIsMenuOpen(!isMenuOpen)}
                             aria-label="Toggle menu"
                         >
                             {isMenuOpen ? <CloseIcon size={24} /> : <MenuIcon size={24} />}
                         </button>
 
-                        <nav className="hidden md:flex items-center gap-6 lg:gap-8 text-sm lg:text-base font-medium tracking-tight">
+                        <nav className="hidden lg:flex items-center gap-6 xl:gap-8 text-sm lg:text-base font-medium tracking-tight">
                             {navLinks.map((link) => (
                                 <Link
                                     key={link.href}
@@ -143,7 +143,7 @@ export function Header() {
                                 alt="Bodega Sound"
                                 width={120}
                                 height={60}
-                                className="h-14 w-auto object-contain transition-all"
+                                className="h-8 sm:h-10 lg:h-14 w-auto object-contain transition-all"
                             />
                         </Link>
                     </div>
@@ -164,7 +164,7 @@ export function Header() {
                         animate="open"
                         exit="closed"
                         variants={menuVariants}
-                        className="fixed inset-0 bg-[#0A0A08] z-40 flex flex-col justify-center items-center md:hidden"
+                        className="fixed inset-0 bg-[#0A0A08] z-40 flex flex-col justify-center items-center lg:hidden"
                     >
                         <nav className="flex flex-col items-center gap-8">
                             {navLinks.map((link, i) => (
@@ -232,9 +232,10 @@ function SubscriberModal() {
         <Dialog open={open} onOpenChange={setOpen}>
             <button
                 onClick={() => setOpen(true)}
-                className="bg-bodega-yellow text-black px-4 py-2 rounded-sm text-sm font-bold tracking-widest hover:scale-105 transition-transform border border-transparent hover:border-black dark:hover:border-transparent whitespace-nowrap"
+                className="bg-bodega-yellow text-black px-2.5 py-2 lg:px-4 lg:py-2.5 min-h-[44px] flex items-center rounded-sm text-[10px] sm:text-xs lg:text-sm font-bold tracking-widest hover:scale-105 transition-transform border border-transparent hover:border-black dark:hover:border-transparent whitespace-nowrap"
             >
-                JOIN THE LIST
+                <span className="hidden sm:inline">JOIN THE LIST</span>
+                <span className="sm:hidden">JOIN</span>
             </button>
 
             <AnimatePresence>

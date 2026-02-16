@@ -130,6 +130,7 @@ export function LuminaInteractiveList({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [webglSupported, setWebglSupported] = useState(true);
 
   // Refs for WebGL objects
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
@@ -171,9 +172,10 @@ export function LuminaInteractiveList({
   useEffect(() => {
     let disposed = false;
 
-    if (!canvasRef.current || slides.length < 2) return;
+    if (!canvasRef.current || !containerRef.current || slides.length < 2) return;
     if (!checkWebGLSupport()) {
       console.warn("WebGL not supported — Lumina gallery requires WebGL");
+      setWebglSupported(false);
       return;
     }
 
@@ -413,6 +415,12 @@ export function LuminaInteractiveList({
       setActiveIndex(targetIndex);
       updateCounter(targetIndex);
 
+      // Auto-scroll active nav item into view on mobile
+      const navItem = navRef.current?.children[targetIndex] as HTMLElement | undefined;
+      if (navItem) {
+        navItem.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+      }
+
       gsap.fromTo(
         mat.uniforms.uProgress,
         { value: 0 },
@@ -477,7 +485,8 @@ export function LuminaInteractiveList({
         return;
       }
 
-      renderer.setSize(window.innerWidth, window.innerHeight);
+      const containerRect = containerRef.current!.getBoundingClientRect();
+      renderer.setSize(containerRect.width, containerRect.height);
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
       sceneRef.current = scene;
@@ -490,7 +499,7 @@ export function LuminaInteractiveList({
           uTexture2: { value: null },
           uProgress: { value: 0 },
           uResolution: {
-            value: new THREE.Vector2(window.innerWidth, window.innerHeight),
+            value: new THREE.Vector2(containerRect.width, containerRect.height),
           },
           uTexture1Size: { value: new THREE.Vector2(1, 1) },
           uTexture2Size: { value: new THREE.Vector2(1, 1) },
@@ -608,25 +617,33 @@ export function LuminaInteractiveList({
       else if (!isTransitioningRef.current) safeStartTimer();
     };
 
-    const handleResize = () => {
-      if (rendererRef.current && materialRef.current) {
-        rendererRef.current.setSize(window.innerWidth, window.innerHeight);
-        materialRef.current.uniforms.uResolution.value.set(
-          window.innerWidth,
-          window.innerHeight
-        );
-      }
-    };
-
     document.addEventListener("visibilitychange", handleVisibility);
-    window.addEventListener("resize", handleResize);
 
-    // --- Touch/swipe ---
+    // --- ResizeObserver (replaces window resize) ---
+    const container = containerRef.current!;
+    const resizeObserver = new ResizeObserver((entries) => {
+      const entry = entries[0];
+      if (!entry || !rendererRef.current || !materialRef.current) return;
+      const { width, height } = entry.contentRect;
+      rendererRef.current.setSize(width, height);
+      materialRef.current.uniforms.uResolution.value.set(width, height);
+    });
+    resizeObserver.observe(container);
+
+    // --- Touch/swipe on container ---
     const handleTouchStart = (e: TouchEvent) => {
       touchStartRef.current = {
         x: e.touches[0].clientX,
         y: e.touches[0].clientY,
       };
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      const deltaX = Math.abs(e.touches[0].clientX - touchStartRef.current.x);
+      const deltaY = Math.abs(e.touches[0].clientY - touchStartRef.current.y);
+      if (deltaX > deltaY) {
+        e.preventDefault();
+      }
     };
 
     const handleTouchEnd = (e: TouchEvent) => {
@@ -648,9 +665,27 @@ export function LuminaInteractiveList({
       }
     };
 
+    container.addEventListener("touchstart", handleTouchStart, { passive: true });
+    container.addEventListener("touchmove", handleTouchMove, { passive: false });
+    container.addEventListener("touchend", handleTouchEnd, { passive: true });
+
+    // --- WebGL context lost/restored ---
     const canvas = canvasRef.current;
-    canvas.addEventListener("touchstart", handleTouchStart, { passive: true });
-    canvas.addEventListener("touchend", handleTouchEnd, { passive: true });
+    const handleContextLost = (e: Event) => {
+      e.preventDefault();
+      stopAutoSlideTimer();
+      cancelAnimationFrame(rafIdRef.current);
+    };
+
+    const handleContextRestored = () => {
+      if (rendererRef.current && sceneRef.current && cameraRef.current) {
+        rendererRef.current.render(sceneRef.current, cameraRef.current);
+      }
+      if (sliderEnabledRef.current && isInViewRef.current) safeStartTimer();
+    };
+
+    canvas.addEventListener("webglcontextlost", handleContextLost);
+    canvas.addEventListener("webglcontextrestored", handleContextRestored);
 
     // --- IntersectionObserver ---
     const observer = new IntersectionObserver(
@@ -689,9 +724,12 @@ export function LuminaInteractiveList({
       sceneRef.current = null;
       cameraRef.current = null;
       document.removeEventListener("visibilitychange", handleVisibility);
-      window.removeEventListener("resize", handleResize);
-      canvas.removeEventListener("touchstart", handleTouchStart);
-      canvas.removeEventListener("touchend", handleTouchEnd);
+      resizeObserver.disconnect();
+      container.removeEventListener("touchstart", handleTouchStart);
+      container.removeEventListener("touchmove", handleTouchMove);
+      container.removeEventListener("touchend", handleTouchEnd);
+      canvas.removeEventListener("webglcontextlost", handleContextLost);
+      canvas.removeEventListener("webglcontextrestored", handleContextRestored);
       observer.disconnect();
       sliderEnabledRef.current = false;
       texturesLoadedRef.current = false;
@@ -720,12 +758,18 @@ export function LuminaInteractiveList({
     <div
       ref={containerRef}
       className={cn(
-        "relative w-screen h-dvh overflow-hidden bg-black transition-opacity duration-[1200ms] ease-[cubic-bezier(0.4,0,0.2,1)]",
+        "relative w-full h-[70vh] sm:h-[80vh] lg:h-dvh overflow-hidden bg-black transition-opacity duration-[1200ms] ease-[cubic-bezier(0.4,0,0.2,1)]",
         isLoaded ? "opacity-100" : "opacity-0 pointer-events-none",
         className
       )}
     >
-      <canvas ref={canvasRef} className="block w-full h-full bg-black" />
+      {!webglSupported ? (
+        <div className="flex items-center justify-center w-full h-full bg-black text-white/50 font-mono text-sm">
+          WebGL is not available on this device
+        </div>
+      ) : (
+        <canvas ref={canvasRef} className="block w-full h-full bg-black" />
+      )}
 
       {/* Full mode: slide indicators + text overlay */}
       {mode === "full" && (
@@ -758,7 +802,7 @@ export function LuminaInteractiveList({
       {/* Bottom navigation */}
       <nav
         ref={navRef}
-        className="absolute bottom-4 left-4 right-4 md:bottom-12 md:left-12 md:right-12 flex overflow-x-auto md:overflow-visible z-[3] pointer-events-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+        className="absolute bottom-4 left-4 right-4 md:bottom-12 md:left-12 md:right-12 flex overflow-x-auto md:overflow-visible z-[3] pointer-events-auto pb-safe [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
       >
         {slides.map((slide, i) => (
           <div

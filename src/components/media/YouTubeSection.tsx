@@ -64,7 +64,7 @@ function VideoCard({ video }: { video: YouTubeVideo }) {
 
             {/* Play button */}
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-16 h-12 bg-red-600 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg z-10">
+              <div className="w-16 h-12 bg-red-600 rounded-md flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg z-10">
                 <PlayIcon className="w-6 h-6 text-white fill-current ml-1" />
               </div>
             </div>
@@ -107,7 +107,7 @@ export function YouTubeSection() {
                 YOUTUBE CHANNEL
               </p>
             </div>
-            <h2 className="font-display text-6xl md:text-8xl text-white tracking-tight">
+            <h2 className="font-display text-5xl sm:text-6xl md:text-8xl text-white tracking-tight">
               FULL SETS
             </h2>
           </div>

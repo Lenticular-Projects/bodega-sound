@@ -13,11 +13,11 @@ export const metadata: Metadata = {
 export default function ContactPage() {
     return (
         <div className="pt-32 pb-20 px-6 max-w-7xl mx-auto">
-            <h1 className="font-display text-7xl md:text-9xl text-zinc-900 dark:text-white tracking-tight mb-8 transition-colors duration-300">
+            <h1 className="font-display text-5xl sm:text-7xl md:text-9xl text-zinc-900 dark:text-white tracking-tight mb-8 transition-colors duration-300">
                 CONTACT
             </h1>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-start mt-16">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 items-start mt-16">
                 <div className="space-y-8">
                     <p className="text-2xl text-zinc-800 dark:text-warm-200 leading-relaxed font-light transition-colors duration-300">
                         Reach out for bookings, collaborations, or general inquiries. We are always listening.
@@ -41,7 +41,7 @@ export default function ContactPage() {
                     </div>
                 </div>
 
-                <div className="bg-zinc-50 dark:bg-warm-900/10 p-8 rounded-sm border border-zinc-200 dark:border-warm-800/50">
+                <div className="bg-zinc-50 dark:bg-warm-900/10 p-4 md:p-8 rounded-sm border border-zinc-200 dark:border-warm-800/50">
                     <ContactForm />
                 </div>
             </div>

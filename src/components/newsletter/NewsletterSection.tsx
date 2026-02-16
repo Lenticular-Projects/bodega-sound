@@ -23,12 +23,12 @@ export function NewsletterSection() {
           variants={fadeUp}
         >
           <div className="flex justify-center mb-6">
-            <div className="w-16 h-16 rounded-full bg-bodega-yellow/10 flex items-center justify-center">
+            <div className="w-16 h-16 rounded-sm bg-bodega-yellow/10 flex items-center justify-center">
               <EmailIcon className="w-8 h-8 text-bodega-yellow" />
             </div>
           </div>
 
-          <h2 className="font-display text-6xl md:text-8xl text-zinc-900 dark:text-white tracking-tight mb-6 transition-colors duration-300">
+          <h2 className="font-display text-4xl sm:text-6xl md:text-8xl text-zinc-900 dark:text-white tracking-tight mb-6 transition-colors duration-300">
             JOIN THE COLLECTIVE
           </h2>
 

@@ -5,6 +5,7 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { PlayIcon, ArrowRightIcon } from "@/components/icons";
 import { fadeUp, staggerContainer } from "@/lib/animations";
+import { cn } from "@/lib/utils";
 import { recentEvents, allEvents, type BodegaEvent } from "@/data/events";
 
 const handleCardClick = (slideIndex: number) => {
@@ -22,10 +23,7 @@ function EventCard({ event, index }: { event: BodegaEvent; index: number }) {
   return (
     <motion.div
       variants={fadeUp}
-      className="group relative overflow-hidden rounded-sm cursor-pointer"
-      style={{
-        marginTop: index % 2 === 1 ? "2rem" : "0",
-      }}
+      className={cn("group relative overflow-hidden rounded-sm cursor-pointer", index % 2 === 1 && "md:mt-8")}
       onClick={() => handleCardClick(slideIndex)}
     >
       {/* Card Background */}
@@ -54,14 +52,14 @@ function EventCard({ event, index }: { event: BodegaEvent; index: number }) {
           </h3>
           <p className="text-warm-400 text-sm">{event.theme}</p>
 
-          <p className="text-warm-500 text-xs mt-3 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+          <p className="text-warm-500 text-xs mt-3 opacity-70 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-500">
             {event.artists.join(" • ")}
           </p>
         </div>
 
         {/* Play button overlay */}
-        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-          <div className="w-16 h-16 rounded-full bg-bodega-yellow/20 backdrop-blur-sm flex items-center justify-center border border-bodega-yellow/30 group-hover:scale-110 transition-transform duration-500">
+        <div className="absolute inset-0 flex items-center justify-center opacity-70 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-500">
+          <div className="w-16 h-16 rounded-sm bg-bodega-yellow/20 backdrop-blur-sm flex items-center justify-center border border-bodega-yellow/30 group-hover:scale-110 transition-transform duration-500">
             <PlayIcon className="w-6 h-6 text-bodega-yellow fill-current" />
           </div>
         </div>
@@ -84,7 +82,7 @@ export function PastEventsSection() {
           variants={fadeUp}
           className="mb-16"
         >
-          <h2 className="font-display text-6xl md:text-8xl text-white tracking-tight mb-4">
+          <h2 className="font-display text-5xl sm:text-6xl md:text-8xl text-white tracking-tight mb-4">
             TIME CAPSULE
           </h2>
           <p className="text-xl text-warm-400 max-w-xl">

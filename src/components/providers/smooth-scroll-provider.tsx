@@ -20,7 +20,7 @@ export function SmoothScrollProvider({
             gestureOrientation: "vertical",
             smoothWheel: true,
             wheelMultiplier: 1,
-            touchMultiplier: 2,
+            touchMultiplier: 1,
         });
 
         lenisRef.current = lenis;

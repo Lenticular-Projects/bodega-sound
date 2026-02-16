@@ -50,7 +50,7 @@ export function NextEventSection() {
               <p className="text-zinc-500 dark:text-bodega-yellow font-mono tracking-wider text-sm mb-4 transition-colors duration-300 -ml-0.5">
                 NEXT GATHERING
               </p>
-              <h2 className="font-display text-7xl md:text-9xl text-zinc-900 dark:text-white tracking-tight leading-[0.8] mb-8 transition-colors duration-300 -ml-1 md:-ml-2">
+              <h2 className="font-display text-4xl sm:text-6xl md:text-9xl text-zinc-900 dark:text-white tracking-tight leading-[0.8] mb-8 transition-colors duration-300 -ml-1 md:-ml-2">
                 {nextEvent.name}
               </h2>
             </motion.div>
