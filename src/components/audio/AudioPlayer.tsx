@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { motion } from "framer-motion";
 import {
   PlayIcon,
   PauseIcon,
@@ -34,60 +33,53 @@ export function AudioPlayer() {
   };
 
   return (
-    <>
-      {/* Audio Player Bar */}
-      <motion.div
-        initial={{ y: 100 }}
-        animate={{ y: 0 }}
-        className="fixed bottom-0 left-0 right-0 z-40 bg-[#0A0A08]/95 backdrop-blur-md border-t border-warm-800"
-      >
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          {/* Track Info */}
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-warm-800 rounded-sm flex items-center justify-center">
-              <MusicIcon className="w-6 h-6 text-bodega-yellow" />
-            </div>
-            <div>
-              <p className="text-white font-medium text-sm">BODEGA RADIO</p>
-              <p className="text-warm-500 text-xs">
-                Continuous mix • PinkPantheress vibes
-              </p>
-            </div>
+    <div className="fixed bottom-0 left-0 right-0 z-50 bg-[#0A0A08]/95 backdrop-blur-md border-t border-white/10">
+      <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
+        {/* Track Info */}
+        <div className="flex items-center gap-4">
+          <div className="w-10 h-10 bg-warm-800 rounded-sm flex items-center justify-center">
+            <MusicIcon className="w-5 h-5 text-bodega-yellow" />
           </div>
-
-          {/* Controls */}
-          <div className="flex items-center gap-4">
-            <button
-              onClick={togglePlay}
-              className="w-12 h-12 bg-bodega-yellow rounded-full flex items-center justify-center hover:bg-bodega-yellow-light transition-colors duration-300"
-            >
-              {isPlaying ? (
-                <PauseIcon className="w-5 h-5 text-[#0A0A08] fill-current" />
-              ) : (
-                <PlayIcon className="w-5 h-5 text-[#0A0A08] fill-current ml-1" />
-              )}
-            </button>
-
-            <button
-              onClick={toggleMute}
-              className="p-2 text-warm-400 hover:text-white transition-colors duration-300"
-            >
-              {isMuted ? (
-                <VolumeMuteIcon className="w-5 h-5" />
-              ) : (
-                <VolumeUpIcon className="w-5 h-5" />
-              )}
-            </button>
+          <div>
+            <p className="text-white font-medium text-sm tracking-wide">CHAMPAGNE COAST</p>
+            <p className="text-warm-500 text-xs">
+              A$TRIDX, YLMRN JERSEY  EDIT
+            </p>
           </div>
         </div>
 
-        {/* Audio Element - placeholder */}
-        <audio
-          ref={audioRef}
-          loop
-        // src="/audio/ambient-mix.mp3"  // Add actual audio file later
-        />
-      </motion.div>
-    </>
+        {/* Controls */}
+        <div className="flex items-center gap-4">
+          <button
+            onClick={togglePlay}
+            className="w-10 h-10 bg-bodega-yellow rounded-full flex items-center justify-center hover:scale-105 transition-transform duration-300"
+          >
+            {isPlaying ? (
+              <PauseIcon className="w-4 h-4 text-[#0A0A08] fill-current" />
+            ) : (
+              <PlayIcon className="w-4 h-4 text-[#0A0A08] fill-current ml-0.5" />
+            )}
+          </button>
+
+          <button
+            onClick={toggleMute}
+            className="p-2 text-warm-400 hover:text-white transition-colors duration-300"
+          >
+            {isMuted ? (
+              <VolumeMuteIcon className="w-5 h-5" />
+            ) : (
+              <VolumeUpIcon className="w-5 h-5" />
+            )}
+          </button>
+        </div>
+      </div>
+
+      {/* Audio Element */}
+      <audio
+        ref={audioRef}
+        loop
+        src="/music/mixes/CHAMPAGNE COAST (A$TRIDX, YLMRN JERSEY  EDIT)/CHAMPAGNE COAST (A$TRIDX, YLMRN JERSEY  EDIT).mp3"
+      />
+    </div>
   );
 }

@@ -6,6 +6,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { SmoothScrollProvider } from "@/components/providers/smooth-scroll-provider";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
+import { AudioPlayer } from "@/components/audio/AudioPlayer";
 import { Toaster } from "react-hot-toast";
 
 export const metadata: Metadata = {
@@ -58,6 +59,7 @@ export default function RootLayout({
               {children}
             </main>
             <Footer />
+            <AudioPlayer />
           </SmoothScrollProvider>
         </ThemeProvider>
       </body>

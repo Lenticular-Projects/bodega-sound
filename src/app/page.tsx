@@ -7,7 +7,7 @@ import { PastEventsSection } from "@/components/archive/PastEventsSection";
 import { YouTubeSection } from "@/components/media/YouTubeSection";
 import { MerchSection } from "@/components/shop/MerchSection";
 import { NewsletterSection } from "@/components/newsletter/NewsletterSection";
-import { AudioPlayer } from "@/components/audio/AudioPlayer";
+
 
 export default function Home() {
   return (
@@ -43,10 +43,7 @@ export default function Home() {
         <NewsletterSection />
       </div>
 
-      {/* Audio Player */}
-      <div className="z-overlay">
-        <AudioPlayer />
-      </div>
+
     </div>
   );
 }
