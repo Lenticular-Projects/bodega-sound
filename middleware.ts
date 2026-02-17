@@ -5,7 +5,6 @@ const ADMIN_SECRET = process.env.ADMIN_PASSWORD ?? "";
 const DOOR_SECRET = process.env.DOOR_PASSWORD ?? "";
 const TOKEN_EXPIRY_MS = 24 * 60 * 60 * 1000;
 
-// Routes accessible by door workers (check-in related)
 const DOOR_ALLOWED_PATTERNS = [
   /^\/admin\/events\/[^/]+\/checkin$/,
   /^\/admin\/checkin$/,
@@ -31,54 +30,53 @@ async function signToken(payload: string, secret: string): Promise<string> {
     .join("");
 }
 
-async function verifyToken(token: string, secret: string): Promise<boolean> {
-  if (!secret) return false;
-  const parts = token.split(":");
-  if (parts.length !== 3) return false;
-
-  const [timestamp, nonce, signature] = parts;
-  const payload = `${timestamp}:${nonce}`;
-  const expected = await signToken(payload, secret);
-
-  if (signature !== expected) return false;
-
-  const age = Date.now() - parseInt(timestamp, 10);
-  return age < TOKEN_EXPIRY_MS;
-}
-
-async function verifySessionToken(token: string): Promise<boolean> {
-  return verifyToken(token, ADMIN_SECRET);
-}
-
-async function verifyDoorSessionToken(token: string): Promise<boolean> {
-  return verifyToken(token, DOOR_SECRET);
-}
-
 export async function middleware(request: NextRequest) {
-  // Pass pathname to server components via REQUEST headers (not response)
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set('x-pathname', request.nextUrl.pathname);
 
   const pathname = request.nextUrl.pathname;
 
-  // Admin auth check
   if (pathname.startsWith('/admin') && !pathname.startsWith('/admin/login')) {
     const adminSession = request.cookies.get('admin-session')?.value;
     const doorSession = request.cookies.get('door-session')?.value;
 
-    const isAdmin = adminSession ? await verifySessionToken(adminSession) : false;
-    const isDoor = doorSession ? await verifyDoorSessionToken(doorSession) : false;
+    let isAdmin = false;
+    let isDoor = false;
+
+    if (adminSession && ADMIN_SECRET) {
+      const parts = adminSession.split(":");
+      if (parts.length === 3) {
+        const [timestamp, nonce, signature] = parts;
+        const payload = `${timestamp}:${nonce}`;
+        const expected = await signToken(payload, ADMIN_SECRET);
+        if (signature === expected) {
+          const age = Date.now() - parseInt(timestamp, 10);
+          isAdmin = age < TOKEN_EXPIRY_MS;
+        }
+      }
+    }
+
+    if (doorSession && DOOR_SECRET && !isAdmin) {
+      const parts = doorSession.split(":");
+      if (parts.length === 3) {
+        const [timestamp, nonce, signature] = parts;
+        const payload = `${timestamp}:${nonce}`;
+        const expected = await signToken(payload, DOOR_SECRET);
+        if (signature === expected) {
+          const age = Date.now() - parseInt(timestamp, 10);
+          isDoor = age < TOKEN_EXPIRY_MS;
+        }
+      }
+    }
 
     if (!isAdmin && !isDoor) {
       return NextResponse.redirect(new URL('/admin/login', request.url));
     }
 
-    // Door workers can only access check-in and door hub pages
     if (isDoor && !isAdmin && !isDoorAllowedRoute(pathname)) {
       return NextResponse.redirect(new URL('/admin/door', request.url));
     }
 
-    // Pass role to server components
     requestHeaders.set('x-admin-role', isAdmin ? 'admin' : 'door');
   }
 
