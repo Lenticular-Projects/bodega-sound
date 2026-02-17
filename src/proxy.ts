@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { verifySessionToken, verifyDoorSessionToken } from '@/lib/auth';
+import { verifySessionToken, verifyDoorSessionToken } from './lib/auth';
 
 // Routes accessible by door workers (check-in related)
 const DOOR_ALLOWED_PATTERNS = [
