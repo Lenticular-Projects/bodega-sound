@@ -1,0 +1,474 @@
+"use server";
+
+import { z } from "zod";
+import { prisma } from "@/server/db";
+import { revalidatePath } from "next/cache";
+import { Resend } from "resend";
+
+const getResend = () => {
+  const key = process.env.RESEND_API_KEY;
+  if (!key) return null;
+  return new Resend(key);
+};
+
+// Event Schema
+const eventSchema = z.object({
+  title: z.string().min(1, "Title is required"),
+  description: z.string().optional(),
+  eventDate: z.string().min(1, "Date is required"),
+  location: z.string().min(1, "Location is required"),
+  locationUrl: z.string().optional(),
+  flyerImage: z.string().optional(),
+  capacity: z.coerce.number().int().positive().optional(),
+  ticketPrice: z.string().optional(),
+  currency: z.string().default("PHP"),
+  collectInstagram: z.boolean().default(false),
+  collectPhone: z.boolean().default(false),
+  allowPlusOnes: z.boolean().default(false),
+  showGuestList: z.boolean().default(false),
+});
+
+// RSVP Schema
+const rsvpSchema = z.object({
+  eventId: z.string(),
+  name: z.string().min(1, "Name is required"),
+  email: z.string().email("Valid email required"),
+  phone: z.string().optional(),
+  instagram: z.string().optional(),
+  status: z.enum(["GOING", "MAYBE", "NOT_GOING"]),
+  plusOnes: z.coerce.number().int().min(0).max(10).default(0),
+  plusOneNames: z.string().optional(),
+  referralSource: z.string().default("DIRECT"),
+});
+
+// Generate unique QR code string
+function generateQRCode(): string {
+  return `qr_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
+}
+
+// Create Event
+export async function createEvent(formData: FormData) {
+  try {
+    const rawData = {
+      title: formData.get("title") as string,
+      description: formData.get("description") as string,
+      eventDate: formData.get("eventDate") as string,
+      location: formData.get("location") as string,
+      locationUrl: formData.get("locationUrl") as string,
+      flyerImage: formData.get("flyerImage") as string,
+      capacity: formData.get("capacity") as string,
+      ticketPrice: formData.get("ticketPrice") as string,
+      currency: formData.get("currency") as string,
+      collectInstagram: formData.get("collectInstagram") === "on",
+      collectPhone: formData.get("collectPhone") === "on",
+      allowPlusOnes: formData.get("allowPlusOnes") === "on",
+      showGuestList: formData.get("showGuestList") === "on",
+    };
+
+    const validatedData = eventSchema.parse({
+      ...rawData,
+      capacity: rawData.capacity ? parseInt(rawData.capacity) : undefined,
+    });
+
+    const event = await prisma.event.create({
+      data: {
+        ...validatedData,
+        eventDate: new Date(validatedData.eventDate),
+        status: "PUBLISHED",
+      },
+    });
+
+    revalidatePath("/admin/events");
+    return { success: true, eventId: event.id };
+  } catch (error) {
+    console.error("Create event error:", error);
+    if (error instanceof z.ZodError) {
+      return { success: false, error: error.issues[0].message };
+    }
+    return { success: false, error: "Failed to create event" };
+  }
+}
+
+// Update Event
+export async function updateEvent(eventId: string, formData: FormData) {
+  try {
+    const rawData = {
+      title: formData.get("title") as string,
+      description: formData.get("description") as string,
+      eventDate: formData.get("eventDate") as string,
+      location: formData.get("location") as string,
+      locationUrl: formData.get("locationUrl") as string,
+      flyerImage: formData.get("flyerImage") as string,
+      capacity: formData.get("capacity") as string,
+      ticketPrice: formData.get("ticketPrice") as string,
+      currency: formData.get("currency") as string,
+      collectInstagram: formData.get("collectInstagram") === "on",
+      collectPhone: formData.get("collectPhone") === "on",
+      allowPlusOnes: formData.get("allowPlusOnes") === "on",
+      showGuestList: formData.get("showGuestList") === "on",
+    };
+
+    const validatedData = eventSchema.parse({
+      ...rawData,
+      capacity: rawData.capacity ? parseInt(rawData.capacity) : undefined,
+    });
+
+    await prisma.event.update({
+      where: { id: eventId },
+      data: {
+        ...validatedData,
+        eventDate: new Date(validatedData.eventDate),
+      },
+    });
+
+    revalidatePath("/admin/events");
+    revalidatePath(`/admin/events/${eventId}`);
+    return { success: true };
+  } catch (error) {
+    console.error("Update event error:", error);
+    if (error instanceof z.ZodError) {
+      return { success: false, error: error.issues[0].message };
+    }
+    return { success: false, error: "Failed to update event" };
+  }
+}
+
+// Delete Event
+export async function deleteEvent(eventId: string) {
+  try {
+    await prisma.event.delete({ where: { id: eventId } });
+    revalidatePath("/admin/events");
+    return { success: true };
+  } catch (error) {
+    console.error("Delete event error:", error);
+    return { success: false, error: "Failed to delete event" };
+  }
+}
+
+// Submit RSVP
+export async function submitRSVP(formData: FormData) {
+  try {
+    const str = (key: string): string => (formData.get(key) as string) || "";
+    const optStr = (key: string): string | undefined => {
+      const val = formData.get(key);
+      return val && typeof val === "string" && val.trim() ? val.trim() : undefined;
+    };
+
+    const validatedData = rsvpSchema.parse({
+      eventId: str("eventId"),
+      name: str("name"),
+      email: str("email"),
+      phone: optStr("phone"),
+      instagram: optStr("instagram"),
+      status: str("status"),
+      plusOnes: parseInt(str("plusOnes") || "0") || 0,
+      plusOneNames: optStr("plusOneNames"),
+      referralSource: optStr("referralSource") || "DIRECT",
+    });
+
+    // Check if event exists and is published
+    const event = await prisma.event.findFirst({
+      where: { id: validatedData.eventId, status: "PUBLISHED" },
+    });
+
+    if (!event) {
+      return { success: false, error: "Event not found or not available" };
+    }
+
+    // Check capacity if set
+    if (event.capacity) {
+      const currentRSVPs = await prisma.rSVP.count({
+        where: { eventId: event.id, status: { in: ["GOING", "MAYBE"] } },
+      });
+      
+      if (currentRSVPs >= event.capacity && validatedData.status === "GOING") {
+        return { success: false, error: "Event is at capacity" };
+      }
+    }
+
+    // Check for existing RSVP
+    const existingRSVP = await prisma.rSVP.findFirst({
+      where: { eventId: validatedData.eventId, email: validatedData.email },
+    });
+
+    if (existingRSVP) {
+      // Update existing RSVP
+      const updated = await prisma.rSVP.update({
+        where: { id: existingRSVP.id },
+        data: {
+          ...validatedData,
+          plusOnes: validatedData.plusOnes || 0,
+        },
+      });
+      
+      revalidatePath(`/events/${event.id}`);
+      return { success: true, rsvpId: updated.id, qrCode: updated.qrCode, isUpdate: true };
+    }
+
+    // Create new RSVP with QR code
+    const qrCode = generateQRCode();
+    const rsvp = await prisma.rSVP.create({
+      data: {
+        ...validatedData,
+        plusOnes: validatedData.plusOnes || 0,
+        qrCode,
+      },
+    });
+
+    // Send confirmation email if Resend is configured
+    const resend = getResend();
+    if (resend) {
+      try {
+        await resend.emails.send({
+          from: "Bodega Sound <hello@bodegasound.com>",
+          to: validatedData.email,
+          subject: `You're on the list! ${event.title}`,
+          text: `Hi ${validatedData.name},\n\nYou're confirmed for ${event.title}!\n\n📅 ${new Date(event.eventDate).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}\n📍 ${event.location}\n\nYour QR code for check-in:\nhttps://bodegasound.com/api/qr/${rsvp.qrCode}\n\nSee you on the dance floor!\n\n— The Bodega Sound Team`,
+        });
+      } catch (emailError) {
+        console.error("Email send error:", emailError);
+        // Don't fail if email doesn't send
+      }
+    }
+
+    revalidatePath(`/events/${event.id}`);
+    return { success: true, rsvpId: rsvp.id, qrCode: rsvp.qrCode, isUpdate: false };
+  } catch (error) {
+    console.error("RSVP error:", error);
+    if (error instanceof z.ZodError) {
+      return { success: false, error: error.issues[0].message };
+    }
+    return { success: false, error: "Failed to submit RSVP" };
+  }
+}
+
+// Get Event by ID
+export async function getEvent(eventId: string) {
+  try {
+    const event = await prisma.event.findUnique({
+      where: { id: eventId },
+      include: {
+        _count: {
+          select: { rsvps: { where: { status: { in: ["GOING", "MAYBE"] } } } },
+        },
+      },
+    });
+
+    if (!event) return null;
+
+    return {
+      ...event,
+      rsvpCount: event._count.rsvps,
+    };
+  } catch (error) {
+    console.error("Get event error:", error);
+    return null;
+  }
+}
+
+// Get All Events (Admin)
+export async function getAllEvents() {
+  try {
+    const events = await prisma.event.findMany({
+      orderBy: { eventDate: "desc" },
+      include: {
+        _count: {
+          select: { rsvps: { where: { status: { in: ["GOING", "MAYBE"] } } } },
+        },
+      },
+    });
+
+    return events.map(event => ({
+      ...event,
+      rsvpCount: event._count.rsvps,
+    }));
+  } catch (error) {
+    console.error("Get events error:", error);
+    return [];
+  }
+}
+
+// Get Event RSVPs (Admin)
+export async function getEventRSVPs(eventId: string) {
+  try {
+    const rsvps = await prisma.rSVP.findMany({
+      where: { eventId },
+      orderBy: { createdAt: "desc" },
+    });
+
+    return rsvps;
+  } catch (error) {
+    console.error("Get RSVPs error:", error);
+    return [];
+  }
+}
+
+// Check In Guest
+export async function checkInGuest(rsvpId: string, checkedInBy?: string) {
+  try {
+    const rsvp = await prisma.rSVP.update({
+      where: { id: rsvpId },
+      data: {
+        checkedIn: true,
+        checkedInAt: new Date(),
+        checkedInBy: checkedInBy || null,
+      },
+    });
+
+    return { success: true, rsvp };
+  } catch (error) {
+    console.error("Check-in error:", error);
+    return { success: false, error: "Failed to check in guest" };
+  }
+}
+
+// Undo Check In
+export async function undoCheckIn(rsvpId: string) {
+  try {
+    const rsvp = await prisma.rSVP.update({
+      where: { id: rsvpId },
+      data: {
+        checkedIn: false,
+        checkedInAt: null,
+        checkedInBy: null,
+      },
+    });
+
+    return { success: true, rsvp };
+  } catch (error) {
+    console.error("Undo check-in error:", error);
+    return { success: false, error: "Failed to undo check-in" };
+  }
+}
+
+// Manual Add Guest (Admin)
+export async function manualAddGuest(eventId: string, formData: FormData) {
+  try {
+    const name = formData.get("name") as string;
+    const email = formData.get("email") as string;
+    const phone = formData.get("phone") as string;
+    const instagram = formData.get("instagram") as string;
+    const status = formData.get("status") as "GOING" | "MAYBE" | "NOT_GOING";
+    const plusOnes = parseInt(formData.get("plusOnes") as string) || 0;
+    const plusOneNames = formData.get("plusOneNames") as string;
+
+    if (!name || !email) {
+      return { success: false, error: "Name and email required" };
+    }
+
+    const qrCode = generateQRCode();
+    const rsvp = await prisma.rSVP.create({
+      data: {
+        eventId,
+        name,
+        email,
+        phone,
+        instagram,
+        status: status || "GOING",
+        plusOnes,
+        plusOneNames,
+        referralSource: "MANUAL_ADD",
+        qrCode,
+      },
+    });
+
+    revalidatePath(`/admin/events/${eventId}`);
+    return { success: true, rsvpId: rsvp.id };
+  } catch (error) {
+    console.error("Manual add error:", error);
+    return { success: false, error: "Failed to add guest" };
+  }
+}
+
+// Check In by QR Code (used by QR scan redirect)
+export async function checkInByQRCode(qrCode: string): Promise<{
+  success: boolean;
+  guestName?: string;
+  eventId?: string;
+  error?: string;
+}> {
+  try {
+    const rsvp = await prisma.rSVP.findUnique({
+      where: { qrCode },
+      include: { event: true },
+    });
+
+    if (!rsvp) {
+      return { success: false, error: "QR code not found" };
+    }
+
+    if (rsvp.checkedIn) {
+      return {
+        success: false,
+        error: `${rsvp.name} is already checked in`,
+        guestName: rsvp.name,
+        eventId: rsvp.eventId,
+      };
+    }
+
+    await prisma.rSVP.update({
+      where: { id: rsvp.id },
+      data: {
+        checkedIn: true,
+        checkedInAt: new Date(),
+        checkedInBy: "QR_SCAN",
+      },
+    });
+
+    return {
+      success: true,
+      guestName: rsvp.name,
+      eventId: rsvp.eventId,
+    };
+  } catch (error) {
+    console.error("QR check-in error:", error);
+    return { success: false, error: "Failed to process check-in" };
+  }
+}
+
+// Export RSVPs to CSV
+export async function exportRSVPsToCSV(eventId: string) {
+  try {
+    const rsvps = await prisma.rSVP.findMany({
+      where: { eventId },
+      orderBy: { createdAt: "desc" },
+    });
+
+    const event = await prisma.event.findUnique({ where: { id: eventId } });
+
+    const headers = [
+      "Name",
+      "Email",
+      "Phone",
+      "Instagram",
+      "Status",
+      "Plus Ones",
+      "Plus One Names",
+      "Referral Source",
+      "Checked In",
+      "Checked In At",
+      "Registration Date",
+    ];
+
+    const rows = rsvps.map((rsvp) => [
+      rsvp.name,
+      rsvp.email,
+      rsvp.phone || "",
+      rsvp.instagram || "",
+      rsvp.status,
+      rsvp.plusOnes.toString(),
+      rsvp.plusOneNames || "",
+      rsvp.referralSource,
+      rsvp.checkedIn ? "Yes" : "No",
+      rsvp.checkedInAt ? rsvp.checkedInAt.toISOString() : "",
+      rsvp.createdAt.toISOString(),
+    ]);
+
+    const csv = [headers.join(","), ...rows.map((row) => row.map((cell) => `"${cell.replace(/"/g, '""')}"`).join(","))].join("\n");
+
+    return { success: true, csv, eventTitle: event?.title || "Event" };
+  } catch (error) {
+    console.error("Export error:", error);
+    return { success: false, error: "Failed to export" };
+  }
+}

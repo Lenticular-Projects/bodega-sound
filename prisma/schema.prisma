@@ -43,11 +43,85 @@ model ContactMessage {
 }
 
 model Subscriber {
-  id        String   @id @default(cuid())
+  id String @id @default(cuid())
   createdAt DateTime @default(now())
-  email     String   @unique
-  phone     String?
-  name      String?
-  source    String?  // e.g., 'FOOTER', 'MODAL', 'ORDER'
+  email String @unique
+  phone String?
+  name String?
+  source String? // e.g., 'FOOTER', 'MODAL', 'ORDER'
+}
+
+// RSVP System Models
+model Event {
+  id                String   @id @default(cuid())
+  title             String
+  description       String?
+  eventDate         DateTime
+  location          String
+  locationUrl       String?
+  flyerImage        String?
+  
+  // Capacity & Pricing
+  capacity          Int?
+  ticketPrice       String?  // Store as string to avoid decimal issues
+  currency          String   @default("PHP")
+  
+  // Status: DRAFT, PUBLISHED, CLOSED, COMPLETED
+  status            String   @default("DRAFT")
+  
+  // Collection Settings
+  collectInstagram  Boolean  @default(false)
+  collectPhone      Boolean  @default(false)
+  allowPlusOnes     Boolean  @default(false)
+  showGuestList     Boolean  @default(false)
+  
+  // Relationships
+  rsvps             RSVP[]
+  
+  // Timestamps
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  @@index([status])
+  @@index([eventDate])
+}
+
+model RSVP {
+  id              String   @id @default(cuid())
+  eventId         String
+  event           Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  
+  // Guest Information
+  name            String
+  email           String
+  phone           String?
+  instagram       String?
+  tiktok          String?
+  
+  // RSVP Details: GOING, MAYBE, NOT_GOING
+  status          String   @default("GOING")
+  plusOnes        Int      @default(0)
+  plusOneNames    String?
+  
+  // Custom Answers (JSON string)
+  customAnswers   String?
+  
+  // Tracking & Referral
+  referralSource  String   @default("DIRECT")
+  qrCode          String   @unique
+  
+  // Check-in Status
+  checkedIn       Boolean  @default(false)
+  checkedInAt     DateTime?
+  checkedInBy     String?
+  
+  // Timestamps
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  @@index([eventId])
+  @@index([email])
+  @@index([qrCode])
+  @@index([checkedIn])
 }
 

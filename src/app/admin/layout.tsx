@@ -42,31 +42,37 @@ export default async function AdminLayout({
                     <p className="text-[10px] font-mono text-zinc-600 mt-2 uppercase tracking-[0.2em]">Internal Hub</p>
                 </div>
 
-                <nav className="flex-1 px-4 space-y-1">
-                    <Link
-                        href="/admin/orders"
-                        className="flex items-center gap-3 px-4 py-3 text-sm font-bold uppercase tracking-widest text-zinc-400 hover:text-white hover:bg-zinc-900/50 rounded-sm transition-all"
-                    >
-                        Orders
-                    </Link>
-                    <Link
-                        href="/admin/subscribers"
-                        className="flex items-center gap-3 px-4 py-3 text-sm font-bold uppercase tracking-widest text-zinc-400 hover:text-white hover:bg-zinc-900/50 rounded-sm transition-all"
-                    >
-                        Subscribers
-                    </Link>
-                    <Link
-                        href="/admin/messages"
-                        className="flex items-center justify-between px-4 py-3 text-sm font-bold uppercase tracking-widest text-zinc-400 hover:text-white hover:bg-zinc-900/50 rounded-sm transition-all"
-                    >
-                        <span>Messages</span>
-                        {unreadCount > 0 && (
-                            <span className="bg-bodega-yellow text-black text-[10px] font-bold px-2 py-0.5 rounded-sm min-w-[20px] text-center">
-                                {unreadCount}
-                            </span>
-                        )}
-                    </Link>
-                </nav>
+<nav className="flex-1 px-4 space-y-1">
+      <Link
+        href="/admin/events"
+        className="flex items-center gap-3 px-4 py-3 text-sm font-bold uppercase tracking-widest text-zinc-400 hover:text-white hover:bg-zinc-900/50 rounded-sm transition-all"
+      >
+        Events
+      </Link>
+      <Link
+        href="/admin/orders"
+        className="flex items-center gap-3 px-4 py-3 text-sm font-bold uppercase tracking-widest text-zinc-400 hover:text-white hover:bg-zinc-900/50 rounded-sm transition-all"
+      >
+        Orders
+      </Link>
+      <Link
+        href="/admin/subscribers"
+        className="flex items-center gap-3 px-4 py-3 text-sm font-bold uppercase tracking-widest text-zinc-400 hover:text-white hover:bg-zinc-900/50 rounded-sm transition-all"
+      >
+        Subscribers
+      </Link>
+      <Link
+        href="/admin/messages"
+        className="flex items-center justify-between px-4 py-3 text-sm font-bold uppercase tracking-widest text-zinc-400 hover:text-white hover:bg-zinc-900/50 rounded-sm transition-all"
+      >
+        <span>Messages</span>
+        {unreadCount > 0 && (
+          <span className="bg-bodega-yellow text-black text-[10px] font-bold px-2 py-0.5 rounded-sm min-w-[20px] text-center">
+            {unreadCount}
+          </span>
+        )}
+      </Link>
+    </nav>
 
                 <div className="p-4 border-t border-zinc-900">
                     <LogoutButton />
