@@ -226,8 +226,8 @@ export default function EventManagePage() {
           >
             ← Back to Events
           </Link>
-          <div className="flex items-center gap-3">
-            <h2 className="text-4xl font-display tracking-tight text-white uppercase">
+          <div className="flex items-center gap-3 flex-wrap">
+            <h2 className="text-2xl md:text-4xl font-display tracking-tight text-white uppercase">
               {event.title}
             </h2>
             <span
@@ -255,9 +255,9 @@ export default function EventManagePage() {
       </div>
 
       {/* Stats Bar */}
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+      <div className="grid grid-cols-3 md:grid-cols-5 gap-2 md:gap-4">
         {[
-          { label: "Total RSVPs", value: rsvps.length },
+          { label: "Total", value: rsvps.length },
           { label: "Going", value: goingCount },
           { label: "Maybe", value: maybeCount },
           { label: "Not Going", value: notGoingCount },
@@ -265,10 +265,10 @@ export default function EventManagePage() {
         ].map((stat) => (
           <div
             key={stat.label}
-            className="bg-zinc-900/20 border border-zinc-800 rounded-sm p-4 text-center"
+            className="bg-zinc-900/20 border border-zinc-800 rounded-sm p-3 md:p-4 text-center"
           >
-            <p className="text-2xl font-display text-white">{stat.value}</p>
-            <p className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest mt-1">
+            <p className="text-xl md:text-2xl font-display text-white">{stat.value}</p>
+            <p className="text-[9px] md:text-[10px] font-mono text-zinc-500 uppercase tracking-widest mt-1">
               {stat.label}
             </p>
           </div>
@@ -276,12 +276,12 @@ export default function EventManagePage() {
       </div>
 
       {/* Tabs */}
-      <div className="border-b border-zinc-800 flex gap-1">
+      <div className="border-b border-zinc-800 flex gap-1 overflow-x-auto">
         {tabs.map((tab) => (
           <button
             key={tab.key}
             onClick={() => setActiveTab(tab.key)}
-            className={`px-6 py-3 text-sm font-mono uppercase tracking-widest transition-colors ${
+            className={`px-4 md:px-6 py-3 text-xs md:text-sm font-mono uppercase tracking-widest transition-colors whitespace-nowrap shrink-0 ${
               activeTab === tab.key
                 ? "text-bodega-yellow border-b-2 border-bodega-yellow"
                 : "text-zinc-500 hover:text-zinc-300"
@@ -428,62 +428,105 @@ export default function EventManagePage() {
       {activeTab === "guests" && (
         <div className="space-y-4">
           {/* Search & Filter Bar */}
-          <div className="flex flex-col md:flex-row gap-4">
+          <div className="flex flex-col sm:flex-row gap-3">
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search by name or email..."
-              className="flex-1 px-4 py-3 bg-zinc-900 border-2 border-zinc-800 rounded-sm text-white placeholder:text-zinc-600 focus:border-bodega-yellow focus:outline-none transition-colors"
+              className="flex-1 px-4 py-3 bg-zinc-900 border-2 border-zinc-800 rounded-sm text-white placeholder:text-zinc-600 focus:border-bodega-yellow focus:outline-none transition-colors text-base"
             />
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="px-4 py-3 bg-zinc-900 border-2 border-zinc-800 rounded-sm text-white focus:border-bodega-yellow focus:outline-none transition-colors"
-            >
-              <option value="ALL">All</option>
-              <option value="GOING">Going</option>
-              <option value="MAYBE">Maybe</option>
-              <option value="NOT_GOING">Not Going</option>
-              <option value="CHECKED_IN">Checked In</option>
-              <option value="NOT_CHECKED_IN">Not Checked In</option>
-            </select>
-            <Button
-              onClick={handleExportCSV}
-              variant="outline"
-              className="border-zinc-700 bg-transparent text-zinc-300 hover:bg-zinc-800 uppercase tracking-widest text-xs"
-            >
-              Export CSV
-            </Button>
+            <div className="flex gap-2">
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                className="flex-1 sm:flex-none px-3 py-3 bg-zinc-900 border-2 border-zinc-800 rounded-sm text-white focus:border-bodega-yellow focus:outline-none transition-colors text-sm"
+              >
+                <option value="ALL">All</option>
+                <option value="GOING">Going</option>
+                <option value="MAYBE">Maybe</option>
+                <option value="NOT_GOING">Not Going</option>
+                <option value="CHECKED_IN">Checked In</option>
+                <option value="NOT_CHECKED_IN">Not Checked In</option>
+              </select>
+              <Button
+                onClick={handleExportCSV}
+                variant="outline"
+                className="border-zinc-700 bg-transparent text-zinc-300 hover:bg-zinc-800 uppercase tracking-widest text-xs shrink-0"
+              >
+                CSV
+              </Button>
+            </div>
           </div>
 
-          {/* Guest Table */}
-          <div className="bg-zinc-900/20 border border-zinc-800 rounded-sm overflow-hidden">
+          {/* Mobile: Card layout */}
+          <div className="md:hidden space-y-2">
+            {filteredRSVPs.length === 0 ? (
+              <p className="text-zinc-600 text-center py-12 font-mono text-xs italic">No guests found</p>
+            ) : (
+              filteredRSVPs.map((rsvp) => (
+                <div
+                  key={rsvp.id}
+                  className={`border rounded-sm p-3 ${
+                    rsvp.checkedIn
+                      ? "bg-green-500/5 border-green-500/30"
+                      : "bg-zinc-900/20 border-zinc-800"
+                  }`}
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0 flex-1">
+                      <p className="text-white text-sm font-bold truncate">{rsvp.name}</p>
+                      <p className="text-zinc-500 text-xs truncate">{rsvp.email}</p>
+                      {rsvp.phone && <p className="text-zinc-600 text-xs">{rsvp.phone}</p>}
+                    </div>
+                    <button
+                      onClick={() => handleToggleCheckIn(rsvp.id, rsvp.checkedIn, rsvp.name)}
+                      className={`px-3 py-1.5 rounded-sm text-xs font-mono uppercase tracking-wider transition-colors shrink-0 ${
+                        rsvp.checkedIn
+                          ? "bg-green-500/20 text-green-400 border border-green-500/30"
+                          : "bg-bodega-yellow text-black"
+                      }`}
+                    >
+                      {rsvp.checkedIn ? "Checked In" : "Check In"}
+                    </button>
+                  </div>
+                  <div className="flex items-center gap-2 mt-2">
+                    <span
+                      className={`text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-sm ${
+                        rsvp.status === "GOING"
+                          ? "bg-green-500/20 text-green-400"
+                          : rsvp.status === "MAYBE"
+                          ? "bg-yellow-500/20 text-yellow-400"
+                          : "bg-red-500/20 text-red-400"
+                      }`}
+                    >
+                      {rsvp.status}
+                    </span>
+                    {rsvp.plusOnes > 0 && (
+                      <span className="text-[10px] text-zinc-500 font-mono">+{rsvp.plusOnes}</span>
+                    )}
+                    <span className="text-[10px] text-zinc-600 font-mono ml-auto">
+                      {format(new Date(rsvp.createdAt), "MMM d")}
+                    </span>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+
+          {/* Desktop: Table layout */}
+          <div className="hidden md:block bg-zinc-900/20 border border-zinc-800 rounded-sm overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-zinc-800">
-                    <th className="text-left px-4 py-3 text-[10px] font-mono text-zinc-500 uppercase tracking-widest">
-                      Name
-                    </th>
-                    <th className="text-left px-4 py-3 text-[10px] font-mono text-zinc-500 uppercase tracking-widest">
-                      Email
-                    </th>
-                    <th className="text-left px-4 py-3 text-[10px] font-mono text-zinc-500 uppercase tracking-widest">
-                      Status
-                    </th>
-                    <th className="text-left px-4 py-3 text-[10px] font-mono text-zinc-500 uppercase tracking-widest">
-                      +1s
-                    </th>
-                    <th className="text-left px-4 py-3 text-[10px] font-mono text-zinc-500 uppercase tracking-widest">
-                      Source
-                    </th>
-                    <th className="text-left px-4 py-3 text-[10px] font-mono text-zinc-500 uppercase tracking-widest">
-                      Checked In
-                    </th>
-                    <th className="text-left px-4 py-3 text-[10px] font-mono text-zinc-500 uppercase tracking-widest">
-                      Registered
-                    </th>
+                    <th className="text-left px-4 py-3 text-[10px] font-mono text-zinc-500 uppercase tracking-widest">Name</th>
+                    <th className="text-left px-4 py-3 text-[10px] font-mono text-zinc-500 uppercase tracking-widest">Email</th>
+                    <th className="text-left px-4 py-3 text-[10px] font-mono text-zinc-500 uppercase tracking-widest">Status</th>
+                    <th className="text-left px-4 py-3 text-[10px] font-mono text-zinc-500 uppercase tracking-widest">+1s</th>
+                    <th className="text-left px-4 py-3 text-[10px] font-mono text-zinc-500 uppercase tracking-widest">Source</th>
+                    <th className="text-left px-4 py-3 text-[10px] font-mono text-zinc-500 uppercase tracking-widest">Checked In</th>
+                    <th className="text-left px-4 py-3 text-[10px] font-mono text-zinc-500 uppercase tracking-widest">Registered</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -495,39 +538,24 @@ export default function EventManagePage() {
                     </tr>
                   ) : (
                     filteredRSVPs.map((rsvp) => (
-                      <tr
-                        key={rsvp.id}
-                        className="border-b border-zinc-800/50 hover:bg-zinc-900/30 transition-colors"
-                      >
+                      <tr key={rsvp.id} className="border-b border-zinc-800/50 hover:bg-zinc-900/30 transition-colors">
                         <td className="px-4 py-3">
                           <p className="text-white text-sm font-bold">{rsvp.name}</p>
-                          {rsvp.phone && (
-                            <p className="text-zinc-600 text-xs">{rsvp.phone}</p>
-                          )}
-                          {rsvp.instagram && (
-                            <p className="text-zinc-600 text-xs">@{rsvp.instagram}</p>
-                          )}
+                          {rsvp.phone && <p className="text-zinc-600 text-xs">{rsvp.phone}</p>}
+                          {rsvp.instagram && <p className="text-zinc-600 text-xs">@{rsvp.instagram}</p>}
                         </td>
                         <td className="px-4 py-3 text-zinc-400 text-sm">{rsvp.email}</td>
                         <td className="px-4 py-3">
-                          <span
-                            className={`text-[10px] uppercase tracking-wider px-2 py-1 rounded-sm ${
-                              rsvp.status === "GOING"
-                                ? "bg-green-500/20 text-green-400"
-                                : rsvp.status === "MAYBE"
-                                ? "bg-yellow-500/20 text-yellow-400"
-                                : "bg-red-500/20 text-red-400"
-                            }`}
-                          >
-                            {rsvp.status}
-                          </span>
+                          <span className={`text-[10px] uppercase tracking-wider px-2 py-1 rounded-sm ${
+                            rsvp.status === "GOING" ? "bg-green-500/20 text-green-400"
+                              : rsvp.status === "MAYBE" ? "bg-yellow-500/20 text-yellow-400"
+                              : "bg-red-500/20 text-red-400"
+                          }`}>{rsvp.status}</span>
                         </td>
                         <td className="px-4 py-3 text-zinc-400 text-sm font-mono">
                           {rsvp.plusOnes > 0 ? `+${rsvp.plusOnes}` : "-"}
                         </td>
-                        <td className="px-4 py-3 text-zinc-500 text-xs font-mono uppercase">
-                          {rsvp.referralSource}
-                        </td>
+                        <td className="px-4 py-3 text-zinc-500 text-xs font-mono uppercase">{rsvp.referralSource}</td>
                         <td className="px-4 py-3">
                           <button
                             onClick={() => handleToggleCheckIn(rsvp.id, rsvp.checkedIn, rsvp.name)}
