@@ -71,7 +71,7 @@ export default async function DoorHubPage() {
                       {event._count.rsvps} / {goingHeadcount} checked in
                     </p>
                   </div>
-                  <Link href={`/admin/events/${event.id}/checkin`}>
+                  <Link href={`/admin/events/${event.slug}/checkin`}>
                     <Button className="bg-bodega-yellow text-black hover:bg-bodega-yellow-light uppercase tracking-widest font-bold text-sm w-full sm:w-auto">
                       Check-In
                     </Button>

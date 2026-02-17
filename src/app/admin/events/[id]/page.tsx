@@ -5,7 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import { format } from "date-fns";
 import Link from "next/link";
 import {
-  getEvent,
+  getEventBySlugOrId,
   getEventRSVPs,
   manualAddGuest,
   exportRSVPsToCSV,
@@ -72,13 +72,16 @@ export default function EventManagePage() {
   const [addingGuest, setAddingGuest] = useState(false);
   const [selectedGuest, setSelectedGuest] = useState<RSVPData | null>(null);
 
+  // The URL param may be a slug or cuid — resolve the real event ID for data operations
+  const resolvedEventId = event?.id || eventId;
+
   const loadData = useCallback(async () => {
-    const [eventData, rsvpData] = await Promise.all([
-      getEvent(eventId),
-      getEventRSVPs(eventId),
-    ]);
-    if (eventData) setEvent(eventData);
-    setRsvps(rsvpData);
+    const eventData = await getEventBySlugOrId(eventId);
+    if (eventData) {
+      setEvent(eventData);
+      const rsvpData = await getEventRSVPs(eventData.id);
+      setRsvps(rsvpData);
+    }
     setLoading(false);
   }, [eventId]);
 
@@ -130,7 +133,7 @@ export default function EventManagePage() {
   }
 
   async function handleExportCSV(): Promise<void> {
-    const result = await exportRSVPsToCSV(eventId);
+    const result = await exportRSVPsToCSV(resolvedEventId);
     if (result.success && result.csv) {
       const blob = new Blob([result.csv], { type: "text/csv" });
       const url = URL.createObjectURL(blob);
@@ -147,7 +150,7 @@ export default function EventManagePage() {
 
   async function handleDeleteEvent(): Promise<void> {
     if (!confirm("Are you sure you want to delete this event? This cannot be undone.")) return;
-    const result = await deleteEvent(eventId);
+    const result = await deleteEvent(resolvedEventId);
     if (result.success) {
       toast.success("Event deleted");
       router.push("/admin/events");
@@ -176,7 +179,7 @@ export default function EventManagePage() {
     e.preventDefault();
     setAddingGuest(true);
     const formData = new FormData(e.currentTarget);
-    const result = await manualAddGuest(eventId, formData);
+    const result = await manualAddGuest(resolvedEventId, formData);
     setAddingGuest(false);
 
     if (result.success) {
@@ -206,7 +209,7 @@ export default function EventManagePage() {
 
     // We need to update the status separately since the schema doesn't include it
     // For now we use a direct approach
-    const result = await updateEvent(eventId, formData);
+    const result = await updateEvent(resolvedEventId, formData);
     if (result.success) {
       toast.success(`Event status updated`);
       loadData();
@@ -250,7 +253,7 @@ export default function EventManagePage() {
           </div>
         </div>
         <div className="flex gap-2">
-          <Link href={`/admin/events/${eventId}/checkin`}>
+          <Link href={`/admin/events/${event.slug || eventId}/checkin`}>
             <Button className="bg-bodega-yellow text-black hover:bg-bodega-yellow-light uppercase tracking-widest font-bold">
               Check-In Mode
             </Button>

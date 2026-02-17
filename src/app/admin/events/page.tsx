@@ -75,7 +75,7 @@ export default async function AdminEventsPage() {
                   </div>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
-                  <Link href={`/admin/events/${event.id}`}>
+                  <Link href={`/admin/events/${event.slug}`}>
                     <Button
                       variant="outline"
                       size="sm"
@@ -84,7 +84,7 @@ export default async function AdminEventsPage() {
                       Manage
                     </Button>
                   </Link>
-                  <Link href={`/admin/events/${event.id}/checkin`}>
+                  <Link href={`/admin/events/${event.slug}/checkin`}>
                     <Button
                       size="sm"
                       className="bg-bodega-yellow text-black hover:bg-bodega-yellow-light text-xs"

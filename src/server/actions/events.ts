@@ -445,6 +445,7 @@ export async function checkInByQRCode(qrCode: string): Promise<{
   success: boolean;
   guestName?: string;
   eventId?: string;
+  eventSlug?: string;
   error?: string;
 }> {
   try {
@@ -463,6 +464,7 @@ export async function checkInByQRCode(qrCode: string): Promise<{
         error: `${rsvp.name} is already checked in`,
         guestName: rsvp.name,
         eventId: rsvp.eventId,
+        eventSlug: rsvp.event.slug,
       };
     }
 
@@ -479,6 +481,7 @@ export async function checkInByQRCode(qrCode: string): Promise<{
       success: true,
       guestName: rsvp.name,
       eventId: rsvp.eventId,
+      eventSlug: rsvp.event.slug,
     };
   } catch (error) {
     console.error("QR check-in error:", error);

@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { Html5Qrcode } from "html5-qrcode";
-import { checkInGuest, undoCheckIn, getEventRSVPs } from "@/server/actions/events";
+import { checkInGuest, undoCheckIn, getEventRSVPs, getEventBySlugOrId } from "@/server/actions/events";
 import { Button } from "@/components/ui/button";
 import toast from "react-hot-toast";
 
@@ -24,7 +24,8 @@ interface RSVP {
 
 export default function CheckInPage() {
   const params = useParams();
-  const eventId = params.id as string;
+  const slugOrId = params.id as string;
+  const [resolvedEventId, setResolvedEventId] = useState<string>(slugOrId);
   const [rsvps, setRsvps] = useState<RSVP[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [isScanning, setIsScanning] = useState(false);
@@ -39,10 +40,19 @@ export default function CheckInPage() {
     rsvpsRef.current = rsvps;
   }, [rsvps]);
 
+  // Resolve slug to real event ID on mount
+  useEffect(() => {
+    async function resolve() {
+      const event = await getEventBySlugOrId(slugOrId);
+      if (event) setResolvedEventId(event.id);
+    }
+    resolve();
+  }, [slugOrId]);
+
   const loadRSVPs = useCallback(async () => {
-    const result = await getEventRSVPs(eventId);
+    const result = await getEventRSVPs(resolvedEventId);
     setRsvps(result);
-  }, [eventId]);
+  }, [resolvedEventId]);
 
   useEffect(() => {
     loadRSVPs();
@@ -174,7 +184,7 @@ export default function CheckInPage() {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
         <div>
           <Link
-            href={`/admin/events/${eventId}`}
+            href={`/admin/events/${slugOrId}`}
             className="text-zinc-600 font-mono text-xs uppercase tracking-widest hover:text-zinc-400 transition-colors mb-2 inline-block"
           >
             ← Back to Event

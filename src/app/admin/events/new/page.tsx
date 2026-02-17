@@ -62,7 +62,7 @@ export default function CreateEventPage() {
 
     if (result.success) {
       toast.success("Event created!");
-      router.push(`/admin/events/${result.eventId}`);
+      router.push(`/admin/events/${result.slug || result.eventId}`);
     } else {
       toast.error(result.error || "Failed to create event");
     }

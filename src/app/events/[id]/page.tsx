@@ -59,10 +59,11 @@ export default function EventRSVPPage() {
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (!event) return;
     setSubmitting(true);
 
     const formData = new FormData(e.currentTarget);
-    formData.set("eventId", eventId);
+    formData.set("eventId", event.id);
     formData.set("referralSource", "DIRECT");
 
     const result = await submitRSVP(formData);

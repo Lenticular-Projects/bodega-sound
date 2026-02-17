@@ -26,7 +26,7 @@ export default function CheckInRedirectPage() {
         toast.success(`Checked in: ${result.guestName}`);
         // Redirect to the event's check-in page after a moment
         setTimeout(() => {
-          router.push(`/admin/events/${result.eventId}/checkin`);
+          router.push(`/admin/events/${result.eventSlug || result.eventId}/checkin`);
         }, 2000);
       } else {
         setStatus("error");
