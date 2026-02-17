@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { fadeUp } from "@/lib/animations";
-import { submitRSVP, getEvent } from "@/server/actions/events";
+import { submitRSVP, getEventBySlugOrId } from "@/server/actions/events";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import toast from "react-hot-toast";
@@ -13,6 +13,7 @@ import Image from "next/image";
 interface EventData {
   id: string;
   title: string;
+  slug: string;
   description: string | null;
   eventDate: Date | string;
   location: string;
@@ -47,7 +48,7 @@ export default function EventRSVPPage() {
 
   useEffect(() => {
     async function loadEvent() {
-      const data = await getEvent(eventId);
+      const data = await getEventBySlugOrId(eventId);
       if (data) {
         setEvent(data);
       }

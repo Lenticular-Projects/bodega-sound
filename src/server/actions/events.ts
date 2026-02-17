@@ -46,6 +46,22 @@ function generateQRCode(): string {
   return `qr_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
 }
 
+// Generate a URL-friendly slug from a title
+async function generateSlug(title: string): Promise<string> {
+  const base = title
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "")
+    || `event-${Math.random().toString(36).substring(2, 8)}`;
+
+  // Check if slug already exists, append random suffix if so
+  const existing = await prisma.event.findUnique({ where: { slug: base } });
+  if (!existing) return base;
+
+  const suffix = Math.random().toString(36).substring(2, 6);
+  return `${base}-${suffix}`;
+}
+
 // Create Event
 export async function createEvent(formData: FormData) {
   try {
@@ -70,22 +86,25 @@ export async function createEvent(formData: FormData) {
       capacity: rawData.capacity ? parseInt(rawData.capacity) : undefined,
     });
 
+    const slug = await generateSlug(validatedData.title);
     const event = await prisma.event.create({
       data: {
         ...validatedData,
+        slug,
         eventDate: new Date(validatedData.eventDate),
         status: "PUBLISHED",
       },
     });
 
     revalidatePath("/admin/events");
-    return { success: true, eventId: event.id };
+    return { success: true, eventId: event.id, slug: event.slug };
   } catch (error) {
     console.error("Create event error:", error);
     if (error instanceof z.ZodError) {
       return { success: false, error: error.issues[0].message };
     }
-    return { success: false, error: "Failed to create event" };
+    const message = error instanceof Error ? error.message : "Failed to create event";
+    return { success: false, error: process.env.NODE_ENV === "development" ? message : "Failed to create event" };
   }
 }
 
@@ -175,13 +194,16 @@ export async function submitRSVP(formData: FormData) {
       return { success: false, error: "Event not found or not available" };
     }
 
-    // Check capacity if set
+    // Check capacity if set (count total headcount including plus-ones)
     if (event.capacity) {
-      const currentRSVPs = await prisma.rSVP.count({
+      const currentRSVPs = await prisma.rSVP.findMany({
         where: { eventId: event.id, status: { in: ["GOING", "MAYBE"] } },
+        select: { plusOnes: true },
       });
-      
-      if (currentRSVPs >= event.capacity && validatedData.status === "GOING") {
+      const currentHeadcount = currentRSVPs.reduce((sum, r) => sum + 1 + r.plusOnes, 0);
+      const incomingHeadcount = 1 + (validatedData.plusOnes || 0);
+
+      if (currentHeadcount + incomingHeadcount > event.capacity && validatedData.status === "GOING") {
         return { success: false, error: "Event is at capacity" };
       }
     }
@@ -266,11 +288,12 @@ export async function getEvent(eventId: string) {
   }
 }
 
-// Get All Events (Admin)
-export async function getAllEvents() {
+// Get Event by slug or ID (tries slug first, falls back to ID)
+export async function getEventBySlugOrId(slugOrId: string) {
   try {
-    const events = await prisma.event.findMany({
-      orderBy: { eventDate: "desc" },
+    // Try slug first
+    let event = await prisma.event.findUnique({
+      where: { slug: slugOrId },
       include: {
         _count: {
           select: { rsvps: { where: { status: { in: ["GOING", "MAYBE"] } } } },
@@ -278,9 +301,46 @@ export async function getAllEvents() {
       },
     });
 
-    return events.map(event => ({
+    // Fall back to ID lookup
+    if (!event) {
+      event = await prisma.event.findUnique({
+        where: { id: slugOrId },
+        include: {
+          _count: {
+            select: { rsvps: { where: { status: { in: ["GOING", "MAYBE"] } } } },
+          },
+        },
+      });
+    }
+
+    if (!event) return null;
+
+    return {
       ...event,
       rsvpCount: event._count.rsvps,
+    };
+  } catch (error) {
+    console.error("Get event by slug/id error:", error);
+    return null;
+  }
+}
+
+// Get All Events (Admin)
+export async function getAllEvents() {
+  try {
+    const events = await prisma.event.findMany({
+      orderBy: { eventDate: "desc" },
+      include: {
+        rsvps: {
+          where: { status: { in: ["GOING", "MAYBE"] } },
+          select: { plusOnes: true },
+        },
+      },
+    });
+
+    return events.map(event => ({
+      ...event,
+      rsvpCount: event.rsvps.reduce((sum, r) => sum + 1 + r.plusOnes, 0),
     }));
   } catch (error) {
     console.error("Get events error:", error);
@@ -423,6 +483,17 @@ export async function checkInByQRCode(qrCode: string): Promise<{
   } catch (error) {
     console.error("QR check-in error:", error);
     return { success: false, error: "Failed to process check-in" };
+  }
+}
+
+// Delete RSVP
+export async function deleteRSVP(rsvpId: string): Promise<{ success: boolean; error?: string }> {
+  try {
+    await prisma.rSVP.delete({ where: { id: rsvpId } });
+    return { success: true };
+  } catch (error) {
+    console.error("Delete RSVP error:", error);
+    return { success: false, error: "Failed to delete guest" };
   }
 }
 

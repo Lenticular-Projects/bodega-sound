@@ -12,11 +12,43 @@ export default async function AdminLayout({
 }) {
     const headersList = await headers();
     const pathname = headersList.get("x-nextjs-path") ?? "";
+    const role = headersList.get("x-admin-role") ?? "admin";
     const isLoginPage = pathname?.includes("/admin/login") || pathname === "/admin";
+    const isDoorWorker = role === "door";
 
     // Login page gets a clean layout with no sidebar
     if (isLoginPage) {
         return <>{children}</>;
+    }
+
+    // Door workers on /admin/door get a minimal layout (no sidebar)
+    if (isDoorWorker) {
+        return (
+            <div className="min-h-screen bg-[#0A0A08] text-zinc-100">
+                <header className="h-14 md:h-20 border-b border-zinc-900 flex items-center justify-between px-4 md:px-10 bg-black/20 backdrop-blur-xl sticky top-0 z-10">
+                    <div className="flex items-center gap-3">
+                        <Image
+                            src="/images/logo/bdg-yellow.png"
+                            alt="Bodega Sound"
+                            width={120}
+                            height={30}
+                            className="h-7 md:h-10 w-auto object-contain"
+                        />
+                        <span className="text-[10px] font-mono text-zinc-600 uppercase tracking-widest hidden sm:inline">Door Check-In</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-2">
+                            <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                            <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest hidden sm:inline">Online</span>
+                        </div>
+                        <LogoutButton />
+                    </div>
+                </header>
+                <div className="p-4 md:p-10">
+                    {children}
+                </div>
+            </div>
+        );
     }
 
     let unreadCount = 0;

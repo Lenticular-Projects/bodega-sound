@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { createEvent } from "@/server/actions/events";
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,45 @@ import toast from "react-hot-toast";
 export default function CreateEventPage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const [flyerUrl, setFlyerUrl] = useState("");
+  const [flyerPreview, setFlyerPreview] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const [dragOver, setDragOver] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const uploadFile = useCallback(async (file: File) => {
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("File too large. Maximum 5MB.");
+      return;
+    }
+    if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
+      toast.error("Invalid file type. Use JPEG, PNG, or WebP.");
+      return;
+    }
+
+    setUploading(true);
+    setFlyerPreview(URL.createObjectURL(file));
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const res = await fetch("/api/upload", { method: "POST", body: formData });
+      const data = await res.json();
+      if (data.url) {
+        setFlyerUrl(data.url);
+        toast.success("Flyer uploaded!");
+      } else {
+        toast.error(data.error || "Upload failed");
+        setFlyerPreview(null);
+      }
+    } catch {
+      toast.error("Upload failed");
+      setFlyerPreview(null);
+    } finally {
+      setUploading(false);
+    }
+  }, []);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -132,17 +171,70 @@ export default function CreateEventPage() {
 
           <div className="space-y-2">
             <label className="block text-sm font-mono text-zinc-400 uppercase tracking-wider">
-              Flyer Image URL
+              Flyer Image
             </label>
+            <input type="hidden" name="flyerImage" value={flyerUrl} />
+            {flyerPreview ? (
+              <div className="relative">
+                <img
+                  src={flyerPreview}
+                  alt="Flyer preview"
+                  className="w-full max-h-64 object-contain bg-zinc-900 border-2 border-zinc-800 rounded-sm"
+                />
+                {uploading && (
+                  <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+                    <p className="text-bodega-yellow font-mono text-sm uppercase tracking-widest">
+                      Uploading...
+                    </p>
+                  </div>
+                )}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setFlyerPreview(null);
+                    setFlyerUrl("");
+                    if (fileInputRef.current) fileInputRef.current.value = "";
+                  }}
+                  className="absolute top-2 right-2 bg-black/70 text-white px-2 py-1 rounded-sm text-xs font-mono hover:bg-red-900/70 transition-colors"
+                >
+                  Remove
+                </button>
+              </div>
+            ) : (
+              <div
+                onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+                onDragLeave={() => setDragOver(false)}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  setDragOver(false);
+                  const file = e.dataTransfer.files[0];
+                  if (file) uploadFile(file);
+                }}
+                onClick={() => fileInputRef.current?.click()}
+                className={`w-full border-2 border-dashed rounded-sm p-8 text-center cursor-pointer transition-colors ${
+                  dragOver
+                    ? "border-bodega-yellow bg-bodega-yellow/5"
+                    : "border-zinc-700 hover:border-zinc-500"
+                }`}
+              >
+                <p className="text-zinc-400 text-sm mb-1">
+                  Drop flyer image here or click to browse
+                </p>
+                <p className="text-zinc-600 text-xs font-mono">
+                  JPEG, PNG, WebP — max 5MB — 1080×1350 or 1080×1920 recommended
+                </p>
+              </div>
+            )}
             <input
-              type="url"
-              name="flyerImage"
-              placeholder="https://... (Vercel Blob URL)"
-              className="w-full px-4 py-3 bg-zinc-900 border-2 border-zinc-800 rounded-sm text-white placeholder:text-zinc-600 focus:border-bodega-yellow focus:outline-none transition-colors"
+              ref={fileInputRef}
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              className="hidden"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) uploadFile(file);
+              }}
             />
-            <p className="text-xs text-zinc-600">
-              Upload to Vercel Blob first, then paste URL here
-            </p>
           </div>
         </div>
 

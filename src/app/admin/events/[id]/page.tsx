@@ -13,6 +13,7 @@ import {
   updateEvent,
   checkInGuest,
   undoCheckIn,
+  deleteRSVP,
 } from "@/server/actions/events";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
@@ -22,6 +23,7 @@ import toast from "react-hot-toast";
 interface EventData {
   id: string;
   title: string;
+  slug: string;
   description: string | null;
   eventDate: Date | string;
   location: string;
@@ -68,6 +70,7 @@ export default function EventManagePage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
   const [addingGuest, setAddingGuest] = useState(false);
+  const [selectedGuest, setSelectedGuest] = useState<RSVPData | null>(null);
 
   const loadData = useCallback(async () => {
     const [eventData, rsvpData] = await Promise.all([
@@ -101,10 +104,11 @@ export default function EventManagePage() {
     );
   }
 
-  const goingCount = rsvps.filter((r) => r.status === "GOING").length;
-  const maybeCount = rsvps.filter((r) => r.status === "MAYBE").length;
-  const notGoingCount = rsvps.filter((r) => r.status === "NOT_GOING").length;
-  const checkedInCount = rsvps.filter((r) => r.checkedIn).length;
+  const totalHeadcount = rsvps.reduce((sum, r) => sum + 1 + r.plusOnes, 0);
+  const goingCount = rsvps.filter((r) => r.status === "GOING").reduce((sum, r) => sum + 1 + r.plusOnes, 0);
+  const maybeCount = rsvps.filter((r) => r.status === "MAYBE").reduce((sum, r) => sum + 1 + r.plusOnes, 0);
+  const notGoingCount = rsvps.filter((r) => r.status === "NOT_GOING").reduce((sum, r) => sum + 1 + r.plusOnes, 0);
+  const checkedInCount = rsvps.filter((r) => r.checkedIn).reduce((sum, r) => sum + 1 + r.plusOnes, 0);
 
   const filteredRSVPs = rsvps.filter((rsvp) => {
     const matchesSearch =
@@ -118,7 +122,7 @@ export default function EventManagePage() {
     return matchesSearch && matchesFilter;
   });
 
-  const rsvpLink = `${typeof window !== "undefined" ? window.location.origin : ""}/events/${eventId}`;
+  const rsvpLink = `${typeof window !== "undefined" ? window.location.origin : ""}/events/${event.slug || event.id}`;
 
   async function handleCopyLink(): Promise<void> {
     await navigator.clipboard.writeText(rsvpLink);
@@ -257,21 +261,29 @@ export default function EventManagePage() {
       {/* Stats Bar */}
       <div className="grid grid-cols-3 md:grid-cols-5 gap-2 md:gap-4">
         {[
-          { label: "Total", value: rsvps.length },
-          { label: "Going", value: goingCount },
-          { label: "Maybe", value: maybeCount },
-          { label: "Not Going", value: notGoingCount },
-          { label: "Checked In", value: checkedInCount },
+          { label: "Total", value: totalHeadcount, filter: "ALL" },
+          { label: "Going", value: goingCount, filter: "GOING" },
+          { label: "Maybe", value: maybeCount, filter: "MAYBE" },
+          { label: "Not Going", value: notGoingCount, filter: "NOT_GOING" },
+          { label: "Checked In", value: checkedInCount, filter: "CHECKED_IN" },
         ].map((stat) => (
-          <div
+          <button
             key={stat.label}
-            className="bg-zinc-900/20 border border-zinc-800 rounded-sm p-3 md:p-4 text-center"
+            onClick={() => {
+              setActiveTab("guests");
+              setStatusFilter(stat.filter);
+            }}
+            className={`bg-zinc-900/20 border rounded-sm p-3 md:p-4 text-center cursor-pointer transition-colors ${
+              activeTab === "guests" && statusFilter === stat.filter
+                ? "border-bodega-yellow"
+                : "border-zinc-800 hover:border-zinc-600"
+            }`}
           >
             <p className="text-xl md:text-2xl font-display text-white">{stat.value}</p>
             <p className="text-[9px] md:text-[10px] font-mono text-zinc-500 uppercase tracking-widest mt-1">
               {stat.label}
             </p>
-          </div>
+          </button>
         ))}
       </div>
 
@@ -475,7 +487,12 @@ export default function EventManagePage() {
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0 flex-1">
-                      <p className="text-white text-sm font-bold truncate">{rsvp.name}</p>
+                      <button
+                        onClick={() => setSelectedGuest(rsvp)}
+                        className="text-white text-sm font-bold truncate underline decoration-zinc-700 hover:decoration-bodega-yellow transition-colors text-left block max-w-full"
+                      >
+                        {rsvp.name}
+                      </button>
                       <p className="text-zinc-500 text-xs truncate">{rsvp.email}</p>
                       {rsvp.phone && <p className="text-zinc-600 text-xs">{rsvp.phone}</p>}
                     </div>
@@ -540,7 +557,12 @@ export default function EventManagePage() {
                     filteredRSVPs.map((rsvp) => (
                       <tr key={rsvp.id} className="border-b border-zinc-800/50 hover:bg-zinc-900/30 transition-colors">
                         <td className="px-4 py-3">
-                          <p className="text-white text-sm font-bold">{rsvp.name}</p>
+                          <button
+                            onClick={() => setSelectedGuest(rsvp)}
+                            className="text-white text-sm font-bold underline decoration-zinc-700 hover:decoration-bodega-yellow transition-colors text-left"
+                          >
+                            {rsvp.name}
+                          </button>
                           {rsvp.phone && <p className="text-zinc-600 text-xs">{rsvp.phone}</p>}
                           {rsvp.instagram && <p className="text-zinc-600 text-xs">@{rsvp.instagram}</p>}
                         </td>
@@ -680,6 +702,155 @@ export default function EventManagePage() {
                 {addingGuest ? "Adding..." : "Add Guest"}
               </Button>
             </form>
+          </div>
+        </div>
+      )}
+      {/* Guest Detail Modal */}
+      {selectedGuest && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div
+            className="absolute inset-0 bg-black/70"
+            onClick={() => setSelectedGuest(null)}
+          />
+          <div className="relative bg-zinc-900 border border-zinc-800 rounded-sm w-full max-w-md max-h-[90vh] overflow-y-auto">
+            <div className="p-6 space-y-5">
+              {/* Header */}
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <h3 className="text-xl font-display text-white uppercase tracking-tight">
+                    {selectedGuest.name}
+                  </h3>
+                  <p className="text-zinc-500 text-sm">{selectedGuest.email}</p>
+                </div>
+                <button
+                  onClick={() => setSelectedGuest(null)}
+                  className="text-zinc-500 hover:text-white transition-colors text-xl leading-none p-1"
+                >
+                  &times;
+                </button>
+              </div>
+
+              {/* Status Badge */}
+              <div className="flex items-center gap-3">
+                <span
+                  className={`text-[10px] uppercase tracking-wider px-2 py-1 rounded-sm ${
+                    selectedGuest.status === "GOING"
+                      ? "bg-green-500/20 text-green-400"
+                      : selectedGuest.status === "MAYBE"
+                      ? "bg-yellow-500/20 text-yellow-400"
+                      : "bg-red-500/20 text-red-400"
+                  }`}
+                >
+                  {selectedGuest.status}
+                </span>
+                <span
+                  className={`text-[10px] uppercase tracking-wider px-2 py-1 rounded-sm ${
+                    selectedGuest.checkedIn
+                      ? "bg-green-500/20 text-green-400 border border-green-500/30"
+                      : "bg-zinc-800 text-zinc-400 border border-zinc-700"
+                  }`}
+                >
+                  {selectedGuest.checkedIn ? "Checked In" : "Not Checked In"}
+                </span>
+              </div>
+
+              {/* Details Grid */}
+              <div className="space-y-3">
+                {selectedGuest.phone && (
+                  <div>
+                    <p className="text-[10px] font-mono text-zinc-600 uppercase tracking-widest">Phone</p>
+                    <p className="text-zinc-300 text-sm">{selectedGuest.phone}</p>
+                  </div>
+                )}
+                {selectedGuest.instagram && (
+                  <div>
+                    <p className="text-[10px] font-mono text-zinc-600 uppercase tracking-widest">Instagram</p>
+                    <p className="text-zinc-300 text-sm">@{selectedGuest.instagram}</p>
+                  </div>
+                )}
+                {selectedGuest.plusOnes > 0 && (
+                  <div>
+                    <p className="text-[10px] font-mono text-zinc-600 uppercase tracking-widest">Plus Ones</p>
+                    <p className="text-zinc-300 text-sm">
+                      +{selectedGuest.plusOnes}
+                      {selectedGuest.plusOneNames && ` (${selectedGuest.plusOneNames})`}
+                    </p>
+                  </div>
+                )}
+                <div>
+                  <p className="text-[10px] font-mono text-zinc-600 uppercase tracking-widest">Referral Source</p>
+                  <p className="text-zinc-300 text-sm font-mono uppercase">{selectedGuest.referralSource}</p>
+                </div>
+                <div>
+                  <p className="text-[10px] font-mono text-zinc-600 uppercase tracking-widest">Registered</p>
+                  <p className="text-zinc-300 text-sm font-mono">
+                    {format(new Date(selectedGuest.createdAt), "MMM d, yyyy 'at' h:mm a")}
+                  </p>
+                </div>
+                {selectedGuest.checkedIn && selectedGuest.checkedInAt && (
+                  <div>
+                    <p className="text-[10px] font-mono text-zinc-600 uppercase tracking-widest">Checked In At</p>
+                    <p className="text-zinc-300 text-sm font-mono">
+                      {format(new Date(selectedGuest.checkedInAt), "MMM d, yyyy 'at' h:mm a")}
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              {/* QR Code */}
+              <div className="border-t border-zinc-800 pt-4">
+                <p className="text-[10px] font-mono text-zinc-600 uppercase tracking-widest mb-3">QR Code</p>
+                <div className="bg-white p-3 rounded-sm inline-block">
+                  <img
+                    src={`/api/qr/${selectedGuest.qrCode}`}
+                    alt={`QR Code for ${selectedGuest.name}`}
+                    className="w-40 h-40"
+                  />
+                </div>
+                <p className="text-zinc-600 text-xs mt-2 font-mono">{selectedGuest.qrCode}</p>
+              </div>
+
+              {/* Actions */}
+              <div className="flex gap-2 border-t border-zinc-800 pt-4">
+                <button
+                  onClick={() => {
+                    handleToggleCheckIn(selectedGuest.id, selectedGuest.checkedIn, selectedGuest.name);
+                    setSelectedGuest(null);
+                  }}
+                  className={`flex-1 px-4 py-2 rounded-sm text-xs font-mono uppercase tracking-wider transition-colors ${
+                    selectedGuest.checkedIn
+                      ? "bg-zinc-800 text-zinc-400 border border-zinc-700 hover:bg-red-500/20 hover:text-red-400"
+                      : "bg-bodega-yellow text-black hover:bg-bodega-yellow-light"
+                  }`}
+                >
+                  {selectedGuest.checkedIn ? "Undo Check-In" : "Check In"}
+                </button>
+                <button
+                  onClick={() => setSelectedGuest(null)}
+                  className="px-4 py-2 rounded-sm text-xs font-mono uppercase tracking-wider bg-zinc-800 text-zinc-400 hover:text-white transition-colors"
+                >
+                  Close
+                </button>
+              </div>
+              <div className="border-t border-zinc-800 pt-4">
+                <button
+                  onClick={async () => {
+                    if (!confirm(`Delete ${selectedGuest.name} from the guest list? This cannot be undone.`)) return;
+                    const result = await deleteRSVP(selectedGuest.id);
+                    if (result.success) {
+                      toast.success(`Deleted ${selectedGuest.name}`);
+                      setSelectedGuest(null);
+                      loadData();
+                    } else {
+                      toast.error(result.error || "Delete failed");
+                    }
+                  }}
+                  className="w-full px-4 py-2 rounded-sm text-xs font-mono uppercase tracking-wider bg-transparent border border-red-900 text-red-400 hover:bg-red-900/20 transition-colors"
+                >
+                  Delete Guest
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}

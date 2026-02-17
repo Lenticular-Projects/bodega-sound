@@ -55,6 +55,7 @@ model Subscriber {
 model Event {
   id                String   @id @default(cuid())
   title             String
+  slug              String   @unique
   description       String?
   eventDate         DateTime
   location          String
@@ -84,6 +85,7 @@ model Event {
   
   @@index([status])
   @@index([eventDate])
+  @@index([slug])
 }
 
 model RSVP {

@@ -27,6 +27,7 @@ The Bodega Sound QR code system replaces paper guest lists with a digital check-
    - **Ticket Price** — leave empty for free events
    - Collection settings: phone, Instagram, +1s, public guest list
 5. Click **Create Event** — the event is immediately published and you're redirected to the management page
+6. A URL-friendly slug is automatically generated from the title (e.g. "CONTRABANDA V" → `contrabanda-v`)
 
 ### Managing an Event
 
@@ -34,13 +35,14 @@ The event management page (`/admin/events/[id]`) has three tabs:
 
 **Overview Tab:**
 - See event details at a glance
-- Copy the **RSVP Link** to share with potential guests (via Instagram, WhatsApp, email, etc.)
+- Copy the **RSVP Link** to share with potential guests — uses the slug-based URL (e.g. `/events/contrabanda-v`)
 - See collection settings (what info you're gathering)
 - Export guest list as CSV
 - Delete the event if needed
 
 **Guests Tab:**
-- Real-time stats: Total RSVPs, Going, Maybe, Not Going, Checked In
+- Real-time stats: Total headcount (including +1s), Going, Maybe, Not Going, Checked In
+- Click any guest's **name** to open a detail modal showing full info, QR code, and check-in status
 - Full guest table with name, email, RSVP status, +1s, source, check-in status, registration date
 - Search guests by name or email
 - Filter by status (Going, Maybe, Not Going, Checked In, Not Checked In)
@@ -51,7 +53,17 @@ The event management page (`/admin/events/[id]`) has three tabs:
 - Manually add VIP guests or walk-ins who didn't RSVP online
 - Fill in name, email, phone, Instagram, status, +1 count
 - Manually added guests get referral source "MANUAL_ADD"
-- A QR code is automatically generated for them too
+- A QR code is automatically generated — view it by clicking the guest's name in the Guests tab
+
+### Guest Detail Modal
+
+Click any guest's name in the Guests tab to open a detail modal showing:
+- Name, email, phone, Instagram
+- RSVP status and check-in status
+- Plus-one count and names
+- Referral source and registration date
+- Check-in timestamp (if checked in)
+- **QR code image** — useful for sharing with manually-added guests who didn't receive an email
 
 ### Sharing the RSVP Link
 
@@ -61,12 +73,24 @@ On the event management page, copy the RSVP link and share it through:
 - Email invitations
 - Physical flyers with a QR code linking to the RSVP page
 
-The RSVP link format is: `https://bodegasound.com/events/[eventId]`
+The RSVP link format is: `https://bodegasound.com/events/[slug]` (e.g. `https://bodegasound.com/events/contrabanda-v`)
+
+Old ID-based links (`/events/[cuid]`) continue to work for backwards compatibility.
+
+### Attendance Counting
+
+All attendance stats include plus-ones in the headcount:
+- **Total** = number of RSVPs + all their plus-ones
+- **Going** = GOING RSVPs + their plus-ones
+- **Checked In** = checked-in RSVPs + their plus-ones
+- **Capacity check** = total headcount (RSVPs + plus-ones) vs. event capacity
+
+Example: If 10 people RSVP as Going and each brings 2 plus-ones, the Going count shows 30 (not 10).
 
 ### Monitoring Attendance
 
 - The **Guests tab** shows real-time check-in status
-- The stats bar shows `X / Y checked in` at a glance
+- The stats bar shows total headcount including plus-ones
 - The **Check-In Mode** button at the top takes you to the dedicated QR scanning page
 - After the event, export the final CSV for records
 
@@ -80,7 +104,7 @@ Guests receive the event RSVP link through Instagram, WhatsApp, email, or other 
 
 ### RSVPing
 
-1. Open the RSVP link (`/events/[eventId]`)
+1. Open the RSVP link (`/events/[slug]`)
 2. See the event details: flyer image, title, date/time, location, description, capacity remaining
 3. Fill in the RSVP form:
    - **Name** (required)
@@ -117,9 +141,12 @@ If a guest RSVPs again with the same email:
 
 ### Getting Set Up
 
-1. Open the check-in page on your phone: `/admin/events/[eventId]/checkin`
-2. You need to be logged into the admin dashboard (ask the organizer for the password)
-3. The page shows: QR Scanner section + Manual Search section + stats
+1. Get the **door worker password** from the event organizer (this is different from the admin password)
+2. Go to `/admin/login` on your phone and enter the door password
+3. You'll be taken to the **Door Check-In** hub showing published events
+4. Tap **Check-In** on the event you're working
+
+Door workers have restricted access — they can only see the check-in hub and check-in pages. They cannot access event management, orders, subscribers, or messages.
 
 ### Scanning QR Codes
 
@@ -150,10 +177,14 @@ Made a mistake? Two options:
 - Click **Undo** on the "Last Check-in" card (appears right after scanning)
 - Find the guest in the manual list and click **Undo** next to their "Checked In" status
 
+### Navigating Back
+
+Use the **← Back to Event** link at the top of the check-in page to return to the event management page (admins) or door hub (door workers).
+
 ### What Door Workers See
 
 The check-in page is optimized for mobile and shows:
-- **Stats**: "X / Y checked in" (e.g. "45 / 100 checked in")
+- **Stats**: "X / Y checked in" (includes plus-ones in the count)
 - **Last Check-in**: most recent guest checked in with Undo button
 - **QR Scanner**: camera viewfinder with Start/Stop button
 - **Manual Check-In**: searchable list of all guests with status badges (Going/Maybe/Not Going) and check-in buttons
@@ -171,7 +202,7 @@ The check-in page is optimized for mobile and shows:
 
 ```
 RSVP Flow:
-Guest → /events/[eventId] → fills form → submitRSVP() server action
+Guest → /events/[slug] → fills form → submitRSVP() server action
   → Creates RSVP record with unique qrCode (format: qr_[timestamp]_[random])
   → Sends confirmation email with QR code image link
   → Shows QR code on screen
@@ -195,18 +226,33 @@ Door worker searches by name/email → clicks "Check In"
 Admin Monitoring:
 /admin/events/[eventId] → Guests tab
   → getEventRSVPs(eventId) → shows real-time table
+  → Click guest name → detail modal with QR code
   → Export CSV for post-event analysis
 ```
 
 ---
 
-## 5. Database Schema
+## 5. Role-Based Access
+
+| Role | Password Env Var | Access |
+|------|-----------------|--------|
+| Admin | `ADMIN_PASSWORD` | Full dashboard: events, orders, subscribers, messages, check-in |
+| Door Worker | `DOOR_PASSWORD` | Check-in hub (`/admin/door`) and check-in pages only |
+
+Both roles use the same login page (`/admin/login`). The system determines the role based on which password matches.
+
+To set up door worker access, add `DOOR_PASSWORD` to your environment variables. If not set, only admin login is available.
+
+---
+
+## 6. Database Schema
 
 ### Event Table
 | Field | Type | Description |
 |-------|------|-------------|
 | id | String (cuid) | Unique event ID |
 | title | String | Event name |
+| slug | String (unique) | URL-friendly slug (auto-generated from title) |
 | description | String? | Event description |
 | eventDate | DateTime | When the event happens |
 | location | String | Venue name/address |
@@ -239,21 +285,23 @@ Admin Monitoring:
 
 ---
 
-## 6. Key URLs
+## 7. Key URLs
 
 | URL | Purpose | Who Uses It |
 |-----|---------|-------------|
 | `/admin/events` | Event list dashboard | Admin |
 | `/admin/events/new` | Create new event | Admin |
 | `/admin/events/[id]` | Event management (guests, stats, CSV) | Admin |
-| `/admin/events/[id]/checkin` | QR scanner + manual check-in | Door Worker |
+| `/admin/events/[id]/checkin` | QR scanner + manual check-in | Admin, Door Worker |
+| `/admin/door` | Door worker hub (event selector) | Door Worker |
 | `/admin/checkin?code=[qrCode]` | QR code redirect (auto check-in) | System (scanned by door worker) |
-| `/events/[id]` | Public RSVP page | Guest |
+| `/events/[slug]` | Public RSVP page (slug-based) | Guest |
+| `/events/[id]` | Public RSVP page (ID fallback) | Guest (legacy links) |
 | `/api/qr/[qrCode]` | QR code PNG image | System (embedded in emails, shown to guest) |
 
 ---
 
-## 7. Troubleshooting
+## 8. Troubleshooting
 
 | Issue | Solution |
 |-------|----------|
@@ -264,3 +312,6 @@ Admin Monitoring:
 | Guest not in the list | Use "Add Guest" tab on the management page to add them manually |
 | Duplicate RSVPs | The system prevents duplicates — same email updates the existing RSVP |
 | Check-in page slow | The guest list loads once on page open; search filters locally (no network needed) |
+| Door worker sees "redirected" | They're trying to access admin-only pages; the middleware redirects to `/admin/door` |
+| Door worker can't log in | Ensure `DOOR_PASSWORD` env var is set; without it, only admin login works |
+| Manually added guest needs QR | Click their name in the Guests tab to see their QR code in the detail modal |

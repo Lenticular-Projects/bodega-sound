@@ -9,8 +9,9 @@ export default async function AdminEventsPage() {
   const events = await prisma.event.findMany({
     orderBy: { eventDate: "desc" },
     include: {
-      _count: {
-        select: { rsvps: { where: { status: { in: ["GOING", "MAYBE"] } } } },
+      rsvps: {
+        where: { status: { in: ["GOING", "MAYBE"] } },
+        select: { plusOnes: true },
       },
     },
   });
@@ -64,7 +65,7 @@ export default async function AdminEventsPage() {
                   <p className="text-sm text-zinc-500 truncate">{event.location}</p>
                   <div className="flex items-center gap-4 pt-1">
                     <span className="text-xs text-zinc-600 font-mono uppercase">
-                      {event._count.rsvps} RSVPs
+                      {event.rsvps.reduce((sum, r) => sum + 1 + r.plusOnes, 0)} RSVPs
                     </span>
                     {event.capacity && (
                       <span className="text-xs text-zinc-600 font-mono uppercase">
