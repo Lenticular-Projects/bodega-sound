@@ -4,12 +4,18 @@ import { z } from "zod";
 import { prisma } from "@/server/db";
 import { revalidatePath } from "next/cache";
 import { Resend } from "resend";
+import { randomUUID } from "crypto";
+import { headers } from "next/headers";
+import { requireRole } from "@/server/actions/auth";
+import { createRateLimiter } from "@/lib/rate-limit";
 
 const getResend = () => {
   const key = process.env.RESEND_API_KEY;
   if (!key) return null;
   return new Resend(key);
 };
+
+const rsvpLimiter = createRateLimiter("rsvp", 5, 15 * 60 * 1000);
 
 // Event Schema
 const eventSchema = z.object({
@@ -31,19 +37,19 @@ const eventSchema = z.object({
 // RSVP Schema
 const rsvpSchema = z.object({
   eventId: z.string(),
-  name: z.string().min(1, "Name is required"),
-  email: z.string().email("Valid email required"),
-  phone: z.string().optional(),
-  instagram: z.string().optional(),
+  name: z.string().min(1, "Name is required").max(200),
+  email: z.string().email("Valid email required").max(320),
+  phone: z.string().max(30).optional(),
+  instagram: z.string().max(100).optional(),
   status: z.enum(["GOING", "MAYBE", "NOT_GOING"]),
   plusOnes: z.coerce.number().int().min(0).max(10).default(0),
-  plusOneNames: z.string().optional(),
-  referralSource: z.string().default("DIRECT"),
+  plusOneNames: z.string().max(500).optional(),
+  referralSource: z.string().max(100).default("DIRECT"),
 });
 
-// Generate unique QR code string
+// Generate cryptographically secure QR code
 function generateQRCode(): string {
-  return `qr_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
+  return randomUUID();
 }
 
 // Generate a URL-friendly slug from a title
@@ -62,9 +68,16 @@ async function generateSlug(title: string): Promise<string> {
   return `${base}-${suffix}`;
 }
 
+async function getClientIP(): Promise<string> {
+  const hdrs = await headers();
+  return hdrs.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+}
+
 // Create Event
 export async function createEvent(formData: FormData) {
   try {
+    await requireRole("admin");
+
     const rawData = {
       title: formData.get("title") as string,
       description: formData.get("description") as string,
@@ -99,6 +112,9 @@ export async function createEvent(formData: FormData) {
     revalidatePath("/admin/events");
     return { success: true, eventId: event.id, slug: event.slug };
   } catch (error) {
+    if (error instanceof Error && error.message === "Unauthorized") {
+      return { success: false, error: "Unauthorized" };
+    }
     console.error("Create event error:", error);
     if (error instanceof z.ZodError) {
       return { success: false, error: error.issues[0].message };
@@ -111,6 +127,8 @@ export async function createEvent(formData: FormData) {
 // Update Event
 export async function updateEvent(eventId: string, formData: FormData) {
   try {
+    await requireRole("admin");
+
     const rawData = {
       title: formData.get("title") as string,
       description: formData.get("description") as string,
@@ -144,6 +162,9 @@ export async function updateEvent(eventId: string, formData: FormData) {
     revalidatePath(`/admin/events/${eventId}`);
     return { success: true };
   } catch (error) {
+    if (error instanceof Error && error.message === "Unauthorized") {
+      return { success: false, error: "Unauthorized" };
+    }
     console.error("Update event error:", error);
     if (error instanceof z.ZodError) {
       return { success: false, error: error.issues[0].message };
@@ -155,18 +176,28 @@ export async function updateEvent(eventId: string, formData: FormData) {
 // Delete Event
 export async function deleteEvent(eventId: string) {
   try {
+    await requireRole("admin");
     await prisma.event.delete({ where: { id: eventId } });
     revalidatePath("/admin/events");
     return { success: true };
   } catch (error) {
+    if (error instanceof Error && error.message === "Unauthorized") {
+      return { success: false, error: "Unauthorized" };
+    }
     console.error("Delete event error:", error);
     return { success: false, error: "Failed to delete event" };
   }
 }
 
-// Submit RSVP
+// Submit RSVP (public — rate limited)
 export async function submitRSVP(formData: FormData) {
   try {
+    const ip = await getClientIP();
+    const { allowed } = rsvpLimiter.check(ip);
+    if (!allowed) {
+      return { success: false, error: "Too many submissions. Try again in 15 minutes." };
+    }
+
     const str = (key: string): string => (formData.get(key) as string) || "";
     const optStr = (key: string): string | undefined => {
       const val = formData.get(key);
@@ -222,7 +253,7 @@ export async function submitRSVP(formData: FormData) {
           plusOnes: validatedData.plusOnes || 0,
         },
       });
-      
+
       revalidatePath(`/events/${event.id}`);
       return { success: true, rsvpId: updated.id, qrCode: updated.qrCode, isUpdate: true };
     }
@@ -264,7 +295,7 @@ export async function submitRSVP(formData: FormData) {
   }
 }
 
-// Get Event by ID
+// Get Event by ID (public)
 export async function getEvent(eventId: string) {
   try {
     const event = await prisma.event.findUnique({
@@ -288,7 +319,7 @@ export async function getEvent(eventId: string) {
   }
 }
 
-// Get Event by slug or ID (tries slug first, falls back to ID)
+// Get Event by slug or ID (public — tries slug first, falls back to ID)
 export async function getEventBySlugOrId(slugOrId: string) {
   try {
     // Try slug first
@@ -325,7 +356,7 @@ export async function getEventBySlugOrId(slugOrId: string) {
   }
 }
 
-// Get All Events (Admin)
+// Get All Events (public — used by main page too)
 export async function getAllEvents() {
   try {
     const events = await prisma.event.findMany({
@@ -348,9 +379,11 @@ export async function getAllEvents() {
   }
 }
 
-// Get Event RSVPs (Admin)
+// Get Event RSVPs (Admin/Door)
 export async function getEventRSVPs(eventId: string) {
   try {
+    await requireRole("admin", "door");
+
     const rsvps = await prisma.rSVP.findMany({
       where: { eventId },
       orderBy: { createdAt: "desc" },
@@ -358,14 +391,19 @@ export async function getEventRSVPs(eventId: string) {
 
     return rsvps;
   } catch (error) {
+    if (error instanceof Error && error.message === "Unauthorized") {
+      return [];
+    }
     console.error("Get RSVPs error:", error);
     return [];
   }
 }
 
-// Check In Guest
+// Check In Guest (Admin/Door)
 export async function checkInGuest(rsvpId: string, checkedInBy?: string) {
   try {
+    await requireRole("admin", "door");
+
     const rsvp = await prisma.rSVP.update({
       where: { id: rsvpId },
       data: {
@@ -377,14 +415,19 @@ export async function checkInGuest(rsvpId: string, checkedInBy?: string) {
 
     return { success: true, rsvp };
   } catch (error) {
+    if (error instanceof Error && error.message === "Unauthorized") {
+      return { success: false, error: "Unauthorized" };
+    }
     console.error("Check-in error:", error);
     return { success: false, error: "Failed to check in guest" };
   }
 }
 
-// Undo Check In
+// Undo Check In (Admin/Door)
 export async function undoCheckIn(rsvpId: string) {
   try {
+    await requireRole("admin", "door");
+
     const rsvp = await prisma.rSVP.update({
       where: { id: rsvpId },
       data: {
@@ -396,6 +439,9 @@ export async function undoCheckIn(rsvpId: string) {
 
     return { success: true, rsvp };
   } catch (error) {
+    if (error instanceof Error && error.message === "Unauthorized") {
+      return { success: false, error: "Unauthorized" };
+    }
     console.error("Undo check-in error:", error);
     return { success: false, error: "Failed to undo check-in" };
   }
@@ -404,6 +450,8 @@ export async function undoCheckIn(rsvpId: string) {
 // Manual Add Guest (Admin)
 export async function manualAddGuest(eventId: string, formData: FormData) {
   try {
+    await requireRole("admin");
+
     const name = formData.get("name") as string;
     const email = formData.get("email") as string;
     const phone = formData.get("phone") as string;
@@ -435,12 +483,15 @@ export async function manualAddGuest(eventId: string, formData: FormData) {
     revalidatePath(`/admin/events/${eventId}`);
     return { success: true, rsvpId: rsvp.id };
   } catch (error) {
+    if (error instanceof Error && error.message === "Unauthorized") {
+      return { success: false, error: "Unauthorized" };
+    }
     console.error("Manual add error:", error);
     return { success: false, error: "Failed to add guest" };
   }
 }
 
-// Check In by QR Code (used by QR scan redirect)
+// Check In by QR Code (Admin/Door)
 export async function checkInByQRCode(qrCode: string): Promise<{
   success: boolean;
   guestName?: string;
@@ -449,6 +500,8 @@ export async function checkInByQRCode(qrCode: string): Promise<{
   error?: string;
 }> {
   try {
+    await requireRole("admin", "door");
+
     const rsvp = await prisma.rSVP.findUnique({
       where: { qrCode },
       include: { event: true },
@@ -484,25 +537,34 @@ export async function checkInByQRCode(qrCode: string): Promise<{
       eventSlug: rsvp.event.slug,
     };
   } catch (error) {
+    if (error instanceof Error && error.message === "Unauthorized") {
+      return { success: false, error: "Unauthorized" };
+    }
     console.error("QR check-in error:", error);
     return { success: false, error: "Failed to process check-in" };
   }
 }
 
-// Delete RSVP
+// Delete RSVP (Admin)
 export async function deleteRSVP(rsvpId: string): Promise<{ success: boolean; error?: string }> {
   try {
+    await requireRole("admin");
     await prisma.rSVP.delete({ where: { id: rsvpId } });
     return { success: true };
   } catch (error) {
+    if (error instanceof Error && error.message === "Unauthorized") {
+      return { success: false, error: "Unauthorized" };
+    }
     console.error("Delete RSVP error:", error);
     return { success: false, error: "Failed to delete guest" };
   }
 }
 
-// Export RSVPs to CSV
+// Export RSVPs to CSV (Admin)
 export async function exportRSVPsToCSV(eventId: string) {
   try {
+    await requireRole("admin");
+
     const rsvps = await prisma.rSVP.findMany({
       where: { eventId },
       orderBy: { createdAt: "desc" },
@@ -510,7 +572,7 @@ export async function exportRSVPsToCSV(eventId: string) {
 
     const event = await prisma.event.findUnique({ where: { id: eventId } });
 
-    const headers = [
+    const csvHeaders = [
       "Name",
       "Email",
       "Phone",
@@ -538,10 +600,13 @@ export async function exportRSVPsToCSV(eventId: string) {
       rsvp.createdAt.toISOString(),
     ]);
 
-    const csv = [headers.join(","), ...rows.map((row) => row.map((cell) => `"${cell.replace(/"/g, '""')}"`).join(","))].join("\n");
+    const csv = [csvHeaders.join(","), ...rows.map((row) => row.map((cell) => `"${cell.replace(/"/g, '""')}"`).join(","))].join("\n");
 
     return { success: true, csv, eventTitle: event?.title || "Event" };
   } catch (error) {
+    if (error instanceof Error && error.message === "Unauthorized") {
+      return { success: false, error: "Unauthorized" };
+    }
     console.error("Export error:", error);
     return { success: false, error: "Failed to export" };
   }

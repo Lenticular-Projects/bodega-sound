@@ -75,8 +75,12 @@ export function OrdersTable({ orders }: { orders: Order[] }) {
     };
 
     const handleExport = async (): Promise<void> => {
-        const csv = await exportOrdersCsv();
-        const blob = new Blob([csv], { type: "text/csv" });
+        const result = await exportOrdersCsv();
+        if (!result.success || !result.csv) {
+            toast.error(result.error || "Failed to export orders");
+            return;
+        }
+        const blob = new Blob([result.csv], { type: "text/csv" });
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;

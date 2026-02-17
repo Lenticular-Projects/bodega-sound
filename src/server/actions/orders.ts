@@ -1,8 +1,12 @@
+"use server";
+
 import { z } from "zod";
 import { prisma } from "@/server/db";
 import { Resend } from "resend";
 import { put } from "@vercel/blob";
 import { OrderEmail } from "@/emails/OrderConfirmation";
+import { headers } from "next/headers";
+import { createRateLimiter } from "@/lib/rate-limit";
 
 const getResend = () => {
     const key = process.env.RESEND_API_KEY;
@@ -10,20 +14,32 @@ const getResend = () => {
     return new Resend(key);
 };
 
+const orderLimiter = createRateLimiter("order", 3, 15 * 60 * 1000);
 
 const orderSchema = z.object({
-    customerName: z.string().min(2),
-    customerEmail: z.string().email(),
-    contactNumber: z.string().min(5),
-    shippingAddress: z.string().min(10),
-    shippingMethod: z.string(),
-    productName: z.string(),
-    quantity: z.number().min(1),
-    totalPrice: z.string(),
+    customerName: z.string().min(2).max(200),
+    customerEmail: z.string().email().max(320),
+    contactNumber: z.string().min(5).max(30),
+    shippingAddress: z.string().min(10).max(500),
+    shippingMethod: z.string().max(100),
+    productName: z.string().max(200),
+    quantity: z.number().min(1).max(100),
+    totalPrice: z.string().max(50),
 });
+
+async function getClientIP(): Promise<string> {
+    const hdrs = await headers();
+    return hdrs.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+}
 
 export async function submitOrder(formData: FormData) {
     try {
+        const ip = await getClientIP();
+        const { allowed } = orderLimiter.check(ip);
+        if (!allowed) {
+            return { success: false, error: "Too many orders. Try again in 15 minutes." };
+        }
+
         const rawData = {
             customerName: formData.get("name") as string,
             customerEmail: formData.get("email") as string,
@@ -112,20 +128,20 @@ export async function submitOrder(formData: FormData) {
                 subject: `NEW ORDER: ${validatedData.productName} - ${validatedData.customerName}`,
                 text: `
           New order received!
-          
+
           Order ID: ${order.id}
           Customer: ${validatedData.customerName}
           Email: ${validatedData.customerEmail}
           Phone: ${validatedData.contactNumber}
           Address: ${validatedData.shippingAddress}
-          
+
           Product: ${validatedData.productName}
           Quantity: ${validatedData.quantity}
           Total Price: ${validatedData.totalPrice}
           Shipping Method: ${validatedData.shippingMethod}
-          
+
           Receipt URL: ${receiptUrl || "Not uploaded to blob"}
-          
+
           Proof of payment is attached.
         `,
                 attachments: [
@@ -154,4 +170,3 @@ export async function submitOrder(formData: FormData) {
         return { success: false, error: "Something went wrong. Please try again." };
     }
 }
-

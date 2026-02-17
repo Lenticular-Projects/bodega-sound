@@ -1,11 +1,20 @@
 import { put } from "@vercel/blob";
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
+import { verifySessionToken } from "@/lib/auth";
 
 const MAX_SIZE = 5 * 1024 * 1024; // 5MB
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
 export async function POST(request: Request): Promise<NextResponse> {
   try {
+    // Auth check — only admins can upload files
+    const cookieStore = await cookies();
+    const sessionToken = cookieStore.get("admin-session")?.value;
+    if (!sessionToken || !(await verifySessionToken(sessionToken))) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const formData = await request.formData();
     const file = formData.get("file") as File | null;
 

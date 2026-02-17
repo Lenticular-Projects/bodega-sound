@@ -57,8 +57,12 @@ export function SubscribersTable({ subscribers }: { subscribers: Subscriber[] })
     };
 
     const handleExport = async (): Promise<void> => {
-        const csv = await exportSubscribersCsv();
-        const blob = new Blob([csv], { type: "text/csv" });
+        const result = await exportSubscribersCsv();
+        if (!result.success || !result.csv) {
+            toast.error(result.error || "Failed to export subscribers");
+            return;
+        }
+        const blob = new Blob([result.csv], { type: "text/csv" });
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;

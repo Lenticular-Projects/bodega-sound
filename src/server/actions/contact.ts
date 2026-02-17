@@ -2,6 +2,10 @@
 
 import { z } from "zod";
 import { prisma } from "@/server/db";
+import { headers } from "next/headers";
+import { createRateLimiter } from "@/lib/rate-limit";
+
+const contactLimiter = createRateLimiter("contact", 3, 15 * 60 * 1000);
 
 const contactSchema = z.object({
     name: z.string().min(1, "Name is required").max(200),
@@ -9,10 +13,21 @@ const contactSchema = z.object({
     message: z.string().min(1, "Message is required").max(5000),
 });
 
+async function getClientIP(): Promise<string> {
+    const hdrs = await headers();
+    return hdrs.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+}
+
 export async function submitContactMessage(
     formData: FormData
 ): Promise<{ success: boolean; error?: string }> {
     try {
+        const ip = await getClientIP();
+        const { allowed } = contactLimiter.check(ip);
+        if (!allowed) {
+            return { success: false, error: "Too many messages. Try again in 15 minutes." };
+        }
+
         const data = contactSchema.parse({
             name: formData.get("name"),
             email: formData.get("email"),
