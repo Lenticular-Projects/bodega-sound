@@ -8,7 +8,6 @@ import {
     CloseIcon,
     ShoppingCartIcon,
     SuccessIcon,
-    LocationIcon,
     EmailIcon,
     UserIcon,
     ArrowRightIcon,
@@ -89,7 +88,7 @@ export function BuyNowModal({ product, open, onOpenChange }: BuyNowModalProps) {
             } else {
                 toast.error(result.error || "Submission failed");
             }
-        } catch (err) {
+        } catch {
             toast.error("A server error occurred");
         } finally {
             setIsSubmitting(false);
@@ -124,7 +123,7 @@ export function BuyNowModal({ product, open, onOpenChange }: BuyNowModalProps) {
         <Drawer.Root open={open} onOpenChange={onOpenChange}>
             <Drawer.Portal>
                 <Drawer.Overlay className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100]" />
-                <Drawer.Content className="fixed bottom-0 left-0 right-0 z-[101] bg-[#0A0A08] border-t border-zinc-800 rounded-t-[2rem] outline-none max-h-[96vh] flex flex-col">
+                <Drawer.Content className="fixed bottom-0 left-0 right-0 z-[101] bg-warm-950 border-t border-zinc-800 rounded-t-[2rem] outline-none max-h-[96vh] flex flex-col">
                     <div className="w-full max-w-2xl mx-auto flex flex-col h-full overflow-hidden">
                         {/* Drag Handle */}
                         <div className="mx-auto w-12 h-1.5 flex-shrink-0 rounded-full bg-zinc-800 mt-4 mb-2" />
@@ -391,6 +390,7 @@ export function BuyNowModal({ product, open, onOpenChange }: BuyNowModalProps) {
                                         animate={{ opacity: 1, scale: 1 }}
                                         className="text-center py-12 space-y-6"
                                     >
+                                        {/* bodega-yellow glow — intentional brand signature */}
                                         <div className="w-24 h-24 bg-bodega-yellow rounded-full flex items-center justify-center mx-auto mb-8 shadow-[0_0_50px_rgba(229,255,0,0.2)]">
                                             <SuccessIcon className="w-12 h-12 text-black" />
                                         </div>

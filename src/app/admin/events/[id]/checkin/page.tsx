@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { Html5Qrcode } from "html5-qrcode";
 import { checkInGuest, undoCheckIn, getEventRSVPs, getEventBySlugOrId } from "@/server/actions/events";
 import { Button } from "@/components/ui/button";
@@ -55,6 +56,7 @@ export default function CheckInPage() {
   }, [resolvedEventId]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     loadRSVPs();
   }, [loadRSVPs]);
 
@@ -419,10 +421,12 @@ export default function CheckInPage() {
               <div className="border-t border-zinc-800 pt-3">
                 <p className="text-[10px] font-mono text-zinc-600 uppercase tracking-widest mb-2">QR Code</p>
                 <div className="bg-white p-2 rounded-sm inline-block">
-                  <img
+                  <Image
                     src={`/api/qr/${selectedGuest.qrCode}`}
                     alt={`QR Code for ${selectedGuest.name}`}
-                    className="w-32 h-32"
+                    width={128}
+                    height={128}
+                    unoptimized
                   />
                 </div>
               </div>

@@ -9,7 +9,7 @@ npm run dev          # Start Next.js dev server (localhost:3000)
 npm run build        # Production build
 npm run start        # Run production build
 npm run lint         # ESLint
-npx prisma migrate dev   # Run database migrations (SQLite)
+npx prisma migrate dev   # Run database migrations (PostgreSQL)
 ```
 
 No test runner is configured.
@@ -27,8 +27,8 @@ Page files in `src/app/` are **composition only** (max 50 lines). They import an
 - `src/components/ui/` — Primitives (Button, Card, Tabs, plus WebGL `lumina-interactive-list.tsx`)
 - `src/components/{feature}/` — Domain sections organized by feature (hero, gallery, archive, events, media, shop, newsletter, audio, contact)
 - `src/lib/animations.ts` — Framer Motion presets. **All animation timing must be imported from here**, never inline.
-- `src/lib/gemini.ts` — AI gateway singleton. All AI calls route: Client → Server Action → gemini.ts → Google AI
 - `src/lib/utils.ts` — `cn()` utility (clsx + tailwind-merge)
+- `src/types/events.ts` — Shared `EventData` interface
 - `src/components/icons.tsx` — Carbon icon re-exports. **Only icon source allowed.**
 - `src/data/events.ts` — Event definitions + derived `gallerySlides` for the Lumina component
 - `src/server/actions/` — Next.js Server Actions
@@ -91,9 +91,12 @@ The project follows "VIBE BASE CONSTITUTION v1.3". These are **hard constraints*
 ## Environment
 
 ```
-DATABASE_URL=file:./dev.db              # SQLite (Prisma)
-GEMINI_API_KEY=...                      # Google Gemini (sensitive)
-GOOGLE_GENERATIVE_AI_API_KEY=...        # Used by lib/gemini.ts
+DATABASE_URL=...                        # PostgreSQL (Neon/Prisma)
+RESEND_API_KEY=...                      # Email via Resend
+BLOB_READ_WRITE_TOKEN=...               # Vercel Blob storage
+ADMIN_PASSWORD=...                      # Admin session secret
+DOOR_PASSWORD=...                       # Door worker session secret
+NEXT_PUBLIC_APP_URL=...                 # Public app URL
 ```
 
 ## Z-Index Hierarchy

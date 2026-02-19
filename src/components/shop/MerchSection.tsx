@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { ShoppingCartIcon, ArrowUpRightIcon } from "@/components/icons";
-import { fadeUp, staggerContainer } from "@/lib/animations";
+import { fadeUp, fadeUpDelayed, staggerContainer } from "@/lib/animations";
 import { products } from "./shop-data";
 import { ProductCard } from "./ProductCard";
 import Link from "next/link";
@@ -48,7 +48,7 @@ export function MerchSection() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ delay: 0.5 }}
+          transition={fadeUpDelayed.transition}
           className="mt-12 text-center"
         >
           <Link

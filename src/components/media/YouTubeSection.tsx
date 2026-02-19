@@ -4,7 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { PlayIcon, YouTubeIcon } from "@/components/icons";
-import { fadeUp, staggerContainer } from "@/lib/animations";
+import { fadeUp, fadeUpDelayed, staggerContainer } from "@/lib/animations";
 
 interface YouTubeVideo {
   id: string;
@@ -138,7 +138,7 @@ export function YouTubeSection() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ delay: 0.5 }}
+          transition={fadeUpDelayed.transition}
           className="mt-12 text-center"
         >
           <a

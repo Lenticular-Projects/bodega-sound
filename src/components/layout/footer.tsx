@@ -9,7 +9,7 @@ export function Footer() {
   if (pathname === "/links") return null;
 
   return (
-    <footer className="w-full pt-12 pb-32 md:pb-20 px-4 md:px-8 border-t border-zinc-200 dark:border-white/10 z-content relative bg-warm-50 dark:bg-[#0A0A08] transition-colors duration-300">
+    <footer className="w-full pt-12 pb-32 md:pb-20 px-4 md:px-8 border-t border-zinc-200 dark:border-white/10 z-content relative bg-warm-50 dark:bg-warm-950 transition-colors duration-300">
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center md:items-center gap-8">
         <div className="flex flex-col items-center md:items-start text-center md:text-left">
           <Image

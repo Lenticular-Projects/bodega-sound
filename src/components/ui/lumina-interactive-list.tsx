@@ -227,12 +227,19 @@ export function LuminaInteractiveList({
     };
 
     // --- Text helpers (full mode only) ---
+    const escapeHtml = (char: string): string => {
+      if (char === "&") return "&amp;";
+      if (char === "<") return "&lt;";
+      if (char === ">") return "&gt;";
+      if (char === '"') return "&quot;";
+      return char;
+    };
     const splitText = (text: string): string =>
       text
         .split("")
         .map(
           (char) =>
-            `<span style="display:inline-block;opacity:0">${char === " " ? "&nbsp;" : char}</span>`
+            `<span style="display:inline-block;opacity:0">${char === " " ? "&nbsp;" : escapeHtml(char)}</span>`
         )
         .join("");
 

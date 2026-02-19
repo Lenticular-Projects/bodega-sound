@@ -164,7 +164,7 @@ export function Header() {
                         animate="open"
                         exit="closed"
                         variants={menuVariants}
-                        className="fixed inset-0 bg-[#0A0A08] z-40 flex flex-col justify-center items-center lg:hidden"
+                        className="fixed inset-0 bg-warm-950 z-40 flex flex-col justify-center items-center lg:hidden"
                     >
                         <nav className="flex flex-col items-center gap-8">
                             {navLinks.map((link, i) => (
@@ -221,7 +221,7 @@ function SubscriberModal() {
             } else {
                 toast.error(result.error || "Failed to join.");
             }
-        } catch (err) {
+        } catch {
             toast.error("An error occurred.");
         } finally {
             setIsSubmitting(false);
@@ -252,7 +252,7 @@ function SubscriberModal() {
                             initial={{ opacity: 0, scale: 0.95, y: 20 }}
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                            className="relative w-full max-w-md bg-[#0A0A08] border border-zinc-800 p-8 rounded-sm shadow-2xl"
+                            className="relative w-full max-w-md bg-warm-950 border border-zinc-800 p-8 rounded-sm shadow-2xl"
                         >
                             <button
                                 onClick={() => setOpen(false)}

@@ -3,10 +3,11 @@
 
 export const transitions = {
     // The signature "Languid" ease - smooth start, very smooth end
-    vibe: { duration: 0.8, ease: [0.22, 1, 0.36, 1] },
+    vibe: { duration: 0.8, ease: [0.22, 1, 0.36, 1] as const },
 
     // For interactive elements that need feedback but shouldn't feel "jerky"
-    interactive: { duration: 0.4, ease: "easeOut" },
+    // 300ms per spec
+    interactive: { duration: 0.3, ease: "easeOut" },
 
     // Spring for things that physically move/scale
     spring: { type: "spring", stiffness: 100, damping: 20 }
@@ -17,6 +18,14 @@ export const fadeUp = {
     animate: { opacity: 1, y: 0 },
     exit: { opacity: 0, y: -10 },
     transition: transitions.vibe
+};
+
+// fadeUp with a 0.5s delay — use for secondary elements that follow primary entrance
+export const fadeUpDelayed = {
+    initial: { opacity: 0, y: 24 },
+    animate: { opacity: 1, y: 0 },
+    exit: { opacity: 0, y: -10 },
+    transition: { ...transitions.vibe, delay: 0.5 }
 };
 
 export const fadeIn = {
@@ -46,7 +55,7 @@ export const staggerContainer = {
     initial: {},
     animate: {
         transition: {
-            staggerChildren: 0.12, // Slower stagger
+            staggerChildren: 0.1, // 100ms per spec
             delayChildren: 0.1
         }
     }

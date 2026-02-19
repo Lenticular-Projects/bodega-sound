@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/server/db";
 import QRCode from "qrcode";
 
+// NOTE: This endpoint is intentionally public.
+// QR code URLs are emailed to guests for check-in purposes.
+// The QR code value is a cryptographically random UUID (practically unguessable).
+// This route returns only a PNG image — no personal guest data is exposed.
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ code: string }> }

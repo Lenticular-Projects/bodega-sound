@@ -33,6 +33,7 @@ export function HeroSection() {
         <div className="relative flex flex-col items-center justify-center w-full mx-auto mb-0 select-none">
           <h1 className="sr-only">BODEGA SOUND</h1>
 
+          {/* bodega-yellow glow — intentional brand signature */}
           <FlipTextReveal
             text="BODEGA"
             className="text-bodega-yellow leading-[0.65] tracking-[-0.03em] text-[clamp(4.5rem,16vw,13rem)] drop-shadow-[0_4px_8px_rgba(0,0,0,0.3)] [text-shadow:0_0_40px_rgba(229,255,0,0.25)]"
@@ -58,9 +59,10 @@ export function HeroSection() {
           variants={fadeUp}
           className="flex flex-col md:flex-row gap-4 justify-center items-center"
         >
+          {/* bodega-yellow glow — intentional brand signature */}
           <Link
             href="/shop"
-            className="group px-10 py-5 bg-bodega-yellow text-[#0A0A08] font-bold text-lg rounded-sm hover:bg-bodega-yellow-light transition-all duration-300 flex items-center gap-3 shadow-[0_0_40px_rgba(229,255,0,0.3)] hover:shadow-[0_0_60px_rgba(229,255,0,0.5)] min-w-[180px] justify-center"
+            className="group px-10 py-5 bg-bodega-yellow text-warm-950 font-bold text-lg rounded-sm hover:bg-bodega-yellow-light transition-all duration-300 flex items-center gap-3 shadow-[0_0_40px_rgba(229,255,0,0.3)] hover:shadow-[0_0_60px_rgba(229,255,0,0.5)] min-w-[180px] justify-center"
           >
             SHOP
           </Link>
@@ -72,9 +74,10 @@ export function HeroSection() {
             ARCHIVE
           </Link>
 
+          {/* bodega-yellow glow — intentional brand signature */}
           <Link
             href="/events"
-            className="group px-10 py-5 bg-bodega-yellow text-[#0A0A08] font-bold text-lg rounded-sm hover:bg-bodega-yellow-light transition-all duration-300 flex items-center gap-3 shadow-[0_0_40px_rgba(229,255,0,0.3)] hover:shadow-[0_0_60px_rgba(229,255,0,0.5)] min-w-[180px] justify-center"
+            className="group px-10 py-5 bg-bodega-yellow text-warm-950 font-bold text-lg rounded-sm hover:bg-bodega-yellow-light transition-all duration-300 flex items-center gap-3 shadow-[0_0_40px_rgba(229,255,0,0.3)] hover:shadow-[0_0_60px_rgba(229,255,0,0.5)] min-w-[180px] justify-center"
           >
             EVENTS
           </Link>

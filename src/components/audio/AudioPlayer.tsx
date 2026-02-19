@@ -33,7 +33,7 @@ export function AudioPlayer() {
   };
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 bg-[#0A0A08]/95 backdrop-blur-md border-t border-white/10 pb-safe">
+    <div className="fixed bottom-0 left-0 right-0 z-50 bg-warm-950/95 backdrop-blur-md border-t border-white/10 pb-safe">
       <div className="max-w-7xl mx-auto px-3 md:px-6 py-3 flex items-center justify-between">
         {/* Track Info */}
         <div className="flex items-center gap-4 min-w-0 flex-1">
@@ -55,9 +55,9 @@ export function AudioPlayer() {
             className="w-11 h-11 bg-bodega-yellow rounded-md flex items-center justify-center hover:scale-105 transition-transform duration-300"
           >
             {isPlaying ? (
-              <PauseIcon className="w-4 h-4 text-[#0A0A08] fill-current" />
+              <PauseIcon className="w-4 h-4 text-warm-950 fill-current" />
             ) : (
-              <PlayIcon className="w-4 h-4 text-[#0A0A08] fill-current ml-0.5" />
+              <PlayIcon className="w-4 h-4 text-warm-950 fill-current ml-0.5" />
             )}
           </button>
 

@@ -2,7 +2,6 @@
 
 import { useScroll, useTransform, useMotionValueEvent } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
-import { cn } from "@/lib/utils";
 
 const FRAME_COUNT = 153;
 const START_FRAME = 50;
@@ -83,6 +82,7 @@ export function SpinningLogo() {
         if (loadedCount === FRAME_COUNT) {
             renderFrame(START_FRAME);
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [loadedCount]);
 
     return (

@@ -31,7 +31,7 @@ export function ProductCard({ product }: { product: Product }) {
                     <div className="absolute inset-0 bg-black/0 md:group-hover:bg-black/40 transition-colors duration-300 flex items-end md:items-center justify-center p-4 md:p-0">
                         <div className="opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300 transform md:translate-y-4 md:group-hover:translate-y-0 text-center">
                             <button
-                                className="flex items-center gap-2 px-6 py-3 bg-bodega-yellow text-[#0A0A08] font-bold rounded-sm hover:bg-bodega-yellow-light transition-colors duration-300 uppercase tracking-widest text-xs"
+                                className="flex items-center gap-2 px-6 py-3 bg-bodega-yellow text-warm-950 font-bold rounded-sm hover:bg-bodega-yellow-light transition-colors duration-300 uppercase tracking-widest text-xs"
                             >
                                 <ShoppingCartIcon className="w-5 h-5" />
                                 BUY NOW

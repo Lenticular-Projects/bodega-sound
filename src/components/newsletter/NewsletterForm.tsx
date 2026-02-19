@@ -65,7 +65,7 @@ export function NewsletterForm() {
             <button
                 type="submit"
                 disabled={isLoading}
-                className="px-8 py-4 bg-bodega-yellow text-[#0A0A08] font-bold rounded-sm hover:bg-bodega-yellow-light transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+                className="px-8 py-4 bg-bodega-yellow text-warm-950 font-bold rounded-sm hover:bg-bodega-yellow-light transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
             >
                 {isLoading ? "..." : "SUBSCRIBE"}
             </button>

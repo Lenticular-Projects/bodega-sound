@@ -11,8 +11,8 @@ export default async function AdminLayout({
     children: React.ReactNode;
 }) {
     const headersList = await headers();
-    const pathname = headersList.get("x-nextjs-path") ?? "";
-    const role = headersList.get("x-admin-role") ?? "admin";
+    const pathname = headersList.get("x-pathname") ?? "";
+    const role = headersList.get("x-admin-role") ?? "door";
     const isLoginPage = pathname?.includes("/admin/login") || pathname === "/admin";
     const isDoorWorker = role === "door";
 
@@ -24,7 +24,7 @@ export default async function AdminLayout({
     // Door workers on /admin/door get a minimal layout (no sidebar)
     if (isDoorWorker) {
         return (
-            <div className="min-h-screen bg-[#0A0A08] text-zinc-100">
+            <div className="min-h-screen bg-warm-950 text-zinc-100">
                 <header className="h-14 md:h-20 border-b border-zinc-900 flex items-center justify-between px-4 md:px-10 bg-black/20 backdrop-blur-xl sticky top-0 z-10">
                     <div className="flex items-center gap-3">
                         <Image
@@ -59,7 +59,7 @@ export default async function AdminLayout({
     }
 
     return (
-        <div className="min-h-screen bg-[#0A0A08] text-zinc-100 flex flex-col md:flex-row">
+        <div className="min-h-screen bg-warm-950 text-zinc-100 flex flex-col md:flex-row">
             {/* Desktop Sidebar — hidden on mobile */}
             <aside className="hidden md:flex w-64 border-r border-zinc-900 flex-col pt-8 shrink-0">
                 <div className="px-6 mb-12">

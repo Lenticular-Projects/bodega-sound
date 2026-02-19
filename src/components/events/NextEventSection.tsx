@@ -86,11 +86,12 @@ export function NextEventSection() {
               </div>
 
               <div className="pt-4">
+                {/* bodega-yellow glow — intentional brand signature */}
                 <a
                   href="https://eventbrite.com/bodegasound"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-block w-full md:w-auto px-10 py-5 bg-black dark:bg-bodega-yellow text-white dark:text-[#0A0A08] font-bold text-lg rounded-sm hover:bg-zinc-800 dark:hover:bg-bodega-yellow-light transition-all duration-300 shadow-[0_0_40px_rgba(0,0,0,0.1)] dark:shadow-[0_0_40px_rgba(229,255,0,0.3)] hover:shadow-[0_0_60px_rgba(0,0,0,0.2)] dark:hover:shadow-[0_0_60px_rgba(229,255,0,0.5)] text-center"
+                  className="inline-block w-full md:w-auto px-10 py-5 bg-black dark:bg-bodega-yellow text-white dark:text-warm-950 font-bold text-lg rounded-sm hover:bg-zinc-800 dark:hover:bg-bodega-yellow-light transition-all duration-300 shadow-[0_0_40px_rgba(0,0,0,0.1)] dark:shadow-[0_0_40px_rgba(229,255,0,0.3)] hover:shadow-[0_0_60px_rgba(0,0,0,0.2)] dark:hover:shadow-[0_0_60px_rgba(229,255,0,0.5)] text-center"
                 >
                   SECURE YOUR SPOT
                 </a>
@@ -108,7 +109,7 @@ export function NextEventSection() {
           >
             <div className="absolute inset-0 bg-bodega-yellow/20 rounded-sm blur-2xl opacity-20 group-hover:opacity-40 transition-opacity duration-500" />
             <div className="relative aspect-[4/5] rounded-sm overflow-hidden bg-zinc-200 dark:bg-warm-800 transition-colors duration-300">
-              <div className="absolute inset-0 bg-gradient-to-t from-white/80 dark:from-[#0A0A08]/80 via-transparent to-transparent z-10" />
+              <div className="absolute inset-0 bg-gradient-to-t from-white/80 dark:from-warm-950/80 via-transparent to-transparent z-10" />
 
               {/* Event image */}
               <Image

@@ -50,8 +50,7 @@ export function FlipTextReveal({ text, className, delay = 0, style }: FlipTextRe
                                 delay: delay + (wordIndex * 0.1) + (charIndex * 0.03),
                                 ease: [0.215, 0.61, 0.355, 1], // Cubic-bezier for aggressive "pop"
                             }}
-                            style={{ transformOrigin: "top" }}
-                            className="inline-block"
+                            className="inline-block origin-top"
                         >
                             {char}
                         </motion.span>

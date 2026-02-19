@@ -46,7 +46,7 @@ function ArchiveCard({
         <div className="absolute inset-0 bg-bodega-yellow/0 group-hover:bg-bodega-yellow/10 transition-colors duration-500" />
 
         {/* Content overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A08] via-[#0A0A08]/20 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-warm-950 via-warm-950/20 to-transparent" />
 
         {/* Event info */}
         <div className="absolute bottom-0 left-0 right-0 p-6 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500">

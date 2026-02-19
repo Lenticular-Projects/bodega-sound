@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { PlayIcon, ArrowRightIcon } from "@/components/icons";
-import { fadeUp, staggerContainer } from "@/lib/animations";
+import { fadeUp, fadeUpDelayed, staggerContainer } from "@/lib/animations";
 import { cn } from "@/lib/utils";
 import { recentEvents, allEvents, type BodegaEvent } from "@/data/events";
 
@@ -40,7 +40,7 @@ function EventCard({ event, index }: { event: BodegaEvent; index: number }) {
         <div className="absolute inset-0 bg-bodega-yellow/0 group-hover:bg-bodega-yellow/10 transition-colors duration-500" />
 
         {/* Content overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A08] via-[#0A0A08]/20 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-warm-950 via-warm-950/20 to-transparent" />
 
         {/* Event info */}
         <div className="absolute bottom-0 left-0 right-0 p-6 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
@@ -109,7 +109,7 @@ export function PastEventsSection() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ delay: 0.5 }}
+          transition={fadeUpDelayed.transition}
           className="mt-16 text-center"
         >
           <Link

@@ -103,7 +103,7 @@ export function ContactForm() {
                     <button
                         type="submit"
                         disabled={isLoading}
-                        className="w-full px-8 py-4 bg-bodega-yellow text-[#0A0A08] font-bold tracking-widest rounded-sm hover:bg-bodega-yellow-light transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed uppercase"
+                        className="w-full px-8 py-4 bg-bodega-yellow text-warm-950 font-bold tracking-widest rounded-sm hover:bg-bodega-yellow-light transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed uppercase"
                     >
                         {isLoading ? "Sending..." : "Send Message"}
                     </button>

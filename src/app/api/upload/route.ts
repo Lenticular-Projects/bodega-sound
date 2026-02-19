@@ -1,17 +1,21 @@
 import { put } from "@vercel/blob";
 import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
-import { verifySessionToken } from "@/lib/auth";
+import { requireRole } from "@/server/actions/auth";
+import { randomUUID } from "crypto";
 
 const MAX_SIZE = 5 * 1024 * 1024; // 5MB
-const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"];
+const ALLOWED_TYPES: Record<string, string> = {
+  "image/jpeg": "jpg",
+  "image/png": "png",
+  "image/webp": "webp",
+};
 
 export async function POST(request: Request): Promise<NextResponse> {
   try {
     // Auth check — only admins can upload files
-    const cookieStore = await cookies();
-    const sessionToken = cookieStore.get("admin-session")?.value;
-    if (!sessionToken || !(await verifySessionToken(sessionToken))) {
+    try {
+      await requireRole("admin");
+    } catch {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -22,7 +26,8 @@ export async function POST(request: Request): Promise<NextResponse> {
       return NextResponse.json({ error: "No file provided" }, { status: 400 });
     }
 
-    if (!ALLOWED_TYPES.includes(file.type)) {
+    const ext = ALLOWED_TYPES[file.type];
+    if (!ext) {
       return NextResponse.json(
         { error: "Invalid file type. Use JPEG, PNG, or WebP." },
         { status: 400 }
@@ -36,7 +41,9 @@ export async function POST(request: Request): Promise<NextResponse> {
       );
     }
 
-    const blob = await put(`flyers/${Date.now()}-${file.name}`, file, {
+    // Use server-generated filename to prevent path traversal
+    const safeFilename = `${randomUUID()}.${ext}`;
+    const blob = await put(`flyers/${safeFilename}`, file, {
       access: "public",
     });
 

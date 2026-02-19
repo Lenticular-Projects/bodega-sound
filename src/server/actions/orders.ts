@@ -7,6 +7,7 @@ import { put } from "@vercel/blob";
 import { OrderEmail } from "@/emails/OrderConfirmation";
 import { headers } from "next/headers";
 import { createRateLimiter } from "@/lib/rate-limit";
+import { randomUUID } from "crypto";
 
 const getResend = () => {
     const key = process.env.RESEND_API_KEY;
@@ -62,7 +63,9 @@ export async function submitOrder(formData: FormData) {
         let receiptUrl = "";
         try {
             if (process.env.BLOB_READ_WRITE_TOKEN) {
-                const blob = await put(`receipts/${Date.now()}-${proofFile.name}`, proofFile, {
+                const ext = proofFile.type === "image/png" ? "png" : proofFile.type === "image/webp" ? "webp" : "jpg";
+                const safeFilename = `${randomUUID()}.${ext}`;
+                const blob = await put(`receipts/${safeFilename}`, proofFile, {
                     access: "public",
                 });
                 receiptUrl = blob.url;

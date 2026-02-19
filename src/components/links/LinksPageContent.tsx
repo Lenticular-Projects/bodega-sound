@@ -91,7 +91,7 @@ export function LinksPageContent() {
   };
 
   return (
-    <main className="min-h-screen bg-black text-zinc-100 flex flex-col items-center selection:bg-[#E5FF00] selection:text-black pt-32 pb-16 relative overflow-hidden">
+    <main className="min-h-screen bg-black text-zinc-100 flex flex-col items-center selection:bg-bodega-yellow selection:text-black pt-32 pb-16 relative overflow-hidden">
 
       {/* Profile Section */}
       <motion.div
@@ -101,7 +101,7 @@ export function LinksPageContent() {
         className="w-full max-w-md flex flex-col items-center px-4 z-10"
       >
         <motion.div variants={fadeUp} className="relative w-40 h-40 mb-6">
-          <div className="absolute inset-0 bg-[#E5FF00] rounded-full blur-2xl opacity-20" />
+          <div className="absolute inset-0 bg-bodega-yellow rounded-full blur-2xl opacity-20" />
           <Image
             src="/images/logo/bdg-yellow.png"
             alt="Bodega Sound Logo"
@@ -119,10 +119,10 @@ export function LinksPageContent() {
         </motion.h1>
 
         <motion.div variants={fadeUp} className="flex gap-4 mb-8">
-          <a href="https://www.youtube.com/channel/UCpF9K0Lg4wlwNrqprRFRmxg" target="_blank" className="hover:text-[#E5FF00] transition-colors p-2 hover:bg-zinc-900 rounded-full">
+          <a href="https://www.youtube.com/channel/UCpF9K0Lg4wlwNrqprRFRmxg" target="_blank" className="hover:text-bodega-yellow transition-colors p-2 hover:bg-zinc-900 rounded-full">
             <YouTubeIcon className="w-6 h-6" />
           </a>
-          <a href="https://www.tiktok.com/@bodega_sound" target="_blank" className="hover:text-[#E5FF00] transition-colors p-2 hover:bg-zinc-900 rounded-full">
+          <a href="https://www.tiktok.com/@bodega_sound" target="_blank" className="hover:text-bodega-yellow transition-colors p-2 hover:bg-zinc-900 rounded-full">
             <MusicIcon className="w-6 h-6" />
           </a>
         </motion.div>
@@ -138,7 +138,7 @@ export function LinksPageContent() {
               className="relative group w-full"
             >
               <div
-                className="flex items-center gap-4 w-full p-2 bg-zinc-900/40 backdrop-blur-md rounded-full border border-zinc-800/30 shadow-lg hover:shadow-[#E5FF00]/5 transition-all duration-300"
+                className="flex items-center gap-4 w-full p-2 bg-zinc-900/40 backdrop-blur-md rounded-full border border-zinc-800/30 shadow-lg hover:shadow-bodega-yellow/5 transition-all duration-300"
               >
                 {/* Main Clickable Area */}
                 <a

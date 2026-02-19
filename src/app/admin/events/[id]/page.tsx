@@ -4,13 +4,13 @@ import { useState, useEffect, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { format } from "date-fns";
 import Link from "next/link";
+import Image from "next/image";
 import {
   getEventBySlugOrId,
   getEventRSVPs,
   manualAddGuest,
   exportRSVPsToCSV,
   deleteEvent,
-  updateEvent,
   checkInGuest,
   undoCheckIn,
   deleteRSVP,
@@ -19,26 +19,7 @@ import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { fadeUp } from "@/lib/animations";
 import toast from "react-hot-toast";
-
-interface EventData {
-  id: string;
-  title: string;
-  slug: string;
-  description: string | null;
-  eventDate: Date | string;
-  location: string;
-  locationUrl: string | null;
-  flyerImage: string | null;
-  capacity: number | null;
-  ticketPrice: string | null;
-  currency: string;
-  status: string;
-  collectInstagram: boolean;
-  collectPhone: boolean;
-  allowPlusOnes: boolean;
-  showGuestList: boolean;
-  rsvpCount: number;
-}
+import type { EventData } from "@/types/events";
 
 interface RSVPData {
   id: string;
@@ -86,6 +67,7 @@ export default function EventManagePage() {
   }, [eventId]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     loadData();
   }, [loadData]);
 
@@ -188,31 +170,6 @@ export default function EventManagePage() {
       loadData();
     } else {
       toast.error(result.error || "Failed to add guest");
-    }
-  }
-
-  async function handleUpdateStatus(newStatus: string): Promise<void> {
-    const formData = new FormData();
-    formData.set("title", event!.title);
-    formData.set("eventDate", new Date(event!.eventDate).toISOString());
-    formData.set("location", event!.location);
-    formData.set("locationUrl", event!.locationUrl || "");
-    formData.set("flyerImage", event!.flyerImage || "");
-    formData.set("description", event!.description || "");
-    formData.set("currency", event!.currency);
-    formData.set("ticketPrice", event!.ticketPrice || "");
-    if (event!.capacity) formData.set("capacity", event!.capacity.toString());
-    if (event!.collectPhone) formData.set("collectPhone", "on");
-    if (event!.collectInstagram) formData.set("collectInstagram", "on");
-    if (event!.allowPlusOnes) formData.set("allowPlusOnes", "on");
-    if (event!.showGuestList) formData.set("showGuestList", "on");
-
-    // We need to update the status separately since the schema doesn't include it
-    // For now we use a direct approach
-    const result = await updateEvent(resolvedEventId, formData);
-    if (result.success) {
-      toast.success(`Event status updated`);
-      loadData();
     }
   }
 
@@ -804,10 +761,12 @@ export default function EventManagePage() {
               <div className="border-t border-zinc-800 pt-4">
                 <p className="text-[10px] font-mono text-zinc-600 uppercase tracking-widest mb-3">QR Code</p>
                 <div className="bg-white p-3 rounded-sm inline-block">
-                  <img
+                  <Image
                     src={`/api/qr/${selectedGuest.qrCode}`}
                     alt={`QR Code for ${selectedGuest.name}`}
-                    className="w-40 h-40"
+                    width={160}
+                    height={160}
+                    unoptimized
                   />
                 </div>
                 <p className="text-zinc-600 text-xs mt-2 font-mono">{selectedGuest.qrCode}</p>

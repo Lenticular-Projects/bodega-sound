@@ -47,6 +47,17 @@ const rsvpSchema = z.object({
   referralSource: z.string().max(100).default("DIRECT"),
 });
 
+// Manual Add Guest Schema
+const manualAddGuestSchema = z.object({
+  name: z.string().min(1, "Name is required").max(200),
+  email: z.string().email("Valid email required").max(320),
+  phone: z.string().max(30).optional(),
+  instagram: z.string().max(100).optional(),
+  status: z.enum(["GOING", "MAYBE", "NOT_GOING"]).default("GOING"),
+  plusOnes: z.coerce.number().int().min(0).max(10).default(0),
+  plusOneNames: z.string().max(500).optional(),
+});
+
 // Generate cryptographically secure QR code
 function generateQRCode(): string {
   return randomUUID();
@@ -452,17 +463,21 @@ export async function manualAddGuest(eventId: string, formData: FormData) {
   try {
     await requireRole("admin");
 
-    const name = formData.get("name") as string;
-    const email = formData.get("email") as string;
-    const phone = formData.get("phone") as string;
-    const instagram = formData.get("instagram") as string;
-    const status = formData.get("status") as "GOING" | "MAYBE" | "NOT_GOING";
-    const plusOnes = parseInt(formData.get("plusOnes") as string) || 0;
-    const plusOneNames = formData.get("plusOneNames") as string;
+    const parsed = manualAddGuestSchema.safeParse({
+      name: formData.get("name"),
+      email: formData.get("email"),
+      phone: formData.get("phone") || undefined,
+      instagram: formData.get("instagram") || undefined,
+      status: formData.get("status") || "GOING",
+      plusOnes: formData.get("plusOnes"),
+      plusOneNames: formData.get("plusOneNames") || undefined,
+    });
 
-    if (!name || !email) {
-      return { success: false, error: "Name and email required" };
+    if (!parsed.success) {
+      return { success: false, error: parsed.error.issues[0]?.message ?? "Invalid input" };
     }
+
+    const { name, email, phone, instagram, status, plusOnes, plusOneNames } = parsed.data;
 
     const qrCode = generateQRCode();
     const rsvp = await prisma.rSVP.create({
@@ -472,7 +487,7 @@ export async function manualAddGuest(eventId: string, formData: FormData) {
         email,
         phone,
         instagram,
-        status: status || "GOING",
+        status,
         plusOnes,
         plusOneNames,
         referralSource: "MANUAL_ADD",

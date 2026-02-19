@@ -9,26 +9,7 @@ import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import toast from "react-hot-toast";
 import Image from "next/image";
-
-interface EventData {
-  id: string;
-  title: string;
-  slug: string;
-  description: string | null;
-  eventDate: Date | string;
-  location: string;
-  locationUrl: string | null;
-  flyerImage: string | null;
-  capacity: number | null;
-  ticketPrice: string | null;
-  currency: string;
-  status: string;
-  collectInstagram: boolean;
-  collectPhone: boolean;
-  allowPlusOnes: boolean;
-  showGuestList: boolean;
-  rsvpCount: number;
-}
+import type { EventData } from "@/types/events";
 
 interface RSVPData {
   success: boolean;
@@ -289,10 +270,12 @@ export default function EventRSVPPage() {
               </p>
               {rsvpResult.qrCode && (
                 <div className="bg-white p-4 rounded-sm inline-block mb-6">
-                  <img
+                  <Image
                     src={`/api/qr/${rsvpResult.qrCode}`}
                     alt="Your QR Code"
-                    className="w-48 h-48"
+                    width={192}
+                    height={192}
+                    unoptimized
                   />
                 </div>
               )}

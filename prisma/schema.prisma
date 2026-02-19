@@ -7,15 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Chat {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  prompt    String
-  response  String?
-  metadata  String?  // JSON string for flexibility
-}
-
 model Order {
   id              String   @id @default(cuid())
   createdAt       DateTime @default(now())
@@ -61,28 +52,28 @@ model Event {
   location          String
   locationUrl       String?
   flyerImage        String?
-  
+
   // Capacity & Pricing
   capacity          Int?
   ticketPrice       String?  // Store as string to avoid decimal issues
   currency          String   @default("PHP")
-  
+
   // Status: DRAFT, PUBLISHED, CLOSED, COMPLETED
   status            String   @default("DRAFT")
-  
+
   // Collection Settings
   collectInstagram  Boolean  @default(false)
   collectPhone      Boolean  @default(false)
   allowPlusOnes     Boolean  @default(false)
   showGuestList     Boolean  @default(false)
-  
+
   // Relationships
   rsvps             RSVP[]
-  
+
   // Timestamps
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
-  
+
   @@index([status])
   @@index([eventDate])
   @@index([slug])
@@ -92,38 +83,33 @@ model RSVP {
   id              String   @id @default(cuid())
   eventId         String
   event           Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  
+
   // Guest Information
   name            String
   email           String
   phone           String?
   instagram       String?
-  tiktok          String?
-  
+
   // RSVP Details: GOING, MAYBE, NOT_GOING
   status          String   @default("GOING")
   plusOnes        Int      @default(0)
   plusOneNames    String?
-  
-  // Custom Answers (JSON string)
-  customAnswers   String?
-  
+
   // Tracking & Referral
   referralSource  String   @default("DIRECT")
   qrCode          String   @unique
-  
+
   // Check-in Status
   checkedIn       Boolean  @default(false)
   checkedInAt     DateTime?
   checkedInBy     String?
-  
+
   // Timestamps
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
-  
+
   @@index([eventId])
   @@index([email])
   @@index([qrCode])
   @@index([checkedIn])
 }
-

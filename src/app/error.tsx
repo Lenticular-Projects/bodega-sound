@@ -1,7 +1,6 @@
 "use client";
 
 export default function GlobalError({
-    error: _error,
     reset,
 }: {
     error: Error & { digest?: string };
@@ -18,7 +17,7 @@ export default function GlobalError({
                 </p>
                 <button
                     onClick={reset}
-                    className="px-8 py-4 bg-bodega-yellow text-[#0A0A08] font-bold rounded-sm hover:bg-bodega-yellow-light transition-all duration-300 uppercase tracking-widest"
+                    className="px-8 py-4 bg-bodega-yellow text-warm-950 font-bold rounded-sm hover:bg-bodega-yellow-light transition-all duration-300 uppercase tracking-widest"
                 >
                     Try Again
                 </button>

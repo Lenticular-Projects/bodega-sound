@@ -14,6 +14,7 @@ export default function CheckInRedirectPage() {
   useEffect(() => {
     const code = searchParams.get("code");
     if (!code) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setStatus("error");
       return;
     }

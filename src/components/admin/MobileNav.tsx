@@ -54,7 +54,7 @@ export function MobileNav({ unreadCount }: MobileNavProps) {
 
       {/* Mobile slide-out menu */}
       <nav
-        className={`fixed top-0 left-0 h-full w-64 bg-[#0A0A08] border-r border-zinc-900 z-50 transform transition-transform duration-300 md:hidden ${
+        className={`fixed top-0 left-0 h-full w-64 bg-warm-950 border-r border-zinc-900 z-50 transform transition-transform duration-300 md:hidden ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
