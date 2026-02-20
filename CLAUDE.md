@@ -99,6 +99,14 @@ DOOR_PASSWORD=...                       # Door worker session secret
 NEXT_PUBLIC_APP_URL=...                 # Public app URL
 ```
 
+## To-Do List & Outstanding Work
+
+A living to-do list lives at `docs/to-do-list/`. **Always check this folder when starting a session.**
+
+- `docs/to-do-list/security-hardening.md` — Security items from the 2026-02-20 audit. Items marked `[ ]` are not yet done. When the user says they completed something, update the checkbox to `[x]` and note the date.
+
+**Pending critical item:** The rate limiter in `src/lib/rate-limit.ts` uses an in-memory `Map` which resets on every Vercel cold start, making it ineffective. It must be replaced with Upstash Redis (`@upstash/ratelimit` + `@upstash/redis`). Do not claim rate limiting is functional until this is done. Env vars needed: `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN`.
+
 ## Z-Index Hierarchy
 
 Defined as CSS custom properties in `globals.css`: background (-10) → base (0) → content (10) → overlay (20) → header (50) → popover (100) → grain (9999). Use Tailwind classes like `z-content`, `z-header`, `z-overlay`.
