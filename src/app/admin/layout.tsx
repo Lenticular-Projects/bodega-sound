@@ -12,9 +12,9 @@ export default async function AdminLayout({
 }) {
     const headersList = await headers();
     const pathname = headersList.get("x-pathname") ?? "";
-    const role = headersList.get("x-admin-role") ?? "door";
+    const role = headersList.get("x-admin-role") ?? null;
     const isLoginPage = pathname?.includes("/admin/login") || pathname === "/admin";
-    const isDoorWorker = role === "door";
+    const isDoorWorker = role === "door" && role !== null;
 
     // Login page gets a clean layout with no sidebar
     if (isLoginPage) {

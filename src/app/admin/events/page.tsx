@@ -1,3 +1,5 @@
+import { redirect } from "next/navigation";
+import { verifyAdminSession } from "@/server/actions/auth";
 import { prisma } from "@/server/db";
 import { format } from "date-fns";
 import Link from "next/link";
@@ -6,6 +8,7 @@ import { Button } from "@/components/ui/button";
 export const dynamic = "force-dynamic";
 
 export default async function AdminEventsPage() {
+  if (!(await verifyAdminSession())) redirect("/admin/login");
   const events = await prisma.event.findMany({
     orderBy: { eventDate: "desc" },
     include: {

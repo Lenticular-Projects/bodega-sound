@@ -1,3 +1,5 @@
+import { redirect } from "next/navigation";
+import { getSessionRole } from "@/server/actions/auth";
 import { prisma } from "@/server/db";
 import { format } from "date-fns";
 import Link from "next/link";
@@ -7,6 +9,8 @@ import { LogoutButton } from "@/components/admin/LogoutButton";
 export const dynamic = "force-dynamic";
 
 export default async function DoorHubPage() {
+  const role = await getSessionRole();
+  if (!role) redirect("/admin/login");
   const events = await prisma.event.findMany({
     where: { status: "PUBLISHED" },
     orderBy: { eventDate: "desc" },
