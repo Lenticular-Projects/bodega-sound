@@ -9,13 +9,13 @@ const subscribeLimiter = createRateLimiter("subscribe", 3, 15 * 60 * 1000);
 
 const subscriberSchema = z.object({
     email: z.string().email().max(320),
-    name: z.string().max(200).optional(),
-    phone: z.string().max(30).optional(),
+    name: z.string().trim().min(1).max(200).optional(),
+    phone: z.string().trim().max(30).optional(),
 });
 
 async function getClientIP(): Promise<string> {
     const hdrs = await headers();
-    return hdrs.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+    return hdrs.get("x-real-ip") || hdrs.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
 }
 
 export async function subscribeUser(formData: FormData) {

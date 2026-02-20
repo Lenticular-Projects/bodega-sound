@@ -29,7 +29,7 @@ export default function EventRSVPPage() {
 
   useEffect(() => {
     async function loadEvent() {
-      const data = await getEventBySlugOrId(eventId);
+      const data = await getEventBySlugOrId(eventId, { publicOnly: true });
       if (data) {
         setEvent(data);
       }

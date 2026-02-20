@@ -34,7 +34,7 @@ function safeCompare(a: string, b: string): boolean {
 
 async function getClientIP(): Promise<string> {
   const hdrs = await headers();
-  return hdrs.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+  return hdrs.get("x-real-ip") || hdrs.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
 }
 
 export async function loginAdmin(
@@ -116,7 +116,9 @@ export async function getSessionRole(): Promise<Role | null> {
           parts.slice(0, 2).join(":"),
           ADMIN_SECRET
         );
-        if (parts[2] === expectedSig) return "admin";
+        const sigA = Buffer.from(parts[2]);
+        const sigB = Buffer.from(expectedSig);
+        if (sigA.length === sigB.length && timingSafeEqual(sigA, sigB)) return "admin";
       }
     }
   }
@@ -134,7 +136,9 @@ export async function getSessionRole(): Promise<Role | null> {
           parts.slice(0, 2).join(":"),
           DOOR_SECRET
         );
-        if (parts[2] === expectedSig) return "door";
+        const sigA = Buffer.from(parts[2]);
+        const sigB = Buffer.from(expectedSig);
+        if (sigA.length === sigB.length && timingSafeEqual(sigA, sigB)) return "door";
       }
     }
   }

@@ -1,6 +1,13 @@
 "use server";
 
 import { z } from "zod";
+
+// Escapes a value for CSV: wraps in quotes, doubles internal quotes,
+// and strips leading formula-injection characters (=, +, -, @, tab, CR).
+function csvField(value: string | number | null | undefined): string {
+    const str = String(value ?? "").replace(/^[=+\-@\t\r]+/, "");
+    return `"${str.replace(/"/g, '""')}"`;
+}
 import { prisma } from "@/server/db";
 import { revalidatePath } from "next/cache";
 import { requireRole } from "@/server/actions/auth";
@@ -63,17 +70,17 @@ export async function exportOrdersCsv(): Promise<{ success: boolean; csv?: strin
         const header = "ID,Date,Customer,Email,Contact,Product,Quantity,Total,Status,Shipping Method,Shipping Address";
         const rows = orders.map((o) =>
             [
-                o.id,
-                o.createdAt.toISOString(),
-                `"${o.customerName.replace(/"/g, '""')}"`,
-                o.customerEmail,
-                o.contactNumber,
-                `"${o.productName.replace(/"/g, '""')}"`,
-                o.quantity,
-                o.totalPrice,
-                o.status,
-                o.shippingMethod,
-                `"${o.shippingAddress.replace(/"/g, '""')}"`,
+                csvField(o.id),
+                csvField(o.createdAt.toISOString()),
+                csvField(o.customerName),
+                csvField(o.customerEmail),
+                csvField(o.contactNumber),
+                csvField(o.productName),
+                csvField(o.quantity),
+                csvField(o.totalPrice),
+                csvField(o.status),
+                csvField(o.shippingMethod),
+                csvField(o.shippingAddress),
             ].join(",")
         );
         return { success: true, csv: [header, ...rows].join("\n") };
@@ -93,12 +100,12 @@ export async function exportSubscribersCsv(): Promise<{ success: boolean; csv?: 
         const header = "ID,Date,Email,Name,Phone,Source";
         const rows = subscribers.map((s) =>
             [
-                s.id,
-                s.createdAt.toISOString(),
-                s.email,
-                s.name ?? "",
-                s.phone ?? "",
-                s.source ?? "",
+                csvField(s.id),
+                csvField(s.createdAt.toISOString()),
+                csvField(s.email),
+                csvField(s.name),
+                csvField(s.phone),
+                csvField(s.source),
             ].join(",")
         );
         return { success: true, csv: [header, ...rows].join("\n") };

@@ -15,7 +15,7 @@ const contactSchema = z.object({
 
 async function getClientIP(): Promise<string> {
     const hdrs = await headers();
-    return hdrs.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+    return hdrs.get("x-real-ip") || hdrs.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
 }
 
 export async function submitContactMessage(

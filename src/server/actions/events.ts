@@ -4,7 +4,7 @@ import { z } from "zod";
 import { prisma } from "@/server/db";
 import { revalidatePath } from "next/cache";
 import { Resend } from "resend";
-import { randomUUID } from "crypto";
+import { randomUUID, randomBytes } from "crypto";
 import { headers } from "next/headers";
 import { requireRole } from "@/server/actions/auth";
 import { createRateLimiter } from "@/lib/rate-limit";
@@ -21,10 +21,10 @@ const rsvpLimiter = createRateLimiter("rsvp", 5, 15 * 60 * 1000);
 const eventSchema = z.object({
   title: z.string().min(1, "Title is required"),
   description: z.string().optional(),
-  eventDate: z.string().min(1, "Date is required"),
+  eventDate: z.string().min(1, "Date is required").refine((val) => !isNaN(new Date(val).getTime()), { message: "Invalid date" }),
   location: z.string().min(1, "Location is required"),
-  locationUrl: z.string().optional(),
-  flyerImage: z.string().optional(),
+  locationUrl: z.string().url({ message: "Must be a valid URL" }).refine((u) => u.startsWith("https://"), { message: "Must be an HTTPS URL" }).optional(),
+  flyerImage: z.string().url({ message: "Must be a valid URL" }).optional(),
   capacity: z.coerce.number().int().positive().optional(),
   ticketPrice: z.string().optional(),
   currency: z.string().default("PHP"),
@@ -69,19 +69,19 @@ async function generateSlug(title: string): Promise<string> {
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/(^-|-$)/g, "")
-    || `event-${Math.random().toString(36).substring(2, 8)}`;
+    || `event-${randomBytes(3).toString("hex")}`;
 
   // Check if slug already exists, append random suffix if so
   const existing = await prisma.event.findUnique({ where: { slug: base } });
   if (!existing) return base;
 
-  const suffix = Math.random().toString(36).substring(2, 6);
+  const suffix = randomBytes(2).toString("hex");
   return `${base}-${suffix}`;
 }
 
 async function getClientIP(): Promise<string> {
   const hdrs = await headers();
-  return hdrs.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+  return hdrs.get("x-real-ip") || hdrs.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
 }
 
 // Create Event
@@ -331,7 +331,7 @@ export async function getEvent(eventId: string) {
 }
 
 // Get Event by slug or ID (public — tries slug first, falls back to ID)
-export async function getEventBySlugOrId(slugOrId: string) {
+export async function getEventBySlugOrId(slugOrId: string, options?: { publicOnly?: boolean }) {
   try {
     // Try slug first
     let event = await prisma.event.findUnique({
@@ -356,6 +356,7 @@ export async function getEventBySlugOrId(slugOrId: string) {
     }
 
     if (!event) return null;
+    if (options?.publicOnly && event.status !== "PUBLISHED") return null;
 
     return {
       ...event,

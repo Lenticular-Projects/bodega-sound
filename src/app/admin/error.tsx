@@ -14,7 +14,8 @@ export default function AdminError({
                     SYSTEM ERROR
                 </h2>
                 <p className="text-zinc-500 text-sm mb-8">
-                    {error.message || "An unexpected error occurred in the admin panel."}
+                    An unexpected error occurred in the admin panel.
+                    {error.digest && <span className="block font-mono text-xs mt-1 text-zinc-600">Reference: {error.digest}</span>}
                 </p>
                 <button
                     onClick={reset}

@@ -15,6 +15,17 @@ function isDoorAllowedRoute(pathname: string): boolean {
   return DOOR_ALLOWED_PATTERNS.some((pattern) => pattern.test(pathname));
 }
 
+function edgeTimingSafeEqual(a: string, b: string): boolean {
+  if (a.length !== b.length) return false;
+  const aBytes = new TextEncoder().encode(a);
+  const bBytes = new TextEncoder().encode(b);
+  let result = 0;
+  for (let i = 0; i < aBytes.length; i++) {
+    result |= aBytes[i] ^ bBytes[i];
+  }
+  return result === 0;
+}
+
 async function signToken(payload: string, secret: string): Promise<string> {
   const encoder = new TextEncoder();
   const key = await crypto.subtle.importKey(
@@ -49,7 +60,7 @@ export async function middleware(request: NextRequest) {
         const [timestamp, nonce, signature] = parts;
         const payload = `${timestamp}:${nonce}`;
         const expected = await signToken(payload, ADMIN_SECRET);
-        if (signature === expected) {
+        if (edgeTimingSafeEqual(signature, expected)) {
           const age = Date.now() - parseInt(timestamp, 10);
           isAdmin = age < TOKEN_EXPIRY_MS;
         }
@@ -62,7 +73,7 @@ export async function middleware(request: NextRequest) {
         const [timestamp, nonce, signature] = parts;
         const payload = `${timestamp}:${nonce}`;
         const expected = await signToken(payload, DOOR_SECRET);
-        if (signature === expected) {
+        if (edgeTimingSafeEqual(signature, expected)) {
           const age = Date.now() - parseInt(timestamp, 10);
           isDoor = age < TOKEN_EXPIRY_MS;
         }

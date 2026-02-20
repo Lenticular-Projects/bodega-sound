@@ -28,9 +28,12 @@ const orderSchema = z.object({
     totalPrice: z.string().max(50),
 });
 
+const ALLOWED_PROOF_TYPES = ["image/jpeg", "image/png", "image/webp"];
+const MAX_PROOF_SIZE = 5 * 1024 * 1024; // 5MB
+
 async function getClientIP(): Promise<string> {
     const hdrs = await headers();
-    return hdrs.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+    return hdrs.get("x-real-ip") || hdrs.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
 }
 
 export async function submitOrder(formData: FormData) {
@@ -57,6 +60,12 @@ export async function submitOrder(formData: FormData) {
 
         if (!proofFile || proofFile.size === 0) {
             return { success: false, error: "Proof of payment is required." };
+        }
+        if (!ALLOWED_PROOF_TYPES.includes(proofFile.type)) {
+            return { success: false, error: "Proof of payment must be a JPEG, PNG, or WebP image." };
+        }
+        if (proofFile.size > MAX_PROOF_SIZE) {
+            return { success: false, error: "Proof of payment must be under 5MB." };
         }
 
         // 1. Upload to Vercel Blob (if token exists)
