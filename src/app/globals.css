@@ -108,6 +108,18 @@
   }
 }
 
+@layer components {
+  /* Typography scale — use these instead of ad-hoc tracking/leading combos */
+  .type-display   { @apply font-display tracking-[-0.04em] leading-[0.85]; }
+  .type-headline  { @apply font-display tracking-[-0.02em] leading-[0.9]; }
+  .type-subheading { @apply font-display tracking-[-0.01em] leading-[1.0]; }
+  .type-caption   { @apply font-mono tracking-[0.3em] text-xs uppercase; }
+  .type-label     { @apply font-mono tracking-[0.15em] text-sm uppercase; }
+
+  /* Section rhythm — use on major section elements for consistent vertical breathing */
+  .section-padding { @apply py-[10vh] md:py-[14vh]; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -124,9 +136,26 @@
     @apply border-border;
   }
 
+  html {
+    overflow-x: hidden;
+  }
+
   body {
-    @apply bg-background text-foreground antialiased selection:bg-indigo-500 selection:text-white;
+    @apply bg-background text-foreground antialiased;
     font-feature-settings: "ss01", "ss02", "cv01", "cv02", "cv03";
+    overflow-x: hidden;
+  }
+
+  /* Brand selection color */
+  ::selection {
+    background-color: #E5FF00;
+    color: #000000;
+  }
+
+  /* Global focus ring — bodega-yellow, visible only on keyboard nav */
+  :focus-visible {
+    outline: 2px solid #E5FF00;
+    outline-offset: 2px;
   }
 
   /* Grain Overlay — inlined SVG, no external fetch */
@@ -141,5 +170,20 @@
     opacity: 0.07;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
     mix-blend-mode: overlay;
+    animation: grain 8s steps(12) infinite;
+  }
+
+  @keyframes grain {
+    0%   { transform: translate(0px, 0px); }
+    10%  { transform: translate(-1px, 2px); }
+    20%  { transform: translate(2px, -1px); }
+    30%  { transform: translate(-2px, 1px); }
+    40%  { transform: translate(1px, -2px); }
+    50%  { transform: translate(-1px, -1px); }
+    60%  { transform: translate(2px, 2px); }
+    70%  { transform: translate(-2px, -2px); }
+    80%  { transform: translate(1px, 1px); }
+    90%  { transform: translate(-1px, 2px); }
+    100% { transform: translate(0px, 0px); }
   }
 }

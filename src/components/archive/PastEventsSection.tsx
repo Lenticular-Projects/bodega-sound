@@ -44,10 +44,10 @@ function EventCard({ event, index }: { event: BodegaEvent; index: number }) {
 
         {/* Event info */}
         <div className="absolute bottom-0 left-0 right-0 p-6 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
-          <p className="text-bodega-yellow font-mono text-xs tracking-wider mb-1">
+          <p className="type-caption text-bodega-yellow mb-1">
             {event.date}
           </p>
-          <h3 className="font-display text-3xl md:text-4xl text-white mb-1 tracking-tight">
+          <h3 className="type-headline text-3xl md:text-4xl text-white mb-1">
             {event.name}
           </h3>
           <p className="text-warm-400 text-sm">{event.theme}</p>
@@ -70,7 +70,7 @@ function EventCard({ event, index }: { event: BodegaEvent; index: number }) {
 
 export function PastEventsSection() {
   return (
-    <section className="relative pt-8 pb-8 px-6 overflow-hidden">
+    <section className="relative section-padding px-6 overflow-hidden">
       {/* Background accent */}
       <div className="absolute top-1/2 left-0 w-[600px] h-[600px] bg-bodega-yellow/5 rounded-full blur-[200px] -translate-y-1/2" />
 
@@ -82,7 +82,7 @@ export function PastEventsSection() {
           variants={fadeUp}
           className="mb-16"
         >
-          <h2 className="font-display text-5xl sm:text-6xl md:text-8xl text-white tracking-tight mb-4">
+          <h2 className="type-headline text-5xl sm:text-6xl md:text-8xl text-white mb-4">
             TIME CAPSULE
           </h2>
           <p className="text-xl text-warm-400 max-w-xl">

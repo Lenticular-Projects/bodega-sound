@@ -64,8 +64,8 @@ function VideoCard({ video }: { video: YouTubeVideo }) {
 
             {/* Play button */}
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-16 h-12 bg-red-600 rounded-md flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg z-10">
-                <PlayIcon className="w-6 h-6 text-white fill-current ml-1" />
+              <div className="w-16 h-16 bg-bodega-yellow/10 border-2 border-bodega-yellow rounded-sm flex items-center justify-center group-hover:scale-110 group-hover:bg-bodega-yellow transition-all duration-300 shadow-lg z-10">
+                <PlayIcon className="w-6 h-6 text-bodega-yellow group-hover:text-warm-950 fill-current ml-1 transition-colors duration-300" />
               </div>
             </div>
 
@@ -91,7 +91,7 @@ function VideoCard({ video }: { video: YouTubeVideo }) {
 
 export function YouTubeSection() {
   return (
-    <section className="relative pt-8 pb-8 px-6">
+    <section className="relative section-padding px-6">
       <div className="max-w-7xl mx-auto">
         <motion.div
           initial="initial"
@@ -103,11 +103,11 @@ export function YouTubeSection() {
           <div>
             <div className="flex items-center gap-3 mb-4">
               <YouTubeIcon className="w-6 h-6 text-red-600" />
-              <p className="text-warm-400 font-mono text-sm tracking-wider">
+              <p className="type-label text-warm-400">
                 YOUTUBE CHANNEL
               </p>
             </div>
-            <h2 className="font-display text-5xl sm:text-6xl md:text-8xl text-white tracking-tight">
+            <h2 className="type-headline text-5xl sm:text-6xl md:text-8xl text-white">
               FULL SETS
             </h2>
           </div>
@@ -116,9 +116,11 @@ export function YouTubeSection() {
             href="https://www.youtube.com/channel/UCpF9K0Lg4wlwNrqprRFRmxg"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-warm-400 hover:text-bodega-yellow transition-colors duration-300 flex items-center gap-2"
+            aria-label="Bodega Sound on YouTube"
+            className="text-warm-500 hover:text-bodega-yellow transition-colors duration-300 flex items-center gap-2"
           >
-            <span className="font-mono text-sm">@bodegasound</span>
+            <YouTubeIcon className="w-4 h-4 text-red-600 flex-shrink-0" />
+            <span className="type-caption">BODEGA SOUND</span>
           </a>
         </motion.div>
 
@@ -145,10 +147,10 @@ export function YouTubeSection() {
             href="https://www.youtube.com/channel/UCpF9K0Lg4wlwNrqprRFRmxg"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-8 py-4 border border-warm-600 text-warm-200 rounded-sm hover:border-red-600 hover:text-red-600 transition-all duration-300"
+            className="inline-flex items-center gap-3 px-8 py-4 border border-warm-600 text-warm-200 rounded-sm hover:border-bodega-yellow hover:text-bodega-yellow transition-all duration-300"
           >
-            <YouTubeIcon className="w-5 h-5" />
-            SUBSCRIBE FOR MORE
+            <YouTubeIcon className="w-5 h-5 text-red-600 flex-shrink-0" />
+            @BODEGASOUND
           </a>
         </motion.div>
       </div>

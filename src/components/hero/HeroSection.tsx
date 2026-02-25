@@ -4,16 +4,26 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { fadeUp, staggerContainer, breathe } from "@/lib/animations";
 import { FlipTextReveal } from "@/components/ui/flip-text-reveal";
+import { MagneticButton } from "@/components/ui/magnetic-button";
 
 export function HeroSection() {
   return (
     <motion.section
       animate={breathe.animate}
-      className="relative min-h-screen flex items-center justify-center overflow-hidden"
+      className="relative min-h-[100svh] flex items-center justify-center overflow-hidden"
     >
-      {/* Gradient orbs for atmosphere */}
-      <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-bodega-yellow/5 rounded-full blur-[150px] animate-pulse" />
-      <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-purple-600/5 rounded-full blur-[150px] animate-pulse delay-1000" />
+      {/* Gradient orbs for atmosphere — breathe preset, not animate-pulse */}
+      <motion.div
+        animate={breathe.animate}
+        className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-bodega-yellow/5 rounded-full blur-[150px]"
+      />
+      <motion.div
+        animate={{
+          ...breathe.animate,
+          transition: { ...breathe.animate.transition, delay: 2 },
+        }}
+        className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-purple-600/5 rounded-full blur-[150px]"
+      />
 
       {/* Content */}
       <motion.div
@@ -60,12 +70,14 @@ export function HeroSection() {
           className="flex flex-col md:flex-row gap-4 justify-center items-center"
         >
           {/* bodega-yellow glow — intentional brand signature */}
-          <Link
-            href="/shop"
-            className="group px-10 py-5 bg-bodega-yellow text-warm-950 font-bold text-lg rounded-sm hover:bg-bodega-yellow-light transition-all duration-300 flex items-center gap-3 shadow-[0_0_40px_rgba(229,255,0,0.3)] hover:shadow-[0_0_60px_rgba(229,255,0,0.5)] min-w-[180px] justify-center"
-          >
-            SHOP
-          </Link>
+          <MagneticButton>
+            <Link
+              href="/shop"
+              className="group px-10 py-5 bg-bodega-yellow text-warm-950 font-bold text-lg rounded-sm hover:bg-bodega-yellow-light transition-all duration-300 flex items-center gap-3 shadow-[0_0_40px_rgba(229,255,0,0.3)] hover:shadow-[0_0_60px_rgba(229,255,0,0.5)] min-w-[180px] justify-center"
+            >
+              SHOP
+            </Link>
+          </MagneticButton>
 
           <Link
             href="/archive"
@@ -75,12 +87,14 @@ export function HeroSection() {
           </Link>
 
           {/* bodega-yellow glow — intentional brand signature */}
-          <Link
-            href="/events"
-            className="group px-10 py-5 bg-bodega-yellow text-warm-950 font-bold text-lg rounded-sm hover:bg-bodega-yellow-light transition-all duration-300 flex items-center gap-3 shadow-[0_0_40px_rgba(229,255,0,0.3)] hover:shadow-[0_0_60px_rgba(229,255,0,0.5)] min-w-[180px] justify-center"
-          >
-            EVENTS
-          </Link>
+          <MagneticButton>
+            <Link
+              href="/events"
+              className="group px-10 py-5 bg-bodega-yellow text-warm-950 font-bold text-lg rounded-sm hover:bg-bodega-yellow-light transition-all duration-300 flex items-center gap-3 shadow-[0_0_40px_rgba(229,255,0,0.3)] hover:shadow-[0_0_60px_rgba(229,255,0,0.5)] min-w-[180px] justify-center"
+            >
+              EVENTS
+            </Link>
+          </MagneticButton>
         </motion.div>
       </motion.div>
     </motion.section>

@@ -9,7 +9,7 @@ import Link from "next/link";
 
 export function MerchSection() {
   return (
-    <section id="shop" className="relative pt-8 pb-4 px-6">
+    <section id="shop" className="relative section-padding px-6">
       {/* Background accent */}
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-bodega-yellow/5 rounded-full blur-[200px]" />
 
@@ -21,10 +21,10 @@ export function MerchSection() {
           variants={fadeUp}
           className="mb-16"
         >
-          <p className="text-bodega-yellow font-mono tracking-wider text-sm mb-2">
+          <p className="type-label text-bodega-yellow mb-2">
             OFFICIAL MERCHANDISE
           </p>
-          <h2 className="font-display text-5xl sm:text-6xl md:text-8xl text-white tracking-tight mb-4">
+          <h2 className="type-headline text-5xl sm:text-6xl md:text-8xl text-white mb-4">
             GEAR UP
           </h2>
           <p className="text-xl text-warm-400 max-w-xl">
@@ -53,7 +53,7 @@ export function MerchSection() {
         >
           <Link
             href="/shop"
-            className="inline-flex items-center gap-2 px-8 py-4 bg-warm-800 text-white rounded-sm hover:bg-warm-700 transition-all duration-300"
+            className="inline-flex items-center gap-2 px-8 py-4 border border-bodega-yellow text-bodega-yellow rounded-sm hover:bg-bodega-yellow hover:text-warm-950 transition-all duration-300"
           >
             <ShoppingCartIcon className="w-5 h-5" />
             VIEW ALL MERCH

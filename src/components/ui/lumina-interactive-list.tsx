@@ -24,6 +24,7 @@ export interface LuminaInteractiveListProps {
     autoSlideSpeed?: number;
   };
   className?: string;
+  onSlideChange?: (index: number) => void;
 }
 
 // --- Shaders ---
@@ -125,6 +126,7 @@ export function LuminaInteractiveList({
   mode = "full",
   config,
   className,
+  onSlideChange,
 }: LuminaInteractiveListProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -162,6 +164,10 @@ export function LuminaInteractiveList({
 
   // Bridge ref: exposes navigateToSlide to the click handler
   const navigateToSlideRef = useRef<(index: number) => void>(() => { });
+
+  // Stable ref for onSlideChange callback — avoids stale closure in useEffect
+  const onSlideChangeRef = useRef(onSlideChange);
+  useEffect(() => { onSlideChangeRef.current = onSlideChange; }, [onSlideChange]);
 
   // Resolved config values
   const transitionDuration = config?.transitionDuration ?? 2.5;
@@ -421,6 +427,7 @@ export function LuminaInteractiveList({
       currentIndexRef.current = targetIndex;
       setActiveIndex(targetIndex);
       updateCounter(targetIndex);
+      onSlideChangeRef.current?.(targetIndex);
 
       // Auto-scroll active nav item into view on mobile
       const navItem = navRef.current?.children[targetIndex] as HTMLElement | undefined;
@@ -759,13 +766,37 @@ export function LuminaInteractiveList({
     return () => window.removeEventListener("lumina-navigate", handler);
   }, []);
 
+  // --- Keyboard navigation: ArrowLeft / ArrowRight ---
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!containerRef.current) return;
+      const focused =
+        containerRef.current === document.activeElement ||
+        containerRef.current.contains(document.activeElement);
+      if (!focused) return;
+      if (e.key === "ArrowRight") {
+        navigateToSlideRef.current(
+          (currentIndexRef.current + 1) % slides.length
+        );
+      } else if (e.key === "ArrowLeft") {
+        navigateToSlideRef.current(
+          (currentIndexRef.current - 1 + slides.length) % slides.length
+        );
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [slides.length]);
+
 
 
   return (
     <div
       ref={containerRef}
+      tabIndex={0}
+      aria-label={`Image gallery. ${slides.length} slides. Use arrow keys to navigate.`}
       className={cn(
-        "relative w-full h-[70vh] sm:h-[80vh] lg:h-dvh overflow-hidden bg-black transition-opacity duration-[1200ms] ease-[cubic-bezier(0.4,0,0.2,1)]",
+        "relative w-full h-[70vh] sm:h-[80vh] lg:h-dvh overflow-hidden bg-black transition-opacity duration-[1200ms] ease-[cubic-bezier(0.4,0,0.2,1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bodega-yellow focus-visible:ring-offset-0",
         isLoaded ? "opacity-100" : "opacity-0 pointer-events-none",
         className
       )}

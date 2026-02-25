@@ -35,9 +35,9 @@ const nextEvent: Event = {
 
 export function NextEventSection() {
   return (
-    <section id="next-event" className="relative pt-20 pb-8 px-6">
+    <section id="next-event" className="relative section-padding px-6">
       <div className="max-w-7xl mx-auto">
-        <div className="grid md:grid-cols-2 gap-12 items-start">
+        <div className="grid md:grid-cols-2 gap-16 lg:gap-24 items-start">
           {/* Left: Title & Details */}
           <div>
             <motion.div
@@ -47,10 +47,10 @@ export function NextEventSection() {
               variants={fadeUp}
               className="mb-12"
             >
-              <p className="text-zinc-500 dark:text-bodega-yellow font-mono tracking-wider text-sm mb-4 transition-colors duration-300 -ml-0.5">
+              <p className="type-label text-zinc-500 dark:text-bodega-yellow mb-4 transition-colors duration-300 -ml-0.5">
                 NEXT GATHERING
               </p>
-              <h2 className="font-display text-4xl sm:text-6xl md:text-9xl text-zinc-900 dark:text-white tracking-tight leading-[0.8] mb-8 transition-colors duration-300 -ml-1 md:-ml-2">
+              <h2 className="type-display text-[clamp(4rem,10vw,9rem)] text-zinc-900 dark:text-white mb-8 transition-colors duration-300 -ml-1 md:-ml-2">
                 {nextEvent.name}
               </h2>
             </motion.div>
@@ -67,20 +67,20 @@ export function NextEventSection() {
               </p>
 
               <div className="space-y-4">
-                <div className="flex items-center gap-4 text-zinc-700 dark:text-warm-200 transition-colors duration-300">
-                  <CalendarIcon className="w-5 h-5 text-zinc-900 dark:text-bodega-yellow transition-colors duration-300" />
+                <div className="group/detail flex items-center gap-4 text-zinc-700 dark:text-warm-200 hover:text-zinc-900 dark:hover:text-white transition-colors duration-300 cursor-default">
+                  <CalendarIcon className="w-5 h-5 text-zinc-400 dark:text-warm-500 group-hover/detail:text-bodega-yellow transition-colors duration-300" />
                   <span className="text-lg">
                     {nextEvent.date} • {nextEvent.time}
                   </span>
                 </div>
 
-                <div className="flex items-center gap-4 text-zinc-700 dark:text-warm-200 transition-colors duration-300">
-                  <LocationIcon className="w-5 h-5 text-zinc-900 dark:text-bodega-yellow transition-colors duration-300" />
+                <div className="group/detail flex items-center gap-4 text-zinc-700 dark:text-warm-200 hover:text-zinc-900 dark:hover:text-white transition-colors duration-300 cursor-default">
+                  <LocationIcon className="w-5 h-5 text-zinc-400 dark:text-warm-500 group-hover/detail:text-bodega-yellow transition-colors duration-300" />
                   <span className="text-lg">{nextEvent.location}</span>
                 </div>
 
-                <div className="flex items-center gap-4 text-zinc-700 dark:text-warm-200 transition-colors duration-300">
-                  <TicketIcon className="w-5 h-5 text-zinc-900 dark:text-bodega-yellow transition-colors duration-300" />
+                <div className="group/detail flex items-center gap-4 text-zinc-700 dark:text-warm-200 hover:text-zinc-900 dark:hover:text-white transition-colors duration-300 cursor-default">
+                  <TicketIcon className="w-5 h-5 text-zinc-400 dark:text-warm-500 group-hover/detail:text-bodega-yellow transition-colors duration-300" />
                   <span className="text-lg">{nextEvent.capacity}</span>
                 </div>
               </div>

@@ -256,6 +256,7 @@ function SubscriberModal() {
                         >
                             <button
                                 onClick={() => setOpen(false)}
+                                aria-label="Close"
                                 className="absolute top-4 right-4 p-2 text-zinc-500 hover:text-white transition-colors"
                             >
                                 <CloseIcon size={20} />
