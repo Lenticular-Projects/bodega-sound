@@ -4,34 +4,7 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { CalendarIcon, LocationIcon, TicketIcon } from "@/components/icons";
 import { fadeUp } from "@/lib/animations";
-
-interface Event {
-  id: string;
-  name: string;
-  date: string;
-  time: string;
-  location: string;
-  description: string;
-  capacity: string;
-  imageUrl?: string;
-  ticketUrl?: string;
-  isActive: boolean;
-}
-
-// Static data for MVP - can migrate to database later
-const nextEvent: Event = {
-  id: "contrabanda-v",
-  name: "CONTRABANDA V",
-  date: "June 21, 2025",
-  time: "10:00 PM - 6:00 AM",
-  location: "Secret Location • Poblacion, Makati",
-  description:
-    "Our summer solstice celebration. 8 hours of house, techno, and open-format selections. Featuring international headliners and Manila's finest selectors.",
-  capacity: "Limited Capacity • 500 Tickets",
-  imageUrl: "/images/events/contrabanda-v.jpg",
-  ticketUrl: "#tickets",
-  isActive: true,
-};
+import { upcomingEvent as nextEvent } from "@/config/next-event";
 
 export function NextEventSection() {
   return (

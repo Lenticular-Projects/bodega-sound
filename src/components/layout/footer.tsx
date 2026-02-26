@@ -9,7 +9,7 @@ export function Footer() {
   if (pathname === "/links") return null;
 
   return (
-    <footer className="w-full pt-12 pb-32 md:pb-20 px-4 md:px-8 border-t border-zinc-200 dark:border-white/10 z-content relative bg-warm-50 dark:bg-warm-950 transition-colors duration-300">
+    <footer className="w-full pt-12 pb-32 md:pb-28 px-4 md:px-8 border-t border-zinc-200 dark:border-white/10 z-content relative bg-warm-50 dark:bg-warm-950 transition-colors duration-300">
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center md:items-center gap-8">
         <div className="flex flex-col items-center md:items-start text-center md:text-left">
           <Image
@@ -53,7 +53,7 @@ export function Footer() {
           </div>
         </div>
       </div>
-      <div className="mt-12 pt-8 border-t border-zinc-200 dark:border-white/5 text-[10px] font-bold tracking-[0.2em] text-zinc-400 dark:text-warm-500 uppercase transition-colors duration-300">
+      <div className="mt-8 pt-6 border-t border-zinc-200 dark:border-white/5 text-[10px] font-bold tracking-[0.2em] text-zinc-400 dark:text-warm-500 uppercase transition-colors duration-300">
         {/* Mobile: stacked + centered */}
         <div className="flex flex-col items-center text-center gap-1 md:hidden">
           <p>&copy; 2026 BODEGA SOUND COLLECTIVE</p>

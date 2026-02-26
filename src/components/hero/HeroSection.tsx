@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { fadeUp, staggerContainer, breathe } from "@/lib/animations";
 import { FlipTextReveal } from "@/components/ui/flip-text-reveal";
 import { MagneticButton } from "@/components/ui/magnetic-button";
+import { EventCountdown } from "@/components/events/EventCountdown";
 
 export function HeroSection() {
   return (
@@ -96,6 +97,8 @@ export function HeroSection() {
             </Link>
           </MagneticButton>
         </motion.div>
+
+        <EventCountdown />
       </motion.div>
     </motion.section>
   );

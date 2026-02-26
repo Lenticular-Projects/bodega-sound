@@ -52,6 +52,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body
         className={`${GeistSans.variable} ${GeistMono.variable} ${bebasNeue.variable} font-sans antialiased bg-background text-foreground`}
+        suppressHydrationWarning
       >
         <div className="grain-overlay" />
         <ThemeProvider>
